@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E079C15D-DBC4-4F3B-B9B2-1E1DF9DE0460}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BluffinMuffin.Server.Protocol</RootNamespace>
+    <AssemblyName>BluffinMuffin.Server.Protocol</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BluffinMuffin.Protocol, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\BluffinMuffin.Protocol.dll</HintPath>
+    </Reference>
+    <Reference Include="BluffinMuffin.Protocol.DataTypes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\BluffinMuffin.Protocol.DataTypes.dll</HintPath>
+    </Reference>
+    <Reference Include="Com.Ericmas001.Collections">
+      <HintPath>..\References\Com.Ericmas001.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Com.Ericmas001.Games">
+      <HintPath>..\References\Com.Ericmas001.Games.dll</HintPath>
+    </Reference>
+    <Reference Include="Com.Ericmas001.Net.Protocol">
+      <HintPath>..\References\Com.Ericmas001.Net.Protocol.dll</HintPath>
+    </Reference>
+    <Reference Include="Com.Ericmas001.Util">
+      <HintPath>..\References\Com.Ericmas001.Util.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Annotations\Annotations.cs" />
+    <Compile Include="Workers\BluffinGameWorker.cs" />
+    <Compile Include="Workers\BluffinLobbyWorker.cs" />
+    <Compile Include="BluffinServer.cs" />
+    <Compile Include="LocalTcpServer.cs" />
+    <Compile Include="DataTypes\GameCommandEntry.cs" />
+    <Compile Include="DataTypes\CommandEntry.cs" />
+    <Compile Include="DataTypes\IBluffinClient.cs" />
+    <Compile Include="DataTypes\IBluffinLobby.cs" />
+    <Compile Include="DataTypes\IBluffinServer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemotePlayer.cs" />
+    <Compile Include="RemoteTcpClient.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BluffinMuffin.Server.DataTypes\BluffinMuffin.Server.DataTypes.csproj">
+      <Project>{fcdf88c3-ba2f-4c06-aa9a-6ace1355a37e}</Project>
+      <Name>BluffinMuffin.Server.DataTypes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BluffinMuffin.Server.Logic\BluffinMuffin.Server.Logic.csproj">
+      <Project>{c742e561-9daf-40f2-92d4-c2631bbdd253}</Project>
+      <Name>BluffinMuffin.Server.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BluffinMuffin.Server.Persistance\BluffinMuffin.Server.Persistance.csproj">
+      <Project>{8372fa85-e300-4353-8b10-78f93655d479}</Project>
+      <Name>BluffinMuffin.Server.Persistance</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
