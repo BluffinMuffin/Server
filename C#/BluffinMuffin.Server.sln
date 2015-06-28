@@ -7,12 +7,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{10646A39
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "References", "References", "{83B52027-C2CE-459B-B2D6-171D30532F57}"
 	ProjectSection(SolutionItems) = preProject
+		References\BluffinMuffin.HandEvaluator.dll = References\BluffinMuffin.HandEvaluator.dll
 		References\BluffinMuffin.Protocol.DataTypes.dll = References\BluffinMuffin.Protocol.DataTypes.dll
 		References\BluffinMuffin.Protocol.dll = References\BluffinMuffin.Protocol.dll
 		References\BluffinMuffin.Protocol.Tests.DataTypes.dll = References\BluffinMuffin.Protocol.Tests.DataTypes.dll
 		References\Com.Ericmas001.Collections.dll = References\Com.Ericmas001.Collections.dll
 		References\Com.Ericmas001.Games.dll = References\Com.Ericmas001.Games.dll
-		References\Com.Ericmas001.Net.JSON.dll = References\Com.Ericmas001.Net.JSON.dll
 		References\Com.Ericmas001.Net.Protocol.dll = References\Com.Ericmas001.Net.Protocol.dll
 		References\Com.Ericmas001.Util.dll = References\Com.Ericmas001.Util.dll
 	EndProjectSection
