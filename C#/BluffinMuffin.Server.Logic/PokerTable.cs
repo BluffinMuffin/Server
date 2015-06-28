@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using Com.Ericmas001.Games;
 using System.Linq;
 using BluffinMuffin.Server.DataTypes;
-using BluffinMuffin.Server.HandEval;
 using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic
@@ -167,12 +167,12 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         /// <param name="playerCards">Player cards</param>
         /// <returns>A unsigned int that we can use to compare with another hand</returns>
-        private uint EvaluateCards(IReadOnlyCollection<GameCard> playerCards)
+        private HandEvaluationResult EvaluateCards(params GameCard[] playerCards)
         {
-            if (Cards == null || Cards.Length != 5 || playerCards == null || playerCards.Count != 2)
-                return 0;
+            if (Cards == null || Cards.Length != 5 || playerCards == null || playerCards.Length != 2)
+                return null;
 
-            return new Hand(String.Join(" ", playerCards), String.Join<GameCard>(" ", Cards)).HandValue;
+            return HandEvaluator.HandEvaluator.Evaluate(Cards.Union(playerCards).Select(x => x.ToString()).ToArray());
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace BluffinMuffin.Server.Logic
             for (var i = 0; i <= m_CurrPotId; ++i)
             {
                 var pot = m_Pots[i];
-                uint bestHand = 0;
+                HandEvaluationResult bestHand = null;
                 var infos = new List<PlayerInfo>(pot.AttachedPlayers);
 
                 //If there is more than one player attach to the pot, we need to choose who will split it !
@@ -225,14 +225,14 @@ namespace BluffinMuffin.Server.Logic
                 {
                     foreach (var p in infos)
                     {
-                        var handValue = EvaluateCards(p.HoleCards.Select(x => new GameCard(x)).ToList());
-                        if (handValue > bestHand)
+                        var handValue = EvaluateCards(p.HoleCards.Select(x => new GameCard(x)).ToArray());
+                        if (handValue.CompareTo(bestHand) == 1)
                         {
                             pot.DetachAllPlayers();
                             pot.AttachPlayer(p);
                             bestHand = handValue;
                         }
-                        else if (handValue == bestHand)
+                        else if (handValue.CompareTo(bestHand) == 0)
                             pot.AttachPlayer(p);
                     }
                 }

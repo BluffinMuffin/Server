@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BluffinMuffin.HandEvaluator">
+      <HintPath>..\References\BluffinMuffin.HandEvaluator.dll</HintPath>
+    </Reference>
     <Reference Include="BluffinMuffin.Protocol.DataTypes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\BluffinMuffin.Protocol.DataTypes.dll</HintPath>
@@ -66,10 +69,6 @@
     <ProjectReference Include="..\BluffinMuffin.Server.DataTypes\BluffinMuffin.Server.DataTypes.csproj">
       <Project>{fcdf88c3-ba2f-4c06-aa9a-6ace1355a37e}</Project>
       <Name>BluffinMuffin.Server.DataTypes</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BluffinMuffin.Server.HandEval\BluffinMuffin.Server.HandEval.csproj">
-      <Project>{db8262c0-819a-4ff1-87e2-e34ca0cda41e}</Project>
-      <Name>BluffinMuffin.Server.HandEval</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
