@@ -36,7 +36,7 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
             }
         }
 
-        public void Send(AbstractBluffinCommand c)
+        public void Send(AbstractCommand c)
         {
             LobbyCommands.Add(new CommandEntry(){Client = m_Client,Command = c});
         }

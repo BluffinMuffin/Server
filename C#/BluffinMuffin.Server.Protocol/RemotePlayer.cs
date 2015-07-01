@@ -63,13 +63,13 @@ namespace BluffinMuffin.Server.Protocol
                     si.Player = gameSeat.Player.Clone();
 
                     //If we are not sending the info about the player who is receiving, don't show the cards unless you can
-                    if (i != playerSendingTo.NoSeat && si.Player.IsPlaying)
-                        si.Player.HoleCards = gameSeat.Player.RelativeCards.Select(x => x.ToString()).ToArray();
+                    if (i != playerSendingTo.NoSeat && si.Player.IsPlaying&& !si.Player.IsShowingCards)
+                        si.Player.HoleCards = new[] {"??", "??"};
 
-                    if (si.Player.HoleCards.Length != 2)
+                    if (si.Player.HoleCards == null || si.Player.HoleCards.Length != 2)
                         si.Player.HoleCards = new[] { GameCard.NoCard.ToString(), GameCard.NoCard.ToString() };
 
-                    si.Attributes = gameSeat.Attributes;
+                    si.SeatAttributes = gameSeat.SeatAttributes;
                 }
             }
             Send(cmd);
@@ -82,7 +82,6 @@ namespace BluffinMuffin.Server.Protocol
             Game.Observer.GameEnded += OnGameEnded;
             Game.Observer.PlayerWonPot += OnPlayerWonPot;
             Game.Observer.PlayerActionTaken += OnPlayerActionTaken;
-            Game.Observer.PlayerMoneyChanged += OnPlayerMoneyChanged;
             Game.Observer.EverythingEnded += OnEverythingEnded;
             Game.Observer.PlayerActionNeeded += OnPlayerActionNeeded;
             Game.Observer.GameBlindNeeded += OnGameBlindNeeded;
@@ -104,13 +103,13 @@ namespace BluffinMuffin.Server.Protocol
         void OnPlayerHoleCardsChanged(object sender, PlayerInfoEventArgs e)
         {
             var p = e.Player;
-            var holeCards = p.NoSeat == Player.NoSeat ? p.Cards : p.RelativeCards;
+            var holeCards = p.NoSeat == Player.NoSeat || p.IsShowingCards ? p.HoleCards : new[] {"??", "??"};
 
             Send(new PlayerHoleCardsChangedCommand()
             {
-                PlayerPos = p.NoSeat,
-                State = p.State,
-                Cards = holeCards.Select(c => c.ToString()).ToArray(),
+                NoSeat = p.NoSeat,
+                PlayerState = p.State,
+                Cards = holeCards,
             });
         }
 
@@ -125,10 +124,10 @@ namespace BluffinMuffin.Server.Protocol
             var pot = e.Pot;
             Send(new PlayerWonPotCommand()
             {
-                PlayerPos = playerInfo.Player.NoSeat,
+                NoSeat = playerInfo.Player.NoSeat,
                 PotId = pot.Id,
-                Shared = e.AmountWon,
-                PlayerMoney = playerInfo.Player.MoneySafeAmnt,
+                WonAmount = e.AmountWon,
+                TotalPlayerMoney = playerInfo.Player.MoneySafeAmnt,
                 TotalPotAmount = pot.Amount,
                 WinningCards = playerInfo.Hand == null ? new string[0] : playerInfo.Hand.Cards.SelectMany(x => x).Take(5).Select(x => CardStringRepresentationHelper.ConvertForProtocol(x.ToString())).ToArray(),
                 WinningHand = playerInfo.Hand == null ? PokerHandEnum.None : (PokerHandEnum)Enum.Parse(typeof(PokerHandEnum), playerInfo.Hand.Hand.ToString())
@@ -140,24 +139,14 @@ namespace BluffinMuffin.Server.Protocol
             var p = e.Player;
             Send(new PlayerTurnEndedCommand()
             {
-                PlayerPos = p.NoSeat,
-                PlayerBet = p.MoneyBetAmnt,
-                PlayerMoney = p.MoneySafeAmnt,
+                NoSeat = p.NoSeat,
+                TotalPlayedMoneyAmount = p.MoneyBetAmnt,
+                TotalSafeMoneyAmount = p.MoneySafeAmnt,
                 TotalPot = Game.Table.TotalPotAmnt,
-                ActionType = e.Action,
-                ActionAmount = e.AmountPlayed,
-                State = p.State,
+                ActionTakenType = e.Action,
+                ActionTakenAmount = e.AmountPlayed,
+                PlayerState = p.State,
             });
-        }
-
-        void OnPlayerMoneyChanged(object sender, PlayerInfoEventArgs e)
-        {
-            //var p = e.Player;
-            //Send(new PlayerMoneyChangedCommand()
-            //{
-            //    PlayerPos = p.NoSeat,
-            //    PlayerMoney = p.MoneySafeAmnt,
-            //});
         }
 
         void OnEverythingEnded(object sender, EventArgs e)
@@ -169,14 +158,14 @@ namespace BluffinMuffin.Server.Protocol
         {
             Send(new PlayerTurnBeganCommand()
             {
-                PlayerPos = e.Player.NoSeat,
-                MinimumRaise = Game.Table.MinimumRaiseAmount,
+                NoSeat = e.Player.NoSeat,
+                MinimumRaiseAmount = Game.Table.MinimumRaiseAmount,
             });
         }
 
         void OnGameBlindNeeded(object sender, EventArgs e)
         {
-            Send(new GameStartedCommand() { NeededBlind = Game.GameTable.GetBlindNeeded(Player) });
+            Send(new GameStartedCommand() { NeededBlindAmount = Game.GameTable.GetBlindNeeded(Player) });
         }
 
         void OnGameBettingRoundStarted(object sender, RoundEventArgs e)
@@ -207,8 +196,8 @@ namespace BluffinMuffin.Server.Protocol
         {
             if (e.Seat.IsEmpty || Player.NoSeat != e.Seat.NoSeat)
             {
-                if (!e.Seat.IsEmpty && Player.NoSeat != e.Seat.NoSeat)
-                    e.Seat.Player.HoleCards = e.Seat.Player.RelativeCards.Select(x => x.ToString()).ToArray();
+                if (!e.Seat.IsEmpty && Player.NoSeat != e.Seat.NoSeat && !e.Seat.Player.IsShowingCards)
+                    e.Seat.Player.HoleCards = new[] {"??", "??"};
 
                 Send(new SeatUpdatedCommand()
                 {

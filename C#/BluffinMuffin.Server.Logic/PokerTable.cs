@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Server.DataTypes.Helper;
 using Com.Ericmas001.Games;
 using System.Linq;
@@ -266,11 +267,11 @@ namespace BluffinMuffin.Server.Logic
         private void InitPokerTable()
         {
             var previousDealer = DealerSeat;
-
-            Seats.ForEach(s => s.Attributes.Clear());
+            
+            Seats.ForEach(s => s.SeatAttributes = new SeatAttributeEnum[0]);
 
             var nextDealerSeat = GetSeatOfPlayingPlayerNextTo(previousDealer);
-            nextDealerSeat.Attributes.Add(SeatAttributeEnum.Dealer);
+            nextDealerSeat.SeatAttributes = nextDealerSeat.SeatAttributes.Union(new[] { SeatAttributeEnum.Dealer }).ToArray();
 
             m_BlindNeeded.Clear();
 
@@ -282,17 +283,17 @@ namespace BluffinMuffin.Server.Logic
                     var smallSeat = NbPlaying == 2 ? DealerSeat : GetSeatOfPlayingPlayerNextTo(DealerSeat);
                     if (NewArrivals.All(x => x.NoSeat != smallSeat.NoSeat))
                     {
-                        smallSeat.Attributes.Add(SeatAttributeEnum.SmallBlind);
+                        smallSeat.SeatAttributes = smallSeat.SeatAttributes.Union(new[] { SeatAttributeEnum.SmallBlind }).ToArray();
                         if (bob != null) m_BlindNeeded.Add(smallSeat.Player, bob.SmallBlindAmount);
                     }
 
                     var bigSeat = GetSeatOfPlayingPlayerNextTo(smallSeat);
-                    bigSeat.Attributes.Add(SeatAttributeEnum.BigBlind);
+                    bigSeat.SeatAttributes = bigSeat.SeatAttributes.Union(new[] { SeatAttributeEnum.BigBlind }).ToArray();
 
-                    NewArrivals.ForEach(x => Seats[x.NoSeat].Attributes.Add(SeatAttributeEnum.BigBlind));
+                    NewArrivals.ForEach(x => Seats[x.NoSeat].SeatAttributes = Seats[x.NoSeat].SeatAttributes.Union(new[] { SeatAttributeEnum.BigBlind }).ToArray());
                     NewArrivals.Clear();
 
-                    Seats.Where(x => x.Attributes.Contains(SeatAttributeEnum.BigBlind)).ToList().ForEach(x =>{ if (bob != null) m_BlindNeeded.Add(x.Player, bob.BigBlindAmount); });
+                    Seats.Where(x => x.SeatAttributes.Contains(SeatAttributeEnum.BigBlind)).ToList().ForEach(x => { if (bob != null) m_BlindNeeded.Add(x.Player, bob.BigBlindAmount); });
                     break;
                 case BlindTypeEnum.Antes:
                     var boa = Params.Blind as BlindOptionsAnte;

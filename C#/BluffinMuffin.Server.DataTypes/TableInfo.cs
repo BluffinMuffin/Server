@@ -89,7 +89,7 @@ namespace BluffinMuffin.Server.DataTypes
         {
             get
             {
-                return m_Seats.FirstOrDefault(s => s.Attributes.Contains(SeatAttributeEnum.Dealer));
+                return m_Seats.FirstOrDefault(s => s.SeatAttributes.Contains(SeatAttributeEnum.Dealer));
             }
         }
         public int NoSeatDealer
@@ -104,7 +104,7 @@ namespace BluffinMuffin.Server.DataTypes
         {
             get
             {
-                return m_Seats.FirstOrDefault(s => s.Attributes.Contains(SeatAttributeEnum.CurrentPlayer));
+                return m_Seats.FirstOrDefault(s => s.SeatAttributes.Contains(SeatAttributeEnum.CurrentPlayer));
             }
         }
         public int NoSeatCurrentPlayer
@@ -335,9 +335,9 @@ namespace BluffinMuffin.Server.DataTypes
         {
             var oldPlayerSeat = CurrentPlayerSeat;
             if (oldPlayerSeat != null)
-                oldPlayerSeat.Attributes.Remove(SeatAttributeEnum.CurrentPlayer);
+                oldPlayerSeat.SeatAttributes = oldPlayerSeat.SeatAttributes.Except(new [] { SeatAttributeEnum.CurrentPlayer }).ToArray();
             if (seat != null)
-                seat.Attributes.Add(SeatAttributeEnum.CurrentPlayer);
+                seat.SeatAttributes = seat.SeatAttributes.Union(new[] { SeatAttributeEnum.CurrentPlayer }).ToArray();
         }
         #endregion Public Methods
 

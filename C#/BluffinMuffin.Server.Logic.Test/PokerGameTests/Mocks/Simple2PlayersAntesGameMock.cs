@@ -1,4 +1,5 @@
-﻿using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
+﻿using BluffinMuffin.Protocol.DataTypes.Options;
+using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
 using BluffinMuffin.Protocol.DataTypes;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks

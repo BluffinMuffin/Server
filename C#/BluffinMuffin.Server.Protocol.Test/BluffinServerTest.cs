@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Protocol.Game;
 using BluffinMuffin.Protocol.Lobby;
 using BluffinMuffin.Protocol.Lobby.QuickMode;
@@ -117,7 +118,7 @@ namespace BluffinMuffin.Server.Protocol.Test
         {
             var response = serverEntity.WaitForNextCommand<PlayerTurnBeganCommand>();
             Assert.AreEqual(tableId, response.TableId);
-            Assert.AreEqual(noSeat, response.PlayerPos);
+            Assert.AreEqual(noSeat, response.NoSeat);
         }
 
         private void BeAwareOfBettingRoundStarted(RemoteTcpServer serverEntity, int tableId, RoundTypeEnum round)
@@ -134,8 +135,8 @@ namespace BluffinMuffin.Server.Protocol.Test
             {
                 var response = serverEntity.WaitForNextCommand<PlayerHoleCardsChangedCommand>();
                 Assert.AreEqual(tableId, response.TableId);
-                Assert.IsTrue(remaining.Contains(response.PlayerPos));
-                remaining.Remove(response.PlayerPos);
+                Assert.IsTrue(remaining.Contains(response.NoSeat));
+                remaining.Remove(response.NoSeat);
             }
         }
 
@@ -147,7 +148,7 @@ namespace BluffinMuffin.Server.Protocol.Test
 
             var responseTurnEnded = serverEntity.WaitForNextCommand<PlayerTurnEndedCommand>();
             Assert.AreEqual(tableId, responseTurnEnded.TableId);
-            Assert.AreEqual(seat, responseTurnEnded.PlayerPos);
+            Assert.AreEqual(seat, responseTurnEnded.NoSeat);
         }
 
         private void PlayMoney(RemoteTcpServer serverEntity, int tableId, int money)
@@ -155,7 +156,7 @@ namespace BluffinMuffin.Server.Protocol.Test
             var cmd = new PlayerPlayMoneyCommand()
             {
                 TableId = tableId,
-                Played = money
+                AmountPlayed = money
             };
             serverEntity.Send(cmd);
         }
@@ -192,8 +193,8 @@ namespace BluffinMuffin.Server.Protocol.Test
         {
             ReceiveTableInfo(serverEntity);
             var response = serverEntity.WaitForNextCommand<GameStartedCommand>();
-            Assert.AreNotEqual(0,response.NeededBlind);
-            return response.NeededBlind;
+            Assert.AreNotEqual(0,response.NeededBlindAmount);
+            return response.NeededBlindAmount;
         }
 
         private void ReceiveTableInfo(RemoteTcpServer serverEntity)

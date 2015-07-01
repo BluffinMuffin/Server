@@ -12,7 +12,7 @@ namespace BluffinMuffin.Server.Protocol.Test
     [TestClass]
     public class LobbyCommandVsResponse
     {
-        private void CheckIfResponseIs<T>(AbstractBluffinCommand c) where T : AbstractBluffinCommand
+        private void CheckIfResponseIs<T>(AbstractCommand c) where T : AbstractCommand
         {
             var server = new ServerMock();
             server.Send(c);

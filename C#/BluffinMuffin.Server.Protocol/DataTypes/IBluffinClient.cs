@@ -6,7 +6,7 @@ namespace BluffinMuffin.Server.Protocol.DataTypes
     {
         string PlayerName { get; set; }
 
-        void SendCommand(AbstractBluffinCommand command);
+        void SendCommand(AbstractCommand command);
 
         void AddPlayer(RemotePlayer p);
         void RemovePlayer(RemotePlayer p);

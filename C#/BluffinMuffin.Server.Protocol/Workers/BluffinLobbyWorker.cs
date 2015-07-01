@@ -18,7 +18,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
 {
     public class BluffinLobbyWorker
     {
-        private readonly KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>[] m_Methods;
+        private readonly KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>[] m_Methods;
 
         private IBluffinServer Server { get; set; }
         private IBluffinLobby Lobby { get; set; }
@@ -29,25 +29,25 @@ namespace BluffinMuffin.Server.Protocol.Workers
             m_Methods = new[]
             {
                 //General
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(AbstractBluffinCommand), OnCommandReceived), 
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(DisconnectCommand), OnDisconnectCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(AbstractCommand), OnCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(DisconnectCommand), OnDisconnectCommandReceived), 
                 
                 //Lobby
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(ListTableCommand), OnListTableCommandReceived), 
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(CheckCompatibilityCommand), OnCheckCompatibilityCommandReceived), 
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(JoinTableCommand), OnJoinTableCommandReceived), 
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(LeaveTableCommand), OnLeaveTableCommandReceived), 
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(CreateTableCommand), OnCreateTableCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(ListTableCommand), OnListTableCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(CheckCompatibilityCommand), OnCheckCompatibilityCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(JoinTableCommand), OnJoinTableCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(LeaveTableCommand), OnLeaveTableCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(CreateTableCommand), OnCreateTableCommandReceived), 
                 
                 //Lobby QuickMode
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(IdentifyCommand), OnIdentifyCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(IdentifyCommand), OnIdentifyCommandReceived), 
 
                 //Lobby RegisteredMode
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(CheckDisplayExistCommand), OnCheckDisplayExistCommandReceived), 
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(CheckUserExistCommand), OnCheckUserExistCommandReceived), 
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(CreateUserCommand), OnCreateUserCommandReceived), 
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(AuthenticateUserCommand), OnAuthenticateUserCommandReceived), 
-                new KeyValuePair<Type, Action<AbstractBluffinCommand, IBluffinClient>>(typeof(GetUserCommand), OnGetUserCommandReceived)
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(CheckDisplayExistCommand), OnCheckDisplayExistCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(CheckUserExistCommand), OnCheckUserExistCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(CreateUserCommand), OnCreateUserCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(AuthenticateUserCommand), OnAuthenticateUserCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>(typeof(GetUserCommand), OnGetUserCommandReceived)
                 
             };
         }
@@ -61,13 +61,13 @@ namespace BluffinMuffin.Server.Protocol.Workers
             }
         }
 
-        private void OnCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        private void OnCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             LogManager.Log(LogLevel.MessageVeryLow, "BluffinLobbyWorker.OnCommandReceived", "LobbyWorker RECV from {0} [{1}]", client.PlayerName, command.Encode());
             LogManager.Log(LogLevel.MessageVeryLow, "BluffinLobbyWorker.OnCommandReceived", "-------------------------------------------");
         }
 
-        void OnIdentifyCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        void OnIdentifyCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (IdentifyCommand)command;
             client.PlayerName = c.Name;
@@ -84,13 +84,13 @@ namespace BluffinMuffin.Server.Protocol.Workers
             }
         }
 
-        void OnDisconnectCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        void OnDisconnectCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             LogManager.Log(LogLevel.Message, "BluffinLobbyWorker.OnDisconnectCommandReceived", "> Client disconnected: {0}", client.PlayerName);
             Lobby.RemoveName(client.PlayerName);
         }
 
-        void OnListTableCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        void OnListTableCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (ListTableCommand)command;
             var r = c.ResponseSuccess();
@@ -98,7 +98,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             client.SendCommand(r);
         }
 
-        private void OnCheckCompatibilityCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        private void OnCheckCompatibilityCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             const string minimumClientVersion = "1.0";
             const string currentServerVersion = "1.1.1";
@@ -123,7 +123,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
         }
 
 
-        private void OnGetUserCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        private void OnGetUserCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (GetUserCommand)command;
             var u = DataManager.Persistance.Get(client.PlayerName);
@@ -139,7 +139,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             }
         }
 
-        private void OnAuthenticateUserCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        private void OnAuthenticateUserCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (AuthenticateUserCommand)command;
             var u = DataManager.Persistance.Get(c.Username);
@@ -167,7 +167,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             LogManager.Log(LogLevel.Message, "BluffinLobbyWorker.OnAuthenticateUserCommandReceived", "> Client authenticate to RegisteredMode Server as : {0}. Success={1}", c.Username, ok);
         }
 
-        private void OnCreateUserCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        private void OnCreateUserCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (CreateUserCommand)command;
             var ok = false;
@@ -188,7 +188,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             LogManager.Log(LogLevel.Message, "BluffinLobbyWorker.OnCreateUserCommandReceived", "> Client register to RegisteredMode Server as : {0}. Success={1}", c.Username, ok);
         }
 
-        private void OnCheckUserExistCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        private void OnCheckUserExistCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (CheckUserExistCommand)command;
             var r = c.ResponseSuccess();
@@ -196,7 +196,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             client.SendCommand(r);
         }
 
-        private void OnCheckDisplayExistCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        private void OnCheckDisplayExistCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (CheckDisplayExistCommand)command;
             var r = c.ResponseSuccess();
@@ -204,7 +204,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             client.SendCommand(r);
         }
 
-        private void OnCreateTableCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        private void OnCreateTableCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (CreateTableCommand)command;
             var res = Lobby.CreateTable(c);
@@ -214,7 +214,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             client.SendCommand(r);
         }
 
-        private void OnJoinTableCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        private void OnJoinTableCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (JoinTableCommand)command;
             var game = Lobby.GetGame(c.TableId);
@@ -244,7 +244,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             rp.SendTableInfo();
         }
 
-        private void OnLeaveTableCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
+        private void OnLeaveTableCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (LeaveTableCommand)command;
             var game = Lobby.GetGame(c.TableId);

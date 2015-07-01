@@ -1,35 +1,35 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq;
 using System.Net.Sockets;
-using BluffinMuffin.Protocol;
 using Com.Ericmas001.Net.Protocol;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using AbstractCommand = BluffinMuffin.Protocol.AbstractCommand;
 
 namespace BluffinMuffin.Server.Protocol.Test
 {
     public class RemoteTcpServer : RemoteTcpEntity 
     {
-        public BlockingCollection<AbstractBluffinCommand> ReceivedCommands { get; private set; } 
+        public BlockingCollection<AbstractCommand> ReceivedCommands { get; private set; } 
         public RemoteTcpServer(TcpClient remoteEntity) : base(remoteEntity)
         {
-            ReceivedCommands = new BlockingCollection<AbstractBluffinCommand>();
+            ReceivedCommands = new BlockingCollection<AbstractCommand>();
         }
 
         protected override void OnDataReceived(string data)
         {
-            ReceivedCommands.Add(AbstractBluffinCommand.DeserializeCommand(data));
+            ReceivedCommands.Add(AbstractCommand.DeserializeCommand(data));
         }
 
         protected override void OnDataSent(string data)
         {
         }
 
-        public void Send(AbstractBluffinCommand command)
+        public void Send(AbstractCommand command)
         {
             Send(command.Encode());
         }
 
-        public T WaitForNextCommand<T>() where T:AbstractBluffinCommand
+        public T WaitForNextCommand<T>() where T:AbstractCommand
         {
             var r = ReceivedCommands.GetConsumingEnumerable().First();
             var response = r as T;

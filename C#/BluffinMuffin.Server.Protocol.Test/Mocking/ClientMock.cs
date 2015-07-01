@@ -14,7 +14,7 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
         }
 
         public string PlayerName { get; set; }
-        public void SendCommand(AbstractBluffinCommand command)
+        public void SendCommand(AbstractCommand command)
         {
             m_Server.ServerSendedCommands.Add(new CommandEntry() { Client = this, Command = command });
         }

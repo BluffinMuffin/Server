@@ -27,7 +27,7 @@ namespace BluffinMuffin.Server.Protocol
         {
             if (!String.IsNullOrEmpty(data))
             {
-                var command = AbstractBluffinCommand.DeserializeCommand(data);
+                var command = BluffinMuffin.Protocol.AbstractCommand.DeserializeCommand(data);
                 switch (command.CommandType)
                 {
                     case BluffinCommandEnum.General:
@@ -62,7 +62,7 @@ namespace BluffinMuffin.Server.Protocol
             OnDataReceived(new DisconnectCommand().Encode());
         }
 
-        public void SendCommand(AbstractBluffinCommand command)
+        public void SendCommand(BluffinMuffin.Protocol.AbstractCommand command)
         {
             string line = command.Encode();
             LogManager.Log(LogLevel.MessageVeryLow, "ServerClientLobby.Send", "Server SEND to {0} [{1}]", PlayerName, line);

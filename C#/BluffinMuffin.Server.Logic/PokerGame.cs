@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
+using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
@@ -503,7 +505,7 @@ namespace BluffinMuffin.Server.Logic
         {
             foreach (var p in Table.PlayingAndAllInPlayers)
             {
-                p.Cards = m_Dealer.DealHoles();
+                p.HoleCards = m_Dealer.DealHoles().Select(x => x.ToString()).ToArray();
                 Observer.RaisePlayerHoleCardsChanged(p);
             }
         }
@@ -633,7 +635,7 @@ namespace BluffinMuffin.Server.Logic
             else
             {
                 if (Table.DealerSeat != null)
-                    Table.DealerSeat.Attributes.Remove(SeatAttributeEnum.Dealer);
+                    Table.DealerSeat.SeatAttributes = Table.DealerSeat.SeatAttributes.Except(new[] { SeatAttributeEnum.Dealer }).ToArray();
                 Table.PlayingPlayers.ForEach(x => x.State = PlayerStateEnum.SitIn);
             }
         }
