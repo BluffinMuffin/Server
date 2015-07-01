@@ -1,20 +1,18 @@
-﻿using BluffinMuffin.Protocol.DataTypes;
+﻿using System;
 
 namespace BluffinMuffin.Server.DataTypes.EventHandling
 {
-    public class PotWonEventArgs : PlayerInfoEventArgs
+    public class PotWonEventArgs : EventArgs
     {
-        private readonly int m_Id;
-        private readonly int m_AmountWon;
+        public WinningPlayer Player { get; private set; }
+        public MoneyPot Pot { get; private set; }
+        public int AmountWon { get; private set; }
 
-        public int Id { get { return m_Id; } }
-        public int AmountWon { get { return m_AmountWon; } }
-
-        public PotWonEventArgs(PlayerInfo p, int id, int amntWon)
-            : base(p)
+        public PotWonEventArgs(WinningPlayer player, MoneyPot pot, int amountwon)
         {
-            m_Id = id;
-            m_AmountWon = amntWon;
+            Player = player;
+            Pot = pot;
+            AmountWon = amountwon;
         }
     }
 }

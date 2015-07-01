@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using BluffinMuffin.Protocol;
+using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
+using BluffinMuffin.Server.DataTypes.Helper;
 using BluffinMuffin.Server.Logic;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.Game;
@@ -119,13 +121,17 @@ namespace BluffinMuffin.Server.Protocol
 
         void OnPlayerWonPot(object sender, PotWonEventArgs e)
         {
-            var p = e.Player;
+            var playerInfo = e.Player;
+            var pot = e.Pot;
             Send(new PlayerWonPotCommand()
             {
-                PlayerPos = p.NoSeat,
-                PotId = e.Id,
+                PlayerPos = playerInfo.Player.NoSeat,
+                PotId = pot.Id,
                 Shared = e.AmountWon,
-                PlayerMoney = p.MoneySafeAmnt,
+                PlayerMoney = playerInfo.Player.MoneySafeAmnt,
+                TotalPotAmount = pot.Amount,
+                WinningCards = playerInfo.Hand == null ? new string[0] : playerInfo.Hand.Cards.SelectMany(x => x).Take(5).Select(x => CardStringRepresentationHelper.ConvertForProtocol(x.ToString())).ToArray(),
+                WinningHand = playerInfo.Hand == null ? PokerHandEnum.None : (PokerHandEnum)Enum.Parse(typeof(PokerHandEnum), playerInfo.Hand.Hand.ToString())
             });
         }
 

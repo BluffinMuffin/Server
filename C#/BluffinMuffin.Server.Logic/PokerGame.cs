@@ -587,9 +587,9 @@ namespace BluffinMuffin.Server.Logic
                     {
                         foreach (var p in players)
                         {
-                            p.MoneySafeAmnt += wonAmount;
-                            Observer.RaisePlayerMoneyChanged(p);
-                            Observer.RaisePlayerWonPot(p, pot.Id, wonAmount);
+                            p.Player.MoneySafeAmnt += wonAmount;
+                            Observer.RaisePlayerMoneyChanged(p.Player);
+                            Observer.RaisePlayerWonPot(p, pot, wonAmount);
                             WaitALittle(Params.WaitingTimes.AfterPotWon);
                         }
                     }

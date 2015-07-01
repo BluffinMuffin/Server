@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BluffinMuffin.HandEvaluator">
+      <HintPath>..\References\BluffinMuffin.HandEvaluator.dll</HintPath>
+    </Reference>
     <Reference Include="BluffinMuffin.Protocol.DataTypes">
       <HintPath>..\References\BluffinMuffin.Protocol.DataTypes.dll</HintPath>
     </Reference>
@@ -68,11 +71,13 @@
     <Compile Include="EventHandling\PotWonEventArgs.cs" />
     <Compile Include="EventHandling\RoundEventArgs.cs" />
     <Compile Include="EventHandling\SeatEventArgs.cs" />
+    <Compile Include="Helper\CardStringRepresentationHelper.cs" />
     <Compile Include="IPokerGame.cs" />
     <Compile Include="MoneyPot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TableInfo.cs" />
     <Compile Include="UserInfo.cs" />
+    <Compile Include="WinningPlayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

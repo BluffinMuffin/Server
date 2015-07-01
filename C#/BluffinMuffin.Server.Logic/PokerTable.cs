@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.DataTypes.Helper;
 using Com.Ericmas001.Games;
 using System.Linq;
 using BluffinMuffin.Server.DataTypes;
@@ -169,10 +170,10 @@ namespace BluffinMuffin.Server.Logic
         /// <returns>A unsigned int that we can use to compare with another hand</returns>
         private HandEvaluationResult EvaluateCards(params GameCard[] playerCards)
         {
-            if (Cards == null || Cards.Length != 5 || playerCards == null || playerCards.Length != 2)
+            if (Cards == null || Cards.Length != 5 || Cards.Any(x => x.Special != GameCardSpecial.None) || playerCards == null || playerCards.Length != 2)
                 return null;
 
-            return HandEvaluator.HandEvaluator.Evaluate(Cards.Union(playerCards).Select(x => x.ToString()).ToArray());
+            return HandEvaluator.HandEvaluator.Evaluate(Cards.Union(playerCards).Select(x => CardStringRepresentationHelper.ConvertForHandEvaluator(x.ToString())).ToArray());
         }
 
         /// <summary>
@@ -218,26 +219,29 @@ namespace BluffinMuffin.Server.Logic
             {
                 var pot = m_Pots[i];
                 HandEvaluationResult bestHand = null;
-                var infos = new List<PlayerInfo>(pot.AttachedPlayers);
+                var infos = pot.AttachedPlayers.Select(x => x.Player).ToArray();
 
-                //If there is more than one player attach to the pot, we need to choose who will split it !
-                if (infos.Count > 1)
+                foreach (var p in infos)
                 {
-                    foreach (var p in infos)
+                    var handValue = EvaluateCards(p.HoleCards.Select(x => new GameCard(x)).ToArray());
+                    if (handValue != null)
                     {
-                        var handValue = EvaluateCards(p.HoleCards.Select(x => new GameCard(x)).ToArray());
-                        if (handValue.CompareTo(bestHand) == 1)
+                        switch (handValue.CompareTo(bestHand))
                         {
-                            pot.DetachAllPlayers();
-                            pot.AttachPlayer(p);
-                            bestHand = handValue;
+                            case 1:
+                                pot.DetachAllPlayers();
+                                pot.AttachPlayer(p, handValue);
+                                bestHand = handValue;
+                                break;
+                            case 0:
+                                pot.AttachPlayer(p, handValue);
+                                break;
                         }
-                        else if (handValue.CompareTo(bestHand) == 0)
-                            pot.AttachPlayer(p);
                     }
                 }
             }
         }
+
         #endregion Public Methods
 
         #region Private Methods

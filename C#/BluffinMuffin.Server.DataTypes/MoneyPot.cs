@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
 
 namespace BluffinMuffin.Server.DataTypes
@@ -9,7 +10,7 @@ namespace BluffinMuffin.Server.DataTypes
     public class MoneyPot
     {
         #region Fields
-        private readonly List<PlayerInfo> m_AttachedPlayers = new List<PlayerInfo>();
+        private readonly List<WinningPlayer> m_AttachedPlayers = new List<WinningPlayer>();
         #endregion Fields
 
         #region Properties
@@ -27,7 +28,7 @@ namespace BluffinMuffin.Server.DataTypes
         /// <summary>
         /// Number of player playing for this Pot
         /// </summary>
-        public PlayerInfo[] AttachedPlayers
+        public WinningPlayer[] AttachedPlayers
         {
             get { return m_AttachedPlayers.ToArray(); }
         }
@@ -47,9 +48,9 @@ namespace BluffinMuffin.Server.DataTypes
         /// <summary>
         /// Attach a player to the MoneyPot
         /// </summary>
-        public void AttachPlayer(PlayerInfo p)
+        public void AttachPlayer(PlayerInfo p, HandEvaluationResult h = null)
         {
-            m_AttachedPlayers.Add(p);
+            m_AttachedPlayers.Add(new WinningPlayer() { Player = p, Hand = h });
         }
 
         /// <summary>
