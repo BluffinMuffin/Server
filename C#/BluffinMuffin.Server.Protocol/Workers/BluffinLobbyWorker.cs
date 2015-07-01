@@ -100,19 +100,22 @@ namespace BluffinMuffin.Server.Protocol.Workers
 
         private void OnCheckCompatibilityCommandReceived(AbstractBluffinCommand command, IBluffinClient client)
         {
+            const string minimumClientVersion = "1.0";
+            const string currentServerVersion = "1.1.1";
+
             var c = (CheckCompatibilityCommand)command;
             Version vClient; 
             bool ok = Version.TryParse(c.ImplementedProtocolVersion,out vClient);
-            if (!ok || vClient < new Version("1.0"))
+            if (!ok || vClient < new Version(minimumClientVersion))
             {
-                var r = c.ResponseFailure(BluffinMessageId.NotSupported, "The client version must be at least 1.0");
-                r.ImplementedProtocolVersion = "1.0";
+                var r = c.ResponseFailure(BluffinMessageId.NotSupported, "The client version must be at least " + minimumClientVersion);
+                r.ImplementedProtocolVersion = currentServerVersion;
                 client.SendCommand(r);
             }
             else
             {
                 var r = c.ResponseSuccess();
-                r.ImplementedProtocolVersion = "1.0";
+                r.ImplementedProtocolVersion = currentServerVersion;
                 r.SupportedLobbyTypes = new[] {LobbyTypeEnum.QuickMode, LobbyTypeEnum.RegisteredMode};
                 r.Rules = RuleFactory.SupportedRules;
                 client.SendCommand(r);
