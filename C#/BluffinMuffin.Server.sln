@@ -31,6 +31,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BluffinMuffin.Server", "Blu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BluffinMuffin.Server.Protocol.Test", "BluffinMuffin.Server.Protocol.Test\BluffinMuffin.Server.Protocol.Test.csproj", "{C7106429-DDAA-43F9-8074-80631FACED26}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{32388FA6-8CA4-46F5-9BC8-15E4B3BBA359}"
+	ProjectSection(SolutionItems) = preProject
+		..\Documentation\dummy.md = ..\Documentation\dummy.md
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
