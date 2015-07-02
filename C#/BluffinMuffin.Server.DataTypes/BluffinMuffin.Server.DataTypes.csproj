@@ -40,9 +40,6 @@
     <Reference Include="Com.Ericmas001.Collections">
       <HintPath>..\References\Com.Ericmas001.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="Com.Ericmas001.Games">
-      <HintPath>..\References\Com.Ericmas001.Games.dll</HintPath>
-    </Reference>
     <Reference Include="Com.Ericmas001.Net.Protocol">
       <HintPath>..\References\Com.Ericmas001.Net.Protocol.dll</HintPath>
     </Reference>
@@ -71,7 +68,6 @@
     <Compile Include="EventHandling\PotWonEventArgs.cs" />
     <Compile Include="EventHandling\RoundEventArgs.cs" />
     <Compile Include="EventHandling\SeatEventArgs.cs" />
-    <Compile Include="Helper\CardStringRepresentationHelper.cs" />
     <Compile Include="IPokerGame.cs" />
     <Compile Include="MoneyPot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

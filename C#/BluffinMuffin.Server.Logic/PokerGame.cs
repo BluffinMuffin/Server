@@ -491,15 +491,15 @@ namespace BluffinMuffin.Server.Logic
         }
         private void DealRiver()
         {
-            GameTable.AddCards(m_Dealer.DealRiver());
+            GameTable.AddCards(m_Dealer.DealRiver().ToString());
         }
         private void DealTurn()
         {
-            GameTable.AddCards(m_Dealer.DealTurn());
+            GameTable.AddCards(m_Dealer.DealTurn().ToString());
         }
         private void DealFlop()
         {
-            GameTable.AddCards(m_Dealer.DealFlop());
+            GameTable.AddCards(m_Dealer.DealFlop().Select(x => x.ToString()).ToArray());
         }
         private void DealHole()
         {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
-using Com.Ericmas001.Games;
 using System.Linq;
 
 namespace BluffinMuffin.Server.DataTypes
@@ -10,7 +9,7 @@ namespace BluffinMuffin.Server.DataTypes
     public class TableInfo
     {
         #region Fields
-        protected readonly GameCard[] m_Cards = new GameCard[5];
+        protected readonly string[] m_Cards = new string[5];
         protected SeatInfo[] m_Seats;
         private readonly List<PlayerInfo> m_People = new List<PlayerInfo>();
         protected readonly List<MoneyPot> m_Pots = new List<MoneyPot>();
@@ -43,9 +42,9 @@ namespace BluffinMuffin.Server.DataTypes
         /// <summary>
         /// Cards on the Board
         /// </summary>
-        public GameCard[] Cards
+        public string[] Cards
         {
-            get { return m_Cards.Select(c => c ?? GameCard.NoCard).ToArray(); }
+            get { return m_Cards.Select(c => c ?? String.Empty).ToArray(); }
             protected set
             {
                 if (value != null && value.Length == 5)
@@ -215,7 +214,7 @@ namespace BluffinMuffin.Server.DataTypes
 
         public virtual void InitTable()
         {
-            Cards = new GameCard[5];
+            Cards = new string[5];
             NbPlayed = 0;
             TotalPotAmnt = 0;
             m_Pots.Clear();

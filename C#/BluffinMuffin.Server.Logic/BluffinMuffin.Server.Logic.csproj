@@ -41,9 +41,6 @@
     <Reference Include="Com.Ericmas001.Collections">
       <HintPath>..\References\Com.Ericmas001.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="Com.Ericmas001.Games">
-      <HintPath>..\References\Com.Ericmas001.Games.dll</HintPath>
-    </Reference>
     <Reference Include="Com.Ericmas001.Net.Protocol">
       <HintPath>..\References\Com.Ericmas001.Net.Protocol.dll</HintPath>
     </Reference>

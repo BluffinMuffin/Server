@@ -4,12 +4,10 @@ using System.Linq;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
-using BluffinMuffin.Server.DataTypes.Helper;
 using BluffinMuffin.Server.Logic;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.Game;
 using BluffinMuffin.Server.Protocol.DataTypes;
-using Com.Ericmas001.Games;
 
 namespace BluffinMuffin.Server.Protocol
 {
@@ -67,7 +65,7 @@ namespace BluffinMuffin.Server.Protocol
                         si.Player.HoleCards = new[] {"??", "??"};
 
                     if (si.Player.HoleCards == null || si.Player.HoleCards.Length != 2)
-                        si.Player.HoleCards = new[] { GameCard.NoCard.ToString(), GameCard.NoCard.ToString() };
+                        si.Player.HoleCards = new[] { String.Empty, String.Empty };
 
                     si.SeatAttributes = gameSeat.SeatAttributes;
                 }
@@ -129,7 +127,7 @@ namespace BluffinMuffin.Server.Protocol
                 WonAmount = e.AmountWon,
                 TotalPlayerMoney = playerInfo.Player.MoneySafeAmnt,
                 TotalPotAmount = pot.Amount,
-                WinningCards = playerInfo.Hand == null ? new string[0] : playerInfo.Hand.Cards.SelectMany(x => x).Take(5).Select(x => CardStringRepresentationHelper.ConvertForProtocol(x.ToString())).ToArray(),
+                WinningCards = playerInfo.Hand == null ? new string[0] : playerInfo.Hand.Cards.SelectMany(x => x).Take(5).Select(x => x.ToString()).ToArray(),
                 WinningHand = playerInfo.Hand == null ? PokerHandEnum.None : (PokerHandEnum)Enum.Parse(typeof(PokerHandEnum), playerInfo.Hand.Hand.ToString())
             });
         }

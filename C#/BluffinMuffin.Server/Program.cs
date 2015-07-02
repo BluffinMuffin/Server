@@ -72,7 +72,7 @@ namespace BluffinMuffin.Server
             // ATTENTION: This must contain "LogLevel.Message" for RELEASE
             //                              "LogLevel.MessageLow" for DEBUGGING
             //                              "LogLevel.MessageVeryLow" for XTREM DEBUGGING
-            LogManager.LogInConsole(from, message, level, LogLevel.Message);
+            LogManager.LogInConsole(from, message, level, LogLevel.MessageVeryLow);
         }
 
         static void LogManager_MessageLoggedToFileNormal(string from, string message, int level)

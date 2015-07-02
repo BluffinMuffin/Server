@@ -4,8 +4,6 @@ using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.DataTypes.Options;
-using BluffinMuffin.Server.DataTypes.Helper;
-using Com.Ericmas001.Games;
 using System.Linq;
 using BluffinMuffin.Server.DataTypes;
 using Com.Ericmas001.Util;
@@ -66,9 +64,9 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// Add cards to the board
         /// </summary>
-        public void AddCards(params GameCard[] c)
+        public void AddCards(params string[] c)
         {
-            var firstUnused =  Enumerable.Range(0,m_Cards.Length).First(i => m_Cards[i] == null || m_Cards[i].ToString() == GameCard.NoCard.ToString());
+            var firstUnused =  Enumerable.Range(0,m_Cards.Length).First(i => String.IsNullOrEmpty(m_Cards[i]));
             for (var j = firstUnused; j < Math.Min(5, c.Length + firstUnused); ++j)
                 m_Cards[j] = c[j - firstUnused];
         }
@@ -169,12 +167,12 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         /// <param name="playerCards">Player cards</param>
         /// <returns>A unsigned int that we can use to compare with another hand</returns>
-        private HandEvaluationResult EvaluateCards(params GameCard[] playerCards)
+        private HandEvaluationResult EvaluateCards(params string[] playerCards)
         {
-            if (Cards == null || Cards.Length != 5 || Cards.Any(x => x.Special != GameCardSpecial.None) || playerCards == null || playerCards.Length != 2)
+            if (Cards == null || Cards.Length != 5 || Cards.Any(String.IsNullOrEmpty) || playerCards == null || playerCards.Length != 2)
                 return null;
 
-            return HandEvaluator.HandEvaluator.Evaluate(Cards.Union(playerCards).Select(x => CardStringRepresentationHelper.ConvertForHandEvaluator(x.ToString())).ToArray());
+            return HandEvaluator.HandEvaluator.Evaluate(Cards.Union(playerCards).ToArray());
         }
 
         /// <summary>
@@ -224,7 +222,7 @@ namespace BluffinMuffin.Server.Logic
 
                 foreach (var p in infos)
                 {
-                    var handValue = EvaluateCards(p.HoleCards.Select(x => new GameCard(x)).ToArray());
+                    var handValue = EvaluateCards(p.HoleCards);
                     if (handValue != null)
                     {
                         switch (handValue.CompareTo(bestHand))

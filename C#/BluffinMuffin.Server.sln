@@ -12,7 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "References", "References", 
 		References\BluffinMuffin.Protocol.dll = References\BluffinMuffin.Protocol.dll
 		References\BluffinMuffin.Protocol.Tests.DataTypes.dll = References\BluffinMuffin.Protocol.Tests.DataTypes.dll
 		References\Com.Ericmas001.Collections.dll = References\Com.Ericmas001.Collections.dll
-		References\Com.Ericmas001.Games.dll = References\Com.Ericmas001.Games.dll
 		References\Com.Ericmas001.Net.Protocol.dll = References\Com.Ericmas001.Net.Protocol.dll
 		References\Com.Ericmas001.Util.dll = References\Com.Ericmas001.Util.dll
 	EndProjectSection
