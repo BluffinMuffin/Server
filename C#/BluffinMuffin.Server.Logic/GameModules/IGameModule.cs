@@ -13,6 +13,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
     public interface IGameModule
     {
         event EventHandler<SuccessEventArg> ModuleCompleted;
+        event EventHandler<ModuleEventArg> ModuleGenerated;
         GameStateEnum GameState { get; }
 
         void InitModule();

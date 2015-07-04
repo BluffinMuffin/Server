@@ -17,20 +17,17 @@ namespace BluffinMuffin.Server.Logic
     /// </summary>
     public class PokerGame : IPokerGame
     {
-        #region Fields
 
-        // STATES
         private IGameModule m_CurrentModule;
-        private Queue<IGameModule> m_Modules = new Queue<IGameModule>();
-        #endregion Fields
+        private readonly Queue<IGameModule> m_Modules = new Queue<IGameModule>();
 
-        #region Properties
         public PokerGameObserver Observer { get; private set; }
 
         /// <summary>
         /// The Table Entity
         /// </summary>
         public TableInfo Table { get; private set; }
+
         /// <summary>
         /// The PokerTable Entity
         /// </summary>
@@ -68,8 +65,6 @@ namespace BluffinMuffin.Server.Logic
             get { return m_CurrentModule == null ? GameStateEnum.Init : m_CurrentModule.GameState; }
         }
 
-        #endregion
-
         #region Ctors & Init
 
         public PokerGame(PokerTable table)
@@ -92,7 +87,7 @@ namespace BluffinMuffin.Server.Logic
         public void Start()
         {
             if (IsInitializing)
-                SetModule(new InitGameModule(Observer, GameTable));
+                AdvanceToNextGameState();
         }
 
         /// <summary>
@@ -100,7 +95,7 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public bool JoinGame(PlayerInfo p)
         {
-            if (State == GameStateEnum.Init || State == GameStateEnum.End)
+            if (IsInitializing || !IsRunning)
             {
                 LogManager.Log(LogLevel.Error, "PokerGame.JoinGame", "Can't join, bad timing: {0}", State);
                 return false;
@@ -210,29 +205,21 @@ namespace BluffinMuffin.Server.Logic
                     SetModule(new EndGameModule(Observer,GameTable));
                 }
             };
+            m_CurrentModule.ModuleGenerated += (sender, arg) => m_Modules.Enqueue(arg.Module);
             m_CurrentModule.InitModule();
         }
         
         private void AdvanceToNextGameState()
         {
-            if (State == GameStateEnum.End)
+            if (!IsRunning)
                 return;
+
             if (!m_Modules.Any())
             {
                 Observer.RaiseGameEnded();
-                SetAllModules();
+                m_Modules.Enqueue(new InitGameModule(Observer,GameTable));
             }
             SetModule(m_Modules.Dequeue());
-        }
-        private void SetAllModules()
-        {
-            m_Modules.Enqueue(new InitGameModule(Observer, GameTable));
-            m_Modules.Enqueue(new WaitForPlayerModule(Observer, GameTable));
-            m_Modules.Enqueue(new WaitForBlindsModule(Observer, GameTable));
-            m_Modules.Enqueue(new PlayingModule(Observer, GameTable));
-            m_Modules.Enqueue(new ShowDownModule(Observer, GameTable));
-            m_Modules.Enqueue(new DecideWinnersModule(Observer, GameTable));
-            m_Modules.Enqueue(new DistributeMoneyModule(Observer, GameTable));
         }
         #endregion Private Methods
     }

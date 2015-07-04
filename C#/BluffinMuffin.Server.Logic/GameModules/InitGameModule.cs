@@ -23,6 +23,12 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override void InitModule()
         {
+            AddModule(new WaitForPlayerModule(Observer, Table));
+            AddModule(new WaitForBlindsModule(Observer, Table));
+            AddModule(new PlayingModule(Observer, Table));
+            AddModule(new ShowDownModule(Observer, Table));
+            AddModule(new DecideWinnersModule(Observer, Table));
+            AddModule(new DistributeMoneyModule(Observer, Table));
             RaiseCompleted();
         }
     }

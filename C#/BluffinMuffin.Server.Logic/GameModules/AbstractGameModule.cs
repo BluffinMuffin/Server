@@ -13,6 +13,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
     abstract class AbstractGameModule : IGameModule
     {
         public event EventHandler<SuccessEventArg> ModuleCompleted = delegate { };
+        public event EventHandler<ModuleEventArg> ModuleGenerated = delegate { };
 
         public abstract GameStateEnum GameState { get; }
 
@@ -50,6 +51,11 @@ namespace BluffinMuffin.Server.Logic.GameModules
         protected void RaiseAborted()
         {
             ModuleCompleted(this, new SuccessEventArg() { Success = false });
+        }
+
+        protected void AddModule(IGameModule module)
+        {
+            ModuleGenerated(this, new ModuleEventArg() {Module = module});
         }
     }
 }
