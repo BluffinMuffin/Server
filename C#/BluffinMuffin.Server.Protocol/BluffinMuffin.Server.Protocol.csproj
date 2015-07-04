@@ -65,7 +65,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Annotations\Annotations.cs" />
     <Compile Include="Workers\BluffinGameWorker.cs" />
     <Compile Include="Workers\BluffinLobbyWorker.cs" />
     <Compile Include="BluffinServer.cs" />

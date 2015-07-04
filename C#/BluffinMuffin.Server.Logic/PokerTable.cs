@@ -106,18 +106,12 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public override bool JoinTable(PlayerInfo p)
         {
-
             if (PeopleContainsPlayer(p))
             {
                 LogManager.Log(LogLevel.Error, "TableInfo.JoinTable", "Already someone with the same name!");
                 return false;
             }
-            var ok = base.JoinTable(p);
-            //if(ok)
-            //    ok = SitIn(p);
-            //if(!ok)
-            //    base.LeaveTable(p);
-            return ok;
+            return base.JoinTable(p);
         }
 
         public SeatInfo SitIn(PlayerInfo p, int preferedSeat)
@@ -144,6 +138,7 @@ namespace BluffinMuffin.Server.Logic
 
             if (preferedSeat < 0 || preferedSeat >= Seats.Count || !Seats[preferedSeat].IsEmpty)
                 seat = RemainingSeats.First();
+
             return SitInToTable(p, seat);
         }
 
