@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
@@ -217,42 +217,22 @@ namespace BluffinMuffin.Server.Logic
         {
             if (State == GameStateEnum.End)
                 return;
-
-            var state = (GameStateEnum)(((int)State) + 1);
-            m_CurrentModule = null;
-
-            switch (state)
+            if (!m_Modules.Any())
             {
-                case GameStateEnum.WaitForPlayers:
-                    SetModule(new WaitForPlayerModule(Observer, GameTable));
-                    break;
-                case GameStateEnum.WaitForBlinds:
-                    SetModule(new WaitForBlindsModule(Observer, GameTable));
-                    break;
-                case GameStateEnum.Playing:
-                    SetModule(new PlayingModule(Observer, GameTable));
-                    break;
-                case GameStateEnum.Showdown:
-                    SetModule(new ShowDownModule(Observer, GameTable));
-                    break;
-                case GameStateEnum.DecideWinners:
-                    SetModule(new DecideWinnersModule(Observer, GameTable));
-                    break;
-                case GameStateEnum.DistributeMoney:
-                    SetModule(new DistributeMoneyModule(Observer, GameTable));
-                    break;
-                case GameStateEnum.End:
-                    StartANewGame();
-                    break;
+                Observer.RaiseGameEnded();
+                SetAllModules();
             }
-        }
-        private void StartANewGame()
-        {
-            Observer.RaiseGameEnded();
-            SetModule(new InitGameModule(Observer,GameTable));
+            SetModule(m_Modules.Dequeue());
         }
         private void SetAllModules()
         {
+            m_Modules.Enqueue(new InitGameModule(Observer, GameTable));
+            m_Modules.Enqueue(new WaitForPlayerModule(Observer, GameTable));
+            m_Modules.Enqueue(new WaitForBlindsModule(Observer, GameTable));
+            m_Modules.Enqueue(new PlayingModule(Observer, GameTable));
+            m_Modules.Enqueue(new ShowDownModule(Observer, GameTable));
+            m_Modules.Enqueue(new DecideWinnersModule(Observer, GameTable));
+            m_Modules.Enqueue(new DistributeMoneyModule(Observer, GameTable));
         }
         #endregion Private Methods
     }
