@@ -60,6 +60,7 @@
     <Compile Include="GameModules\IGameModule.cs" />
     <Compile Include="GameModules\AbstractGameModule.cs" />
     <Compile Include="GameModules\DecideWinnersModule.cs" />
+    <Compile Include="GameModules\EndGameModule.cs" />
     <Compile Include="GameModules\ShowDownModule.cs" />
     <Compile Include="GameModules\InitGameModule.cs" />
     <Compile Include="GameModules\PlayingModule.cs" />

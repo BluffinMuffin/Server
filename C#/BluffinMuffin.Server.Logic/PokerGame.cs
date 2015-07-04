@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
@@ -19,7 +21,7 @@ namespace BluffinMuffin.Server.Logic
 
         // STATES
         private IGameModule m_CurrentModule;
-        private GameStateEnum m_State; // L'etat global de la game
+        private Queue<IGameModule> m_Modules = new Queue<IGameModule>();
         #endregion Fields
 
         #region Properties
@@ -47,7 +49,7 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public bool IsRunning
         {
-            get { return m_State != GameStateEnum.End; }
+            get { return State != GameStateEnum.End; }
         }
 
         /// <summary>
@@ -55,7 +57,7 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public bool IsPlaying
         {
-            get { return IsRunning && m_State >= GameStateEnum.WaitForBlinds; }
+            get { return IsRunning && State >= GameStateEnum.WaitForBlinds; }
         }
 
         /// <summary>
@@ -63,7 +65,7 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public GameStateEnum State
         {
-            get { return m_State; }
+            get { return m_CurrentModule == null ? GameStateEnum.Init : m_CurrentModule.GameState; }
         }
 
         #endregion
@@ -80,7 +82,6 @@ namespace BluffinMuffin.Server.Logic
             Observer = new PokerGameObserver(this);
             table.Dealer = dealer;
             Table = table;
-            m_State = GameStateEnum.Init;
         }
         #endregion Ctors & Init
 
@@ -99,9 +100,9 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public bool JoinGame(PlayerInfo p)
         {
-            if (m_State == GameStateEnum.Init || m_State == GameStateEnum.End)
+            if (State == GameStateEnum.Init || State == GameStateEnum.End)
             {
-                LogManager.Log(LogLevel.Error, "PokerGame.JoinGame", "Can't join, bad timing: {0}", m_State);
+                LogManager.Log(LogLevel.Error, "PokerGame.JoinGame", "Can't join, bad timing: {0}", State);
                 return false;
             }
 
@@ -118,7 +119,7 @@ namespace BluffinMuffin.Server.Logic
 
                 if (m_CurrentModule != null)
                     m_CurrentModule.OnSitIn();
-                if (m_State > GameStateEnum.WaitForPlayers)
+                if (State > GameStateEnum.WaitForPlayers)
                     GameTable.NewArrivals.Add(p);
                 return p.NoSeat;
             }
@@ -127,7 +128,7 @@ namespace BluffinMuffin.Server.Logic
 
         private bool IsInitializing
         {
-            get { return m_State == GameStateEnum.Init; }
+            get { return State == GameStateEnum.Init; }
         }
 
         public bool SitOut(PlayerInfo p)
@@ -169,7 +170,7 @@ namespace BluffinMuffin.Server.Logic
             if (sitOutOk && Table.LeaveTable(p))
             {
                 if (Table.Players.Count == 0)
-                    m_State = GameStateEnum.End;
+                    SetModule(new EndGameModule(Observer,GameTable));
             }
         }
 
@@ -181,7 +182,7 @@ namespace BluffinMuffin.Server.Logic
             lock(Table)
             {
                 var amnt = Math.Min(amount, p.MoneySafeAmnt);
-                LogManager.Log(LogLevel.MessageLow, "PokerGame.PlayMoney", "{0} is playing {1} money on state: {2}", p.Name, amnt, m_State);
+                LogManager.Log(LogLevel.MessageLow, "PokerGame.PlayMoney", "{0} is playing {1} money on state: {2}", p.Name, amnt, State);
 
                 if (m_CurrentModule != null)
                     return m_CurrentModule.OnMoneyPlayed(p, amount);
@@ -206,8 +207,7 @@ namespace BluffinMuffin.Server.Logic
                 }
                 else
                 {
-                    m_State = GameStateEnum.End;
-                    Observer.RaiseEverythingEnded();
+                    SetModule(new EndGameModule(Observer,GameTable));
                 }
             };
             m_CurrentModule.InitModule();
@@ -215,13 +215,13 @@ namespace BluffinMuffin.Server.Logic
         
         private void AdvanceToNextGameState()
         {
-            if (m_State == GameStateEnum.End)
+            if (State == GameStateEnum.End)
                 return;
 
-            m_State = (GameStateEnum)(((int)m_State) + 1);
+            var state = (GameStateEnum)(((int)State) + 1);
             m_CurrentModule = null;
 
-            switch (m_State)
+            switch (state)
             {
                 case GameStateEnum.WaitForPlayers:
                     SetModule(new WaitForPlayerModule(Observer, GameTable));
@@ -249,8 +249,10 @@ namespace BluffinMuffin.Server.Logic
         private void StartANewGame()
         {
             Observer.RaiseGameEnded();
-            m_State = GameStateEnum.Init;
-            AdvanceToNextGameState();
+            SetModule(new InitGameModule(Observer,GameTable));
+        }
+        private void SetAllModules()
+        {
         }
         #endregion Private Methods
     }
