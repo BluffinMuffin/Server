@@ -56,10 +56,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameModules\IGameModule.cs" />
+    <Compile Include="GameModules\AbstractGameModule.cs" />
+    <Compile Include="GameModules\InitGameModule.cs" />
+    <Compile Include="GameModules\WaitForPlayerModule.cs" />
     <Compile Include="PokerGame.cs" />
     <Compile Include="PokerTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleFactory.cs" />
+    <Compile Include="SuccessEventArg.cs" />
     <Compile Include="TexasHoldemDealer.cs" />
   </ItemGroup>
   <ItemGroup>

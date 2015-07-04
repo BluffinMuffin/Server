@@ -20,7 +20,8 @@ namespace BluffinMuffin.Server.Logic
         #endregion Fields
 
         #region Properties
-
+        public AbstractDealer Dealer { get; set; }
+        public bool HadPlayers { get; private set; }
         /// <summary>
         /// Total amount of money still needed as Blinds for the game to start
         /// </summary>
@@ -34,12 +35,14 @@ namespace BluffinMuffin.Server.Logic
         public PokerTable()
         {
             NewArrivals = new List<PlayerInfo>();
+            HadPlayers = false;
         }
 
         public PokerTable(TableParams parms)
             :base(parms)
         {
             NewArrivals = new List<PlayerInfo>();
+            HadPlayers = false;
         }
 
         public override void InitTable()
@@ -138,7 +141,7 @@ namespace BluffinMuffin.Server.Logic
 
             if (preferedSeat < 0 || preferedSeat >= Seats.Count || !Seats[preferedSeat].IsEmpty)
                 seat = RemainingSeats.First();
-
+            HadPlayers = true;
             return SitInToTable(p, seat);
         }
 

@@ -7,6 +7,7 @@ using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.Logic.GameModules;
 using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic
@@ -19,9 +20,8 @@ namespace BluffinMuffin.Server.Logic
     {
         #region Fields
 
-        private readonly AbstractDealer m_Dealer; // Dealer
-
         // STATES
+        private IGameModule m_CurrentModule;
         private GameStateEnum m_State; // L'etat global de la game
         private RoundStateEnum m_RoundState; // L'etat de la game pour chaque round
         #endregion Fields
@@ -75,8 +75,6 @@ namespace BluffinMuffin.Server.Logic
             get { return m_State; }
         }
 
-        private int m_NbGamePlayed = 0;
-
         #endregion
 
         #region Ctors & Init
@@ -89,7 +87,7 @@ namespace BluffinMuffin.Server.Logic
         private PokerGame(AbstractDealer dealer, PokerTable table)
         {
             Observer = new PokerGameObserver(this);
-            m_Dealer = dealer;
+            table.Dealer = dealer;
             Table = table;
             Params = table.Params;
             m_State = GameStateEnum.Init;
@@ -103,8 +101,8 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public void Start()
         {
-            if( m_State == GameStateEnum.Init )
-                AdvanceToNextGameState(); //Advancing to WaitForPlayers State
+            if (IsInitializing)
+                SetModule(new InitGameModule(Observer, GameTable));
         }
 
         /// <summary>
@@ -129,13 +127,23 @@ namespace BluffinMuffin.Server.Logic
             {
                 Observer.RaiseSeatUpdated(seat.Clone());
 
-                if (m_State == GameStateEnum.WaitForPlayers)
-                    TryToBegin();
-                else if (m_State > GameStateEnum.WaitForPlayers)
+                if (m_CurrentModule != null)
+                    m_CurrentModule.OnSitIn();
+                if (m_State > GameStateEnum.WaitForPlayers)
                     GameTable.NewArrivals.Add(p);
                 return p.NoSeat;
             }
             return -1;
+        }
+
+        private bool IsWaitingForPlayers
+        {
+            get { return m_State == GameStateEnum.WaitForPlayers; }
+        }
+
+        private bool IsInitializing
+        {
+            get { return m_State == GameStateEnum.Init; }
         }
 
         public bool SitOut(PlayerInfo p)
@@ -160,7 +168,8 @@ namespace BluffinMuffin.Server.Logic
                     NoSeat = oldSeat,
                 };
                 Observer.RaiseSeatUpdated(seat);
-                TryToBegin();
+                if (m_CurrentModule != null)
+                    m_CurrentModule.OnSitOut();
                 return true;
             }
             return false;
@@ -203,6 +212,25 @@ namespace BluffinMuffin.Server.Logic
         #endregion
 
         #region Private Methods
+
+        private void SetModule(IGameModule module)
+        {
+            m_CurrentModule = module;
+            m_CurrentModule.ModuleCompleted += delegate(object sender, SuccessEventArg arg)
+            {
+                if (arg.Success)
+                {
+                    AdvanceToNextGameState();
+                }
+                else
+                {
+                    m_State = GameStateEnum.End;
+                    Observer.RaiseEverythingEnded();
+                }
+            };
+            m_CurrentModule.InitModule();
+        }
+        
         private void AdvanceToNextGameState()
         {
             if (m_State == GameStateEnum.End)
@@ -212,10 +240,8 @@ namespace BluffinMuffin.Server.Logic
 
             switch (m_State)
             {
-                case GameStateEnum.Init:
-                    break;
                 case GameStateEnum.WaitForPlayers:
-                    TryToBegin();
+                    SetModule(new WaitForPlayerModule(Observer, GameTable));
                     break;
                 case GameStateEnum.WaitForBlinds:
                     Table.HigherBet = 0;
@@ -246,9 +272,8 @@ namespace BluffinMuffin.Server.Logic
         private void StartANewGame()
         {
             Observer.RaiseGameEnded();
-            m_NbGamePlayed++;
-            m_State = GameStateEnum.WaitForPlayers;
-            TryToBegin();
+            m_State = GameStateEnum.Init;
+            AdvanceToNextGameState();
         }
         private void AdvanceToNextRound()
         {
@@ -484,21 +509,21 @@ namespace BluffinMuffin.Server.Logic
         }
         private void DealRiver()
         {
-            GameTable.AddCards(m_Dealer.DealRiver().ToString());
+            GameTable.AddCards(GameTable.Dealer.DealRiver().ToString());
         }
         private void DealTurn()
         {
-            GameTable.AddCards(m_Dealer.DealTurn().ToString());
+            GameTable.AddCards(GameTable.Dealer.DealTurn().ToString());
         }
         private void DealFlop()
         {
-            GameTable.AddCards(m_Dealer.DealFlop().Select(x => x.ToString()).ToArray());
+            GameTable.AddCards(GameTable.Dealer.DealFlop().Select(x => x.ToString()).ToArray());
         }
         private void DealHole()
         {
             foreach (var p in Table.PlayingAndAllInPlayers)
             {
-                p.HoleCards = m_Dealer.DealHoles().Select(x => x.ToString()).ToArray();
+                p.HoleCards = GameTable.Dealer.DealHoles().Select(x => x.ToString()).ToArray();
                 Observer.RaisePlayerHoleCardsChanged(p);
             }
         }
@@ -598,38 +623,6 @@ namespace BluffinMuffin.Server.Logic
         private void WaitALittle(int waitingTime)
         {
             Thread.Sleep(waitingTime);
-        }
-        private void TryToBegin()
-        {
-            foreach (var p in Table.Players)
-            {
-                if (p.IsZombie)
-                    LeaveGame(p);
-                else if (p.CanPlay)
-                {
-                    p.State = PlayerStateEnum.Playing;
-                    p.IsShowingCards = false;
-                }
-                else
-                    p.State = PlayerStateEnum.SitIn;
-            }
-            if (Table.NbPlaying == 0)
-                Observer.RaiseEverythingEnded();
-            else if (Table.NbPlaying >= Table.Params.MinPlayersToStart)
-            {
-                Table.Params.MinPlayersToStart = 2;
-                Table.InitTable();
-                m_Dealer.FreshDeck();
-                AdvanceToNextGameState(); //Advancing to WaitForBlinds State
-                Observer.RaiseGameGenerallyUpdated();
-                Observer.RaiseGameBlindNeeded();
-            }
-            else
-            {
-                if (Table.DealerSeat != null)
-                    Table.DealerSeat.SeatAttributes = Table.DealerSeat.SeatAttributes.Except(new[] { SeatAttributeEnum.Dealer }).ToArray();
-                Table.PlayingPlayers.ForEach(x => x.State = PlayerStateEnum.SitIn);
-            }
         }
         #endregion Private Methods
     }
