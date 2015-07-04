@@ -59,6 +59,7 @@
     <Compile Include="GameModules\IGameModule.cs" />
     <Compile Include="GameModules\AbstractGameModule.cs" />
     <Compile Include="GameModules\InitGameModule.cs" />
+    <Compile Include="GameModules\PlayingModule.cs" />
     <Compile Include="GameModules\WaitForBlindsModule.cs" />
     <Compile Include="GameModules\WaitForPlayerModule.cs" />
     <Compile Include="PokerGame.cs" />
