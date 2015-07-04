@@ -11,7 +11,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void AntesGameAllPlayerNeedsToPutTheSameBlind()
         {
             var nfo = Simple4PlayersAntesGameMock.WithAllPlayersSeated();
-            Assert.AreEqual(true, nfo.Players.All(x => nfo.BlindNeeded(x) == nfo.Game.Params.MoneyUnit), "The game should need the same blind for everybody (Antes)");
+            Assert.AreEqual(true, nfo.Players.All(x => nfo.BlindNeeded(x) == nfo.Game.Table.Params.MoneyUnit), "The game should need the same blind for everybody (Antes)");
         }
 
         [TestMethod]

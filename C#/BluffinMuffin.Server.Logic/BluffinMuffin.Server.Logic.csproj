@@ -56,8 +56,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameModules\DistributeMoneyModule.cs" />
     <Compile Include="GameModules\IGameModule.cs" />
     <Compile Include="GameModules\AbstractGameModule.cs" />
+    <Compile Include="GameModules\DecideWinnersModule.cs" />
+    <Compile Include="GameModules\ShowDownModule.cs" />
     <Compile Include="GameModules\InitGameModule.cs" />
     <Compile Include="GameModules\PlayingModule.cs" />
     <Compile Include="GameModules\WaitForBlindsModule.cs" />

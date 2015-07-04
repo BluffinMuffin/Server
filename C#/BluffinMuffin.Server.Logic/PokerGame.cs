@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
@@ -34,11 +33,6 @@ namespace BluffinMuffin.Server.Logic
         /// The PokerTable Entity
         /// </summary>
         public PokerTable GameTable { get { return (PokerTable)Table; } }
-
-        /// <summary>
-        /// The Rules Entity
-        /// </summary>
-        public TableParams Params { get; private set; }
 
         /// <summary>
         /// Current Round of the Playing State
@@ -86,7 +80,6 @@ namespace BluffinMuffin.Server.Logic
             Observer = new PokerGameObserver(this);
             table.Dealer = dealer;
             Table = table;
-            Params = table.Params;
             m_State = GameStateEnum.Init;
         }
         #endregion Ctors & Init
@@ -240,17 +233,16 @@ namespace BluffinMuffin.Server.Logic
                     SetModule(new PlayingModule(Observer, GameTable));
                     break;
                 case GameStateEnum.Showdown:
-                    ShowAllCards();
+                    SetModule(new ShowDownModule(Observer, GameTable));
                     break;
                 case GameStateEnum.DecideWinners:
-                    DecideWinners();
+                    SetModule(new DecideWinnersModule(Observer, GameTable));
                     break;
                 case GameStateEnum.DistributeMoney:
-                    DistributeMoney();
-                    StartANewGame();
+                    SetModule(new DistributeMoneyModule(Observer, GameTable));
                     break;
                 case GameStateEnum.End:
-                    Observer.RaiseEverythingEnded();
+                    StartANewGame();
                     break;
             }
         }
@@ -259,45 +251,6 @@ namespace BluffinMuffin.Server.Logic
             Observer.RaiseGameEnded();
             m_State = GameStateEnum.Init;
             AdvanceToNextGameState();
-        }
-        private void ShowAllCards()
-        {
-            foreach (var p in Table.Players)
-                if (p.IsPlaying || p.IsAllIn)
-                {
-                    p.IsShowingCards = true;
-                    Observer.RaisePlayerHoleCardsChanged(p);
-                }
-            AdvanceToNextGameState(); //Advancing to DecideWinners State
-        }
-        private void DistributeMoney()
-        {
-            foreach (var pot in Table.Pots)
-            {
-                var players = pot.AttachedPlayers;
-                if (players.Length > 0)
-                {
-                    var wonAmount = pot.Amount / players.Length;
-                    if (wonAmount > 0)
-                    {
-                        foreach (var p in players)
-                        {
-                            p.Player.MoneySafeAmnt += wonAmount;
-                            Observer.RaisePlayerWonPot(p, pot, wonAmount);
-                            WaitALittle(Params.WaitingTimes.AfterPotWon);
-                        }
-                    }
-                }
-            }
-        }
-        private void DecideWinners()
-        {
-            GameTable.CleanPotsForWinning();
-            AdvanceToNextGameState(); //Advancing to DistributeMoney State
-        }
-        private void WaitALittle(int waitingTime)
-        {
-            Thread.Sleep(waitingTime);
         }
         #endregion Private Methods
     }
