@@ -199,8 +199,8 @@ namespace BluffinMuffin.Server.Logic
                 var amnt = Math.Min(amount, p.MoneySafeAmnt);
                 LogManager.Log(LogLevel.MessageLow, "PokerGame.PlayMoney", "{0} is playing {1} money on state: {2}", p.Name, amnt, m_State);
 
-                if (m_State == GameStateEnum.WaitForBlinds)
-                    return PlayBlinds(p, amnt);
+                if (m_CurrentModule != null)
+                    return m_CurrentModule.OnMoneyPlayed(p, amount);
                 if (m_State == GameStateEnum.Playing && m_RoundState == RoundStateEnum.Betting)
                     return BetMoney(p, amnt);
 
@@ -237,6 +237,7 @@ namespace BluffinMuffin.Server.Logic
                 return;
 
             m_State = (GameStateEnum)(((int)m_State) + 1);
+            m_CurrentModule = null;
 
             switch (m_State)
             {
@@ -244,10 +245,7 @@ namespace BluffinMuffin.Server.Logic
                     SetModule(new WaitForPlayerModule(Observer, GameTable));
                     break;
                 case GameStateEnum.WaitForBlinds:
-                    Table.HigherBet = 0;
-                    //If we got all the blinds, what are we waiting for ?!
-                    if (GameTable.TotalBlindNeeded == 0)
-                        AdvanceToNextGameState(); //Advancing to Playing State
+                    SetModule(new WaitForBlindsModule(Observer, GameTable));
                     break;
                 case GameStateEnum.Playing:
                     Table.Round = RoundTypeEnum.Preflop;
@@ -380,69 +378,6 @@ namespace BluffinMuffin.Server.Logic
             // Ok this player received enough attention !
             ContinueBettingRound();
 
-            return true;
-        }
-        private bool PlayBlinds(PlayerInfo p, int amnt)
-        {
-            LogManager.Log(LogLevel.MessageVeryLow, "PokerGame.PlayMoney", "Total blinds needed is {0}", GameTable.TotalBlindNeeded);
-            LogManager.Log(LogLevel.MessageVeryLow, "PokerGame.PlayMoney", "{0} is putting blind of {1}", p.Name, amnt);
-
-            //What is the need Blind from the player ?
-            var needed = GameTable.GetBlindNeeded(p);
-
-            //If the player isn't giving what we expected from him
-            if (amnt != needed)
-            {
-                //If the player isn't playing enough but it's all he got, time to go All-In
-                if (amnt < needed && !p.CanBet(amnt + 1))
-                {
-                    LogManager.Log(LogLevel.MessageVeryLow, "PokerGame.PlayMoney", "Player now All-In !");
-                    p.State = PlayerStateEnum.AllIn;
-                    Table.NbAllIn++;
-                    GameTable.AddAllInCap(p.MoneyBetAmnt + amnt);
-                }
-                else //well, it's just not fair to play that
-                {
-                    LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} needed to put a blind of {1} and tried {2}", p.Name, needed, amnt);
-                    return false;
-                }
-            }
-
-            //Let's hope the player has enough money ! Time to put the blinds !
-            if (!p.TryBet(amnt))
-            {
-                LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} just put more money than he actually have ({1} > {2})", p.Name, amnt, p.MoneySafeAmnt);
-                return false;
-            }
-
-            //Hmmm ... More Money !! 
-            Table.TotalPotAmnt += amnt;
-
-            //Take note of the given Blind Amount for the player.
-            GameTable.SetBlindNeeded(p, 0);
-
-            //Take note of the action
-            var whatAmIDoing = GameActionEnum.PostAnte;
-            if(Table.Params.Blind.OptionType == BlindTypeEnum.Blinds)
-            {
-                var bob = Table.Params.Blind as BlindOptionsBlinds;
-                if (bob != null && needed == bob.SmallBlindAmount)
-                    whatAmIDoing = GameActionEnum.PostSmallBlind;
-                else
-                    whatAmIDoing = GameActionEnum.PostBigBlind;
-            }
-            LogManager.Log(LogLevel.MessageLow, "PokerGame.PlayMoney", "{0} POSTED BLIND ({1})", p.Name, whatAmIDoing);
-            Observer.RaisePlayerActionTaken(p, whatAmIDoing, amnt);
-
-            //Let's set the HigherBet
-            if (amnt > Table.HigherBet)
-                Table.HigherBet = amnt;
-
-            LogManager.Log(LogLevel.MessageVeryLow, "PokerGame.PlayMoney", "Total blinds still needed is {0}", GameTable.TotalBlindNeeded);
-
-            //If we got all the blinds, what are we waiting for ?!
-            if (GameTable.TotalBlindNeeded == 0)
-                AdvanceToNextGameState(); //Advancing to Playing State
             return true;
         }
         private void StartRound()

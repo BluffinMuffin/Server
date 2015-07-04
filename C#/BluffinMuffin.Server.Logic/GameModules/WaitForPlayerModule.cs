@@ -29,6 +29,12 @@ namespace BluffinMuffin.Server.Logic.GameModules
             base.OnSitOut();
         }
 
+        public override void InitModule()
+        {
+            base.InitModule();
+            TryToBegin();
+        }
+
         private void TryToBegin()
         {
             foreach (var p in Table.Players)

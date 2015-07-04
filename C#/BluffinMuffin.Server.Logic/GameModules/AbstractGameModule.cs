@@ -38,6 +38,11 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         }
 
+        public virtual bool OnMoneyPlayed(PlayerInfo p, int amount)
+        {
+            return false;
+        }
+
         protected void RaiseCompleted()
         {
             ModuleCompleted(this, new SuccessEventArg() { Success = true });
