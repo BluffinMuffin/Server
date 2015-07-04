@@ -16,15 +16,11 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         public event EventHandler<RoundEventArgs> GameBettingRoundStarted = delegate { };
         public event EventHandler<RoundEventArgs> GameBettingRoundEnded = delegate { };
         public event EventHandler<PlayerInfoEventArgs> PlayerJoined = delegate { };
-        public event EventHandler<PlayerInfoEventArgs> PlayerMoneyChanged = delegate { };
         public event EventHandler<PlayerInfoEventArgs> PlayerHoleCardsChanged = delegate { };
-        public event EventHandler<PlayerInfoEventArgs> PlayerLeft = delegate { };
         public event EventHandler<SeatEventArgs> SeatUpdated = delegate { };
         public event EventHandler<PlayerInfoEventArgs> PlayerActionNeeded = delegate { };
         public event EventHandler<PotWonEventArgs> PlayerWonPot = delegate { };
         public event EventHandler<PlayerActionEventArgs> PlayerActionTaken = delegate { };
-        public event IntHandler SitInResponseReceived = delegate { };
-        public event BooleanHandler SitOutResponseReceived = delegate { };
 
         public PokerGameObserver(IPokerGame game)
         {
@@ -59,17 +55,9 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         {
             PlayerJoined(m_Game, new PlayerInfoEventArgs(p));
         }
-        public void RaisePlayerMoneyChanged(PlayerInfo p)
-        {
-            PlayerMoneyChanged(m_Game, new PlayerInfoEventArgs(p));
-        }
         public void RaisePlayerHoleCardsChanged(PlayerInfo p)
         {
             PlayerHoleCardsChanged(m_Game, new PlayerInfoEventArgs(p));
-        }
-        public void RaisePlayerLeft(PlayerInfo p)
-        {
-            PlayerLeft(m_Game, new PlayerInfoEventArgs(p));
         }
         public void RaiseSeatUpdated(SeatInfo s)
         {
@@ -86,14 +74,6 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         public void RaisePlayerActionTaken(PlayerInfo p, GameActionEnum action, int amnt)
         {
             PlayerActionTaken(m_Game, new PlayerActionEventArgs(p, action, amnt));
-        }
-        public void RaiseSitInResponseReceived(int seat)
-        {
-            SitInResponseReceived(seat);
-        }
-        public void RaiseSitOutResponseReceived(bool success)
-        {
-            SitOutResponseReceived(success);
         }
     }
 }

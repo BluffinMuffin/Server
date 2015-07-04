@@ -175,7 +175,6 @@ namespace BluffinMuffin.Server.Logic
 
             if (sitOutOk && Table.LeaveTable(p))
             {
-                Observer.RaisePlayerLeft(p);
                 if (Table.Players.Count == 0)
                     m_State = GameStateEnum.End;
             }
@@ -329,9 +328,6 @@ namespace BluffinMuffin.Server.Logic
             //Update the MinimumRaiseAmount
             Table.MinimumRaiseAmount = Math.Max(Table.MinimumRaiseAmount, p.MoneyBetAmnt);
 
-            //Notify the change in the player's account
-            Observer.RaisePlayerMoneyChanged(p);
-
             //Is the player All-In?
             if (p.MoneySafeAmnt == 0)
             {
@@ -396,9 +392,6 @@ namespace BluffinMuffin.Server.Logic
 
             //Hmmm ... More Money !! 
             Table.TotalPotAmnt += amnt;
-
-            //Notify the change in the player's account
-            Observer.RaisePlayerMoneyChanged(p);
 
             //Take note of the given Blind Amount for the player.
             GameTable.SetBlindNeeded(p, 0);
@@ -590,7 +583,6 @@ namespace BluffinMuffin.Server.Logic
                         foreach (var p in players)
                         {
                             p.Player.MoneySafeAmnt += wonAmount;
-                            Observer.RaisePlayerMoneyChanged(p.Player);
                             Observer.RaisePlayerWonPot(p, pot, wonAmount);
                             WaitALittle(Params.WaitingTimes.AfterPotWon);
                         }
