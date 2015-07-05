@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
@@ -9,12 +8,13 @@ using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    class PlayingModule : AbstractGameModule
+    class BettingRoundModule : AbstractGameModule
     {
-        private RoundStateEnum m_RoundState; // L'etat de la game pour chaque round
-        public PlayingModule(PokerGameObserver o, PokerTable table)
+        protected string Round { get; private set; }
+        public BettingRoundModule(PokerGameObserver o, PokerTable table, string round)
             : base(o, table)
         {
+            Round = round;
         }
 
         public override GameStateEnum GameState
@@ -24,63 +24,16 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override void InitModule()
         {
-            Table.Round = RoundTypeEnum.Preflop;
-            m_RoundState = RoundStateEnum.Cards;
-            StartRound();
-        }
-
-        private void AdvanceToNextRound()
-        {
-            if (Table.Round == RoundTypeEnum.River)
-                RaiseCompleted(); //Advancing to Showdown State
-            else
+            if (Table.NoMoreRoundsNeeded)
             {
-                m_RoundState = RoundStateEnum.Cards;
-                Table.ChangeCurrentPlayerTo(Table.DealerSeat);
-                Table.Round = (RoundTypeEnum)(((int)Table.Round) + 1);
-                StartRound();
-            }
-        }
-        private void AdvanceToNextRoundState()
-        {
-            if (m_RoundState == RoundStateEnum.Cumul)
-                return;
-
-            m_RoundState = (RoundStateEnum)(((int)m_RoundState) + 1);
-            StartRound();
-        }
-        private void StartRound()
-        {
-            switch (m_RoundState)
-            {
-                case RoundStateEnum.Cards:
-                    StartCardRound();
-                    break;
-                case RoundStateEnum.Betting:
-                    StartBettingRound();
-                    break;
-                case RoundStateEnum.Cumul:
-                    StartCumulRound();
-                    break;
-            }
-        }
-        private void StartCumulRound()
-        {
-            Table.ManagePotsRoundEnd();
-
-            Observer.RaiseGameBettingRoundEnded(Table.Round);
-
-            if (Table.NbPlayingAndAllIn <= 1)
                 RaiseCompleted();
-            else
-                AdvanceToNextRound(); //Advancing to Next Round
-        }
-        private void StartBettingRound()
-        {
+                return;
+            }
+            Table.Round = Round;
             Observer.RaiseGameBettingRoundStarted(Table.Round);
 
             //We Put the current player just before the starting player, then we will take the next player and he will be the first
-            Table.ChangeCurrentPlayerTo(Table.GetSeatOfPlayingPlayerJustBefore(Table.SeatOfTheFirstPlayer));
+            Table.ChangeCurrentPlayerTo(Table.GetSeatOfPlayingPlayerJustBefore(GetSeatOfTheFirstPlayer()));
             Table.NbPlayed = 0;
             Table.MinimumRaiseAmount = Table.Params.MoneyUnit;
 
@@ -91,6 +44,12 @@ namespace BluffinMuffin.Server.Logic.GameModules
             else
                 ContinueBettingRound();
         }
+
+        protected virtual SeatInfo GetSeatOfTheFirstPlayer()
+        {
+            return Table.GetSeatOfPlayingPlayerNextTo(Table.DealerSeat);
+        }
+
         private void FoldPlayer(PlayerInfo p)
         {
             if (p.State != PlayerStateEnum.Zombie)
@@ -135,7 +94,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         }
         private void EndBettingRound()
         {
-            AdvanceToNextRoundState(); // Advance to Cumul Round State
+            RaiseCompleted();
         }
         private void ChooseNextPlayer()
         {
@@ -153,46 +112,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
                     OnMoneyPlayed(next.Player, -1);
             }
         }
-        private void StartCardRound()
-        {
-            switch (Table.Round)
-            {
-                case RoundTypeEnum.Preflop:
-                    DealHole();
-                    break;
-                case RoundTypeEnum.Flop:
-                    DealFlop();
-                    break;
-                case RoundTypeEnum.Turn:
-                    DealTurn();
-                    break;
-                case RoundTypeEnum.River:
-                    DealRiver();
-                    break;
-            }
 
-            AdvanceToNextRoundState(); // Advance to Betting Round State
-        }
-        private void DealRiver()
-        {
-            Table.AddCards(Table.Dealer.DealCard().ToString());
-        }
-        private void DealTurn()
-        {
-            Table.AddCards(Table.Dealer.DealCard().ToString());
-        }
-        private void DealFlop()
-        {
-            Table.AddCards(Table.Dealer.DealCards(3).Select(x => x.ToString()).ToArray());
-        }
-        private void DealHole()
-        {
-            foreach (var p in Table.PlayingAndAllInPlayers)
-            {
-                p.HoleCards = Table.Dealer.DealCards(2).Select(x => x.ToString()).ToArray();
-                Observer.RaisePlayerHoleCardsChanged(p);
-            }
-        }
         public override bool OnMoneyPlayed(PlayerInfo p, int amnt)
         {
             LogManager.Log(LogLevel.MessageVeryLow, "PokerGame.PlayMoney", "Currently, we need {0} minimum money from this player", Table.CallAmnt(p));

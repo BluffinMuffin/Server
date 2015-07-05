@@ -36,7 +36,7 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// Current Round of the Playing State
         /// </summary>
-        public RoundTypeEnum Round
+        public string Round
         {
             get { return Table.Round; }
         }

@@ -16,11 +16,6 @@ namespace BluffinMuffin.Server.Logic
             return set;
         }
 
-        public override PlayingCard DealCard()
-        {
-            return m_Deck.Pop();
-        }
-
         public override void FreshDeck()
         {
             m_Deck = GetShuffledDeck();

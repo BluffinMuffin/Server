@@ -12,7 +12,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         {
             var nfo = Simple2PlayersNoBlindsGameMock.WithBothPlayersSeated();
 
-            Assert.AreEqual(RoundTypeEnum.Preflop, nfo.Game.Round, "The game should now be in the preflop round");
+            Assert.AreEqual(RoundTypeEnum.Preflop.ToString(), nfo.Game.Round, "The game should now be in the preflop round");
         }
 
         [TestMethod]
@@ -20,7 +20,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         {
             var nfo = Simple2PlayersBlindsGameMock.BlindsPosted();
 
-            Assert.AreEqual(RoundTypeEnum.Preflop, nfo.Game.Round, "The game should now be in the preflop round");
+            Assert.AreEqual(RoundTypeEnum.Preflop.ToString(), nfo.Game.Round, "The game should now be in the preflop round");
         }
 
         [TestMethod]
@@ -28,28 +28,28 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         {
             var nfo = Simple2PlayersAntesGameMock.BlindsPosted();
 
-            Assert.AreEqual(RoundTypeEnum.Preflop, nfo.Game.Round, "The game should now be in the preflop round");
+            Assert.AreEqual(RoundTypeEnum.Preflop.ToString(), nfo.Game.Round, "The game should now be in the preflop round");
         }
         [TestMethod]
         public void AfterPreflopRoundIsFlop()
         {
             var nfo = Simple2PlayersBlindsGameMock.AfterPreflop();
 
-            Assert.AreEqual(RoundTypeEnum.Flop, nfo.Game.Round, "The game should now be in the flop round");
+            Assert.AreEqual(RoundTypeEnum.Flop.ToString(), nfo.Game.Round, "The game should now be in the flop round");
         }
         [TestMethod]
         public void AfterFlopRoundIsTurn()
         {
             var nfo = Simple2PlayersBlindsGameMock.AfterFlop();
 
-            Assert.AreEqual(RoundTypeEnum.Turn, nfo.Game.Round, "The game should now be in the turn round");
+            Assert.AreEqual(RoundTypeEnum.Turn.ToString(), nfo.Game.Round, "The game should now be in the turn round");
         }
         [TestMethod]
         public void AfterTurnRoundIsRiver()
         {
             var nfo = Simple2PlayersBlindsGameMock.AfterTurn();
 
-            Assert.AreEqual(RoundTypeEnum.River, nfo.Game.Round, "The game should now be in the river round");
+            Assert.AreEqual(RoundTypeEnum.River.ToString(), nfo.Game.Round, "The game should now be in the river round");
         }
 
         [TestMethod]
@@ -59,7 +59,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
 
             nfo.CurrentPlayerCalls();
 
-            Assert.AreEqual(RoundTypeEnum.Preflop, nfo.Game.Round, "The game should still be in the preflop round");
+            Assert.AreEqual(RoundTypeEnum.Preflop.ToString(), nfo.Game.Round, "The game should still be in the preflop round");
         }
 
         [TestMethod]
@@ -67,7 +67,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         {
             var nfo = Simple2PlayersBlindsGameMock.AfterPreflop();
 
-            Assert.AreEqual(RoundTypeEnum.Flop, nfo.Game.Round, "The game should now be in the flop round");
+            Assert.AreEqual(RoundTypeEnum.Flop.ToString(), nfo.Game.Round, "The game should now be in the flop round");
         }
 
         [TestMethod]
@@ -77,7 +77,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
 
             nfo.CurrentPlayerChecks();
 
-            Assert.AreEqual(RoundTypeEnum.Flop, nfo.Game.Round, "The game should still be in the flop round");
+            Assert.AreEqual(RoundTypeEnum.Flop.ToString(), nfo.Game.Round, "The game should still be in the flop round");
         }
 
         [TestMethod]
@@ -88,7 +88,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.CurrentPlayerChecks();
             nfo.CurrentPlayerRaisesMinimum();
 
-            Assert.AreEqual(RoundTypeEnum.Flop, nfo.Game.Round, "The game should still be in the flop round");
+            Assert.AreEqual(RoundTypeEnum.Flop.ToString(), nfo.Game.Round, "The game should still be in the flop round");
         }
 
         [TestMethod]
@@ -99,7 +99,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.CurrentPlayerChecks();
             nfo.CurrentPlayerChecks();
 
-            Assert.AreEqual(RoundTypeEnum.Turn, nfo.Game.Round, "The game should now be in the Turn round");
+            Assert.AreEqual(RoundTypeEnum.Turn.ToString(), nfo.Game.Round, "The game should now be in the Turn round");
         }
 
         [TestMethod]
@@ -110,7 +110,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.CurrentPlayerRaisesMinimum();
             nfo.CurrentPlayerCalls();
 
-            Assert.AreEqual(RoundTypeEnum.Turn, nfo.Game.Round, "The game should now be in the Turn round");
+            Assert.AreEqual(RoundTypeEnum.Turn.ToString(), nfo.Game.Round, "The game should now be in the Turn round");
         }
 
         [TestMethod]
@@ -124,7 +124,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.CurrentPlayerRaisesMinimum();
             nfo.CurrentPlayerRaisesMinimum();
 
-            Assert.AreEqual(RoundTypeEnum.Flop, nfo.Game.Round, "The game should still be in the flop round");
+            Assert.AreEqual(RoundTypeEnum.Flop.ToString(), nfo.Game.Round, "The game should still be in the flop round");
         }
 
         [TestMethod]
@@ -138,7 +138,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.CurrentPlayerRaisesMinimum();
             nfo.CurrentPlayerCalls();
 
-            Assert.AreEqual(RoundTypeEnum.Turn, nfo.Game.Round, "The game should now be in the Turn round");
+            Assert.AreEqual(RoundTypeEnum.Turn.ToString(), nfo.Game.Round, "The game should now be in the Turn round");
         }
     }
 }

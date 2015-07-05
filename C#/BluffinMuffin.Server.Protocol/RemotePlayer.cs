@@ -94,7 +94,7 @@ namespace BluffinMuffin.Server.Protocol
             Send(new BetTurnEndedCommand()
             {
                 PotsAmounts = Game.Table.PotAmountsPadded.ToList(),
-                Round = e.Round,
+                Round = (RoundTypeEnum)Enum.Parse(typeof(RoundTypeEnum), e.Round),
             });
         }
 
@@ -170,7 +170,7 @@ namespace BluffinMuffin.Server.Protocol
         {
             Send(new BetTurnStartedCommand()
             {
-                Round = e.Round,
+                Round = (RoundTypeEnum)Enum.Parse(typeof(RoundTypeEnum), e.Round),
                 Cards = Game.Table.Cards.Select(x => x.ToString()).ToArray()
             });
         }

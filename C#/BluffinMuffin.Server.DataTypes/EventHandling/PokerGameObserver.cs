@@ -43,11 +43,11 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         {
             GameGenerallyUpdated(m_Game, new EventArgs());
         }
-        public void RaiseGameBettingRoundStarted(RoundTypeEnum r)
+        public void RaiseGameBettingRoundStarted(string r)
         {
             GameBettingRoundStarted(m_Game, new RoundEventArgs(r));
         }
-        public void RaiseGameBettingRoundEnded(RoundTypeEnum r)
+        public void RaiseGameBettingRoundEnded(string r)
         {
             GameBettingRoundEnded(m_Game, new RoundEventArgs(r));
         }

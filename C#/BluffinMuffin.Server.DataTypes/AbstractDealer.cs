@@ -7,13 +7,7 @@ namespace BluffinMuffin.Server.DataTypes
     {
         protected Stack<PlayingCard> m_Deck;
 
-        protected AbstractDealer()
-        {
-            FreshDeck();
-        }
-
         public abstract PlayingCard[] DealCards(int nbCards);
-        public abstract PlayingCard DealCard();
 
         public abstract void FreshDeck();
     }

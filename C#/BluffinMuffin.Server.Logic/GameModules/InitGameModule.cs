@@ -23,9 +23,22 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override void InitModule()
         {
+            Table.NoMoreRoundsNeeded = false;
             AddModule(new WaitForPlayerModule(Observer, Table));
             AddModule(new WaitForBlindsModule(Observer, Table));
-            AddModule(new PlayingModule(Observer, Table));
+            //AddModule(new PlayingModule(Observer, Table));
+            AddModule(new DealCardsToPlayersModule(Observer, Table, 2));
+            AddModule(new FirstBettingRoundModule(Observer, Table));
+            AddModule(new CumulPotsModule(Observer, Table));
+            AddModule(new DealCardsToBoardModule(Observer, Table, 3));
+            AddModule(new BettingRoundModule(Observer, Table, RoundTypeEnum.Flop.ToString()));
+            AddModule(new CumulPotsModule(Observer, Table));
+            AddModule(new DealCardsToBoardModule(Observer, Table, 1));
+            AddModule(new BettingRoundModule(Observer, Table, RoundTypeEnum.Turn.ToString()));
+            AddModule(new CumulPotsModule(Observer, Table));
+            AddModule(new DealCardsToBoardModule(Observer, Table, 1));
+            AddModule(new BettingRoundModule(Observer, Table, RoundTypeEnum.River.ToString()));
+            AddModule(new CumulPotsModule(Observer, Table));
             AddModule(new ShowDownModule(Observer, Table));
             AddModule(new DecideWinnersModule(Observer, Table));
             AddModule(new DistributeMoneyModule(Observer, Table));

@@ -22,6 +22,8 @@ namespace BluffinMuffin.Server.Logic
         #region Properties
         public AbstractDealer Dealer { get; set; }
         public bool HadPlayers { get; private set; }
+
+        public bool NoMoreRoundsNeeded { get; set; }
         /// <summary>
         /// Total amount of money still needed as Blinds for the game to start
         /// </summary>
