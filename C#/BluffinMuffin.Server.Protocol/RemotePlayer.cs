@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Protocol.DataTypes.EventHandling;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.Logic;
 using BluffinMuffin.Protocol.DataTypes;

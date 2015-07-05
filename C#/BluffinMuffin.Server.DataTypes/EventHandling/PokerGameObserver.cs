@@ -1,6 +1,7 @@
 ﻿using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using System;
+using BluffinMuffin.Protocol.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.DataTypes.EventHandling
 {
