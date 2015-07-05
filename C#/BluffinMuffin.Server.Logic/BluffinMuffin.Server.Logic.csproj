@@ -73,7 +73,7 @@
     <Compile Include="PokerTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleFactory.cs" />
-    <Compile Include="TexasHoldemDealer.cs" />
+    <Compile Include="Shuffled52CardsDealer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BluffinMuffin.Server.DataTypes\BluffinMuffin.Server.DataTypes.csproj">

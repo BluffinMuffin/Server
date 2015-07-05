@@ -36,6 +36,11 @@ namespace BluffinMuffin.Server.Logic
             get { return State != GameStateEnum.End; }
         }
 
+        private bool IsInitializing
+        {
+            get { return State == GameStateEnum.Init; }
+        }
+
         /// <summary>
         /// Is the Game currently Running ? (Not Ended)
         /// </summary>
@@ -55,7 +60,7 @@ namespace BluffinMuffin.Server.Logic
         #region Ctors & Init
 
         public PokerGame(PokerTable table)
-            : this(new TexasHoldemDealer(), table)
+            : this(new Shuffled52CardsDealer(), table)
         {
         }
 
@@ -106,11 +111,6 @@ namespace BluffinMuffin.Server.Logic
                 return p.NoSeat;
             }
             return -1;
-        }
-
-        private bool IsInitializing
-        {
-            get { return State == GameStateEnum.Init; }
         }
 
         public bool SitOut(PlayerInfo p)

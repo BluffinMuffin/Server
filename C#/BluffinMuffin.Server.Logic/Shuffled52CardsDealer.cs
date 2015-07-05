@@ -6,7 +6,7 @@ using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic
 {
-    public class TexasHoldemDealer : AbstractDealer
+    public class Shuffled52CardsDealer : AbstractDealer
     {
         public override PlayingCard[] DealCards(int nbCards)
         {

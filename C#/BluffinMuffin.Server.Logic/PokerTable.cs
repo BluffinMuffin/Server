@@ -100,13 +100,6 @@ namespace BluffinMuffin.Server.Logic
                 return m_Seats.FirstOrDefault(s => s.SeatAttributes.Contains(SeatAttributeEnum.Dealer));
             }
         }
-        public int NoSeatDealer
-        {
-            get
-            {
-                return DealerSeat == null ? -1 : DealerSeat.NoSeat;
-            }
-        }
 
         public SeatInfo CurrentPlayerSeat
         {
