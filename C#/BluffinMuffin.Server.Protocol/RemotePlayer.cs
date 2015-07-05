@@ -37,7 +37,7 @@ namespace BluffinMuffin.Server.Protocol
             {
                 GameHasStarted = Game.IsPlaying
             };
-            var table = Game.GameTable;
+            var table = Game.Table;
             lock (table)
             {
                 var playerSendingTo = Player;
@@ -163,7 +163,7 @@ namespace BluffinMuffin.Server.Protocol
 
         void OnGameBlindNeeded(object sender, EventArgs e)
         {
-            Send(new GameStartedCommand() { NeededBlindAmount = Game.GameTable.GetBlindNeeded(Player) });
+            Send(new GameStartedCommand() { NeededBlindAmount = Game.Table.GetBlindNeeded(Player) });
         }
 
         void OnGameBettingRoundStarted(object sender, EventArgs e)

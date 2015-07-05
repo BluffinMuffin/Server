@@ -56,10 +56,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameModules\AbstractGameModule.cs" />
     <Compile Include="GameModules\FirstBettingRoundModule.cs" />
     <Compile Include="GameModules\DistributeMoneyModule.cs" />
-    <Compile Include="GameModules\IGameModule.cs" />
-    <Compile Include="GameModules\AbstractGameModule.cs" />
     <Compile Include="GameModules\DecideWinnersModule.cs" />
     <Compile Include="GameModules\EndGameModule.cs" />
     <Compile Include="GameModules\DealCardsToPlayersModule.cs" />
@@ -74,8 +73,7 @@
     <Compile Include="PokerTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleFactory.cs" />
-    <Compile Include="ModuleEventArg.cs" />
-    <Compile Include="SuccessEventArg.cs" />
+    <Compile Include="TableInfo.cs" />
     <Compile Include="TexasHoldemDealer.cs" />
   </ItemGroup>
   <ItemGroup>

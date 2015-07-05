@@ -86,7 +86,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
                     p.Player.MoneySafeAmnt = money;
                 }
             }
-            var seat = p.Game.GameTable.SitIn(p.Player, c.NoSeat);
+            var seat = p.Game.Table.SitIn(p.Player, c.NoSeat);
             if (seat == null)
             {
                 client.SendCommand(c.ResponseFailure(BluffinMessageId.NoMoreSeats, "No seats available"));

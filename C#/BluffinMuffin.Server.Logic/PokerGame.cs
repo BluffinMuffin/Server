@@ -26,12 +26,7 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// The Table Entity
         /// </summary>
-        public TableInfo Table { get; private set; }
-
-        /// <summary>
-        /// The PokerTable Entity
-        /// </summary>
-        public PokerTable GameTable { get { return (PokerTable)Table; } }
+        public PokerTable Table { get; private set; }
 
         /// <summary>
         /// Is the Game currently Running ? (Not Ended)
@@ -94,7 +89,7 @@ namespace BluffinMuffin.Server.Logic
             }
 
             Observer.RaisePlayerJoined(p);
-            return GameTable.JoinTable(p);
+            return Table.JoinTable(p);
         }
 
         public int AfterPlayerSat(PlayerInfo p, int noSeat = -1, int moneyAmount = 1500)
@@ -107,7 +102,7 @@ namespace BluffinMuffin.Server.Logic
                 if (m_CurrentModule != null)
                     m_CurrentModule.OnSitIn();
                 if (State > GameStateEnum.WaitForPlayers)
-                    GameTable.NewArrivals.Add(p);
+                    Table.NewArrivals.Add(p);
                 return p.NoSeat;
             }
             return -1;
@@ -124,7 +119,7 @@ namespace BluffinMuffin.Server.Logic
             if (oldSeat == -1)
                 return true;
 
-            var blindNeeded = GameTable.GetBlindNeeded(p);
+            var blindNeeded = Table.GetBlindNeeded(p);
 
             p.State = PlayerStateEnum.Zombie;
             if (State == GameStateEnum.Playing && Table.CurrentPlayer == p)
@@ -157,7 +152,7 @@ namespace BluffinMuffin.Server.Logic
             if (sitOutOk && Table.LeaveTable(p))
             {
                 if (Table.Players.Count == 0)
-                    SetModule(new EndGameModule(Observer,GameTable));
+                    SetModule(new EndGameModule(Observer,Table));
             }
         }
 
@@ -194,7 +189,7 @@ namespace BluffinMuffin.Server.Logic
                 }
                 else
                 {
-                    SetModule(new EndGameModule(Observer,GameTable));
+                    SetModule(new EndGameModule(Observer,Table));
                 }
             };
             m_CurrentModule.ModuleGenerated += (sender, arg) => m_Modules.Enqueue(arg.Module);
@@ -209,7 +204,7 @@ namespace BluffinMuffin.Server.Logic
             if (!m_Modules.Any())
             {
                 Observer.RaiseGameEnded();
-                m_Modules.Enqueue(new InitTexasHoldemGameModule(Observer,GameTable));
+                m_Modules.Enqueue(new InitTexasHoldemGameModule(Observer,Table));
             }
             SetModule(m_Modules.Dequeue());
         }

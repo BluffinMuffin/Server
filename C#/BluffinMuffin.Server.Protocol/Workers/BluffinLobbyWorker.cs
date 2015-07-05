@@ -218,7 +218,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
         {
             var c = (JoinTableCommand)command;
             var game = Lobby.GetGame(c.TableId);
-            var table = game.GameTable;
+            var table = game.Table;
             if (!game.IsRunning)
             {
                 client.SendCommand(c.ResponseFailure(BluffinMessageId.WrongTableState, "You can't join a game that isn't running !"));
@@ -248,7 +248,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
         {
             var c = (LeaveTableCommand)command;
             var game = Lobby.GetGame(c.TableId);
-            game.LeaveGame(game.GameTable.Players.Single(x => x.Name == client.PlayerName));
+            game.LeaveGame(game.Table.Players.Single(x => x.Name == client.PlayerName));
         }
     }
 }

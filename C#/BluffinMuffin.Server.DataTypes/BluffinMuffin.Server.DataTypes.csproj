@@ -62,15 +62,17 @@
     <Compile Include="AbstractDealer.cs" />
     <Compile Include="Enums\GameStateEnum.cs" />
     <Compile Include="Enums\RoundStateEnum.cs" />
+    <Compile Include="EventHandling\ModuleEventArg.cs" />
     <Compile Include="EventHandling\PlayerActionEventArgs.cs" />
     <Compile Include="EventHandling\PlayerInfoEventArgs.cs" />
     <Compile Include="EventHandling\PokerGameObserver.cs" />
     <Compile Include="EventHandling\PotWonEventArgs.cs" />
     <Compile Include="EventHandling\SeatEventArgs.cs" />
+    <Compile Include="EventHandling\SuccessEventArg.cs" />
+    <Compile Include="IGameModule.cs" />
     <Compile Include="IPokerGame.cs" />
     <Compile Include="MoneyPot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TableInfo.cs" />
     <Compile Include="UserInfo.cs" />
     <Compile Include="WinningPlayer.cs" />
   </ItemGroup>

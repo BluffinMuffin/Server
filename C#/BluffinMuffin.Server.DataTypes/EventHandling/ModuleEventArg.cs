@@ -1,7 +1,6 @@
 ﻿using System;
-using BluffinMuffin.Server.Logic.GameModules;
 
-namespace BluffinMuffin.Server.Logic
+namespace BluffinMuffin.Server.DataTypes.EventHandling
 {
     public class ModuleEventArg : EventArgs
     {
