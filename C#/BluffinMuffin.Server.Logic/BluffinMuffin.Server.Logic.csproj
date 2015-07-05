@@ -67,7 +67,7 @@
     <Compile Include="GameModules\BettingRoundModule.cs" />
     <Compile Include="GameModules\CumulPotsModule.cs" />
     <Compile Include="GameModules\ShowDownModule.cs" />
-    <Compile Include="GameModules\InitGameModule.cs" />
+    <Compile Include="GameModules\InitTexasHoldemGameModule.cs" />
     <Compile Include="GameModules\WaitForBlindsModule.cs" />
     <Compile Include="GameModules\WaitForPlayerModule.cs" />
     <Compile Include="PokerGame.cs" />

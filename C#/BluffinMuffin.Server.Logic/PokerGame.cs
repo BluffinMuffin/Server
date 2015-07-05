@@ -209,7 +209,7 @@ namespace BluffinMuffin.Server.Logic
             if (!m_Modules.Any())
             {
                 Observer.RaiseGameEnded();
-                m_Modules.Enqueue(new InitGameModule(Observer,GameTable));
+                m_Modules.Enqueue(new InitTexasHoldemGameModule(Observer,GameTable));
             }
             SetModule(m_Modules.Dequeue());
         }
