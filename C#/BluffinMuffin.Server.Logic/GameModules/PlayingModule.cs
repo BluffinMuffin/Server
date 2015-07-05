@@ -175,21 +175,21 @@ namespace BluffinMuffin.Server.Logic.GameModules
         }
         private void DealRiver()
         {
-            Table.AddCards(Table.Dealer.DealRiver().ToString());
+            Table.AddCards(Table.Dealer.DealCard().ToString());
         }
         private void DealTurn()
         {
-            Table.AddCards(Table.Dealer.DealTurn().ToString());
+            Table.AddCards(Table.Dealer.DealCard().ToString());
         }
         private void DealFlop()
         {
-            Table.AddCards(Table.Dealer.DealFlop().Select(x => x.ToString()).ToArray());
+            Table.AddCards(Table.Dealer.DealCards(3).Select(x => x.ToString()).ToArray());
         }
         private void DealHole()
         {
             foreach (var p in Table.PlayingAndAllInPlayers)
             {
-                p.HoleCards = Table.Dealer.DealHoles().Select(x => x.ToString()).ToArray();
+                p.HoleCards = Table.Dealer.DealCards(2).Select(x => x.ToString()).ToArray();
                 Observer.RaisePlayerHoleCardsChanged(p);
             }
         }

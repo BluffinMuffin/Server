@@ -12,10 +12,8 @@ namespace BluffinMuffin.Server.DataTypes
             FreshDeck();
         }
 
-        public abstract PlayingCard[] DealHoles();
-        public abstract PlayingCard[] DealFlop();
-        public abstract PlayingCard DealTurn();
-        public abstract PlayingCard DealRiver();
+        public abstract PlayingCard[] DealCards(int nbCards);
+        public abstract PlayingCard DealCard();
 
         public abstract void FreshDeck();
     }

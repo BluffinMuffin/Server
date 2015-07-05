@@ -8,29 +8,15 @@ namespace BluffinMuffin.Server.Logic
 {
     public class TexasHoldemDealer : AbstractDealer
     {
-        public override PlayingCard[] DealHoles()
+        public override PlayingCard[] DealCards(int nbCards)
         {
-            var set = new PlayingCard[2];
-            set[0] = m_Deck.Pop();
-            set[1] = m_Deck.Pop();
+            var set = new PlayingCard[nbCards];
+            for(int i = 0; i < nbCards; ++i)
+                set[i] = m_Deck.Pop();
             return set;
         }
 
-        public override PlayingCard[] DealFlop()
-        {
-            var set = new PlayingCard[3];
-            set[0] = m_Deck.Pop();
-            set[1] = m_Deck.Pop();
-            set[2] = m_Deck.Pop();
-            return set;
-        }
-
-        public override PlayingCard DealTurn()
-        {
-            return m_Deck.Pop();
-        }
-
-        public override PlayingCard DealRiver()
+        public override PlayingCard DealCard()
         {
             return m_Deck.Pop();
         }
@@ -40,7 +26,7 @@ namespace BluffinMuffin.Server.Logic
             m_Deck = GetShuffledDeck();
         }
 
-        public static Stack<PlayingCard> GetShuffledDeck()
+        private static Stack<PlayingCard> GetShuffledDeck()
         {
             var deck = new Stack<PlayingCard>();
             var restantes = GetSortedDeck();
@@ -52,7 +38,7 @@ namespace BluffinMuffin.Server.Logic
             }
             return deck;
         }
-        public static List<PlayingCard> GetSortedDeck()
+        private static List<PlayingCard> GetSortedDeck()
         {
             var deck = new List<PlayingCard>();
             for (var i = 0; i < 4; ++i)
