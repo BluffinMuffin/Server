@@ -171,7 +171,8 @@ namespace BluffinMuffin.Server.Protocol
             Send(new BetTurnStartedCommand()
             {
                 Round = (RoundTypeEnum)(Game.Table.BettingRoundId - 1),
-                Cards = Game.Table.Cards.Select(x => x.ToString()).ToArray()
+                Cards = Game.Table.Cards.Select(x => x.ToString()).ToArray(),
+                BettingRoundId = Game.Table.BettingRoundId
             });
         }
 

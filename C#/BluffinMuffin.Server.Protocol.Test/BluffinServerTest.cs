@@ -68,8 +68,8 @@ namespace BluffinMuffin.Server.Protocol.Test
             BeAwareOfHoleCardDistribution(c1, idTable, s1, s2);
             BeAwareOfHoleCardDistribution(c2, idTable, s1, s2);
 
-            BeAwareOfBettingRoundStarted(c1, idTable, RoundTypeEnum.Preflop);
-            BeAwareOfBettingRoundStarted(c2, idTable, RoundTypeEnum.Preflop);
+            BeAwareOfBettingRoundStarted(c1, idTable, 1);
+            BeAwareOfBettingRoundStarted(c2, idTable, 1);
 
             BeAwareOfWhoItIsToPlay(c1, idTable, s1);
             BeAwareOfWhoItIsToPlay(c2, idTable, s1);
@@ -121,11 +121,11 @@ namespace BluffinMuffin.Server.Protocol.Test
             Assert.AreEqual(noSeat, response.NoSeat);
         }
 
-        private void BeAwareOfBettingRoundStarted(RemoteTcpServer serverEntity, int tableId, RoundTypeEnum round)
+        private void BeAwareOfBettingRoundStarted(RemoteTcpServer serverEntity, int tableId, int round)
         {
             var response = serverEntity.WaitForNextCommand<BetTurnStartedCommand>();
             Assert.AreEqual(tableId, response.TableId);
-            Assert.AreEqual(round, response.Round);
+            Assert.AreEqual(round, response.BettingRoundId);
         }
 
         private void BeAwareOfHoleCardDistribution(RemoteTcpServer serverEntity, int tableId, params int[] seats)
