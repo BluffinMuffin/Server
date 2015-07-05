@@ -10,11 +10,9 @@ namespace BluffinMuffin.Server.Logic.GameModules
 {
     class BettingRoundModule : AbstractGameModule
     {
-        protected string Round { get; private set; }
-        public BettingRoundModule(PokerGameObserver o, PokerTable table, string round)
+        public BettingRoundModule(PokerGameObserver o, PokerTable table)
             : base(o, table)
         {
-            Round = round;
         }
 
         public override GameStateEnum GameState
@@ -29,8 +27,8 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 RaiseCompleted();
                 return;
             }
-            Table.Round = Round;
-            Observer.RaiseGameBettingRoundStarted(Table.Round);
+            Table.BettingRoundId++;
+            Observer.RaiseGameBettingRoundStarted();
 
             //We Put the current player just before the starting player, then we will take the next player and he will be the first
             Table.ChangeCurrentPlayerTo(Table.GetSeatOfPlayingPlayerJustBefore(GetSeatOfTheFirstPlayer()));

@@ -34,14 +34,6 @@ namespace BluffinMuffin.Server.Logic
         public PokerTable GameTable { get { return (PokerTable)Table; } }
 
         /// <summary>
-        /// Current Round of the Playing State
-        /// </summary>
-        public string Round
-        {
-            get { return Table.Round; }
-        }
-
-        /// <summary>
         /// Is the Game currently Running ? (Not Ended)
         /// </summary>
         public bool IsRunning

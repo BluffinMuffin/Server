@@ -1,6 +1,5 @@
 ﻿using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
-using Com.Ericmas001.Util;
 using System;
 
 namespace BluffinMuffin.Server.DataTypes.EventHandling
@@ -13,8 +12,8 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         public event EventHandler GameBlindNeeded = delegate { };
         public event EventHandler GameEnded = delegate { };
         public event EventHandler GameGenerallyUpdated = delegate { };
-        public event EventHandler<RoundEventArgs> GameBettingRoundStarted = delegate { };
-        public event EventHandler<RoundEventArgs> GameBettingRoundEnded = delegate { };
+        public event EventHandler GameBettingRoundStarted = delegate { };
+        public event EventHandler GameBettingRoundEnded = delegate { };
         public event EventHandler<PlayerInfoEventArgs> PlayerJoined = delegate { };
         public event EventHandler<PlayerInfoEventArgs> PlayerHoleCardsChanged = delegate { };
         public event EventHandler<SeatEventArgs> SeatUpdated = delegate { };
@@ -43,13 +42,13 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         {
             GameGenerallyUpdated(m_Game, new EventArgs());
         }
-        public void RaiseGameBettingRoundStarted(string r)
+        public void RaiseGameBettingRoundStarted()
         {
-            GameBettingRoundStarted(m_Game, new RoundEventArgs(r));
+            GameBettingRoundStarted(m_Game, new EventArgs());
         }
-        public void RaiseGameBettingRoundEnded(string r)
+        public void RaiseGameBettingRoundEnded()
         {
-            GameBettingRoundEnded(m_Game, new RoundEventArgs(r));
+            GameBettingRoundEnded(m_Game, new EventArgs());
         }
         public void RaisePlayerJoined(PlayerInfo p)
         {

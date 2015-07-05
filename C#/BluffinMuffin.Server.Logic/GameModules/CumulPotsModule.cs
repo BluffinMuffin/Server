@@ -30,7 +30,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             }
             Table.ManagePotsRoundEnd();
 
-            Observer.RaiseGameBettingRoundEnded(Table.Round);
+            Observer.RaiseGameBettingRoundEnded();
 
             if (Table.NbPlayingAndAllIn <= 1)
                 Table.NoMoreRoundsNeeded = true;

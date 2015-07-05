@@ -153,7 +153,7 @@ namespace BluffinMuffin.Server.DataTypes
         /// <summary>
         /// What is the actual Round of the Game
         /// </summary>
-        public string Round { get; set; }
+        public int BettingRoundId { get; set; }
 
         /// <summary>
         /// List of the Players currently seated

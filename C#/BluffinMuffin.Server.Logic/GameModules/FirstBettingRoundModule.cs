@@ -12,7 +12,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
     class FirstBettingRoundModule : BettingRoundModule
     {
         public FirstBettingRoundModule(PokerGameObserver o, PokerTable table)
-            : base(o, table, RoundTypeEnum.Preflop.ToString())
+            : base(o, table)
         {
         }
 

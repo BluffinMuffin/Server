@@ -89,12 +89,12 @@ namespace BluffinMuffin.Server.Protocol
             Game.Observer.SeatUpdated += OnSeatUpdated;
         }
         #region PokerObserver Event Handling
-        void OnGameBettingRoundEnded(object sender, RoundEventArgs e)
+        void OnGameBettingRoundEnded(object sender, EventArgs e)
         {
             Send(new BetTurnEndedCommand()
             {
                 PotsAmounts = Game.Table.PotAmountsPadded.ToList(),
-                Round = (RoundTypeEnum)Enum.Parse(typeof(RoundTypeEnum), e.Round),
+                Round = (RoundTypeEnum)(Game.Table.BettingRoundId -1),
             });
         }
 
@@ -166,11 +166,11 @@ namespace BluffinMuffin.Server.Protocol
             Send(new GameStartedCommand() { NeededBlindAmount = Game.GameTable.GetBlindNeeded(Player) });
         }
 
-        void OnGameBettingRoundStarted(object sender, RoundEventArgs e)
+        void OnGameBettingRoundStarted(object sender, EventArgs e)
         {
             Send(new BetTurnStartedCommand()
             {
-                Round = (RoundTypeEnum)Enum.Parse(typeof(RoundTypeEnum), e.Round),
+                Round = (RoundTypeEnum)(Game.Table.BettingRoundId - 1),
                 Cards = Game.Table.Cards.Select(x => x.ToString()).ToArray()
             });
         }
