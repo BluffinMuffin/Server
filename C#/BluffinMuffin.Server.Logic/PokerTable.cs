@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BluffinMuffin.HandEvaluator;
+using BluffinMuffin.HandEvaluator.Enums;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.DataTypes.Options;
@@ -436,7 +437,7 @@ namespace BluffinMuffin.Server.Logic
             if (Cards == null || Cards.Length != 5 || Cards.Any(String.IsNullOrEmpty) || playerCards == null || playerCards.Length != 2)
                 return null;
 
-            return HandEvaluator.HandEvaluator.Evaluate(Cards.Union(playerCards).ToArray());
+            return HandEvaluators.Evaluate(playerCards,Cards,EvaluatorTypeEnum.TexasHoldEm);
         }
 
         /// <summary>
