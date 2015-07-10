@@ -437,7 +437,7 @@ namespace BluffinMuffin.Server.Logic
             if (Cards == null || Cards.Length != 5 || Cards.Any(String.IsNullOrEmpty) || playerCards == null || playerCards.Length != 2)
                 return null;
 
-            return HandEvaluators.Evaluate(playerCards,Cards,EvaluatorTypeEnum.TexasHoldEm);
+            return HandEvaluators.Evaluate(CardSelectionEnum.AllPlayerAndAllCommunity,playerCards,Cards);
         }
 
         /// <summary>
