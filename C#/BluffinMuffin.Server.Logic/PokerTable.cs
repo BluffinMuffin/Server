@@ -7,6 +7,7 @@ using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.DataTypes.Options;
 using System.Linq;
 using BluffinMuffin.Server.DataTypes;
+using BluffinMuffin.Server.DataTypes.Enums;
 using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic
@@ -185,6 +186,8 @@ namespace BluffinMuffin.Server.Logic
         }
         public AbstractDealer Dealer { get; set; }
         public bool HadPlayers { get; private set; }
+
+        public GameVariantEnum Variant { get { return EnumFactory<GameVariantEnum>.Parse(Params.Variant); } }
 
         public bool NoMoreRoundsNeeded { get; set; }
         /// <summary>
@@ -437,7 +440,7 @@ namespace BluffinMuffin.Server.Logic
             if (Cards == null || Cards.Length != 5 || Cards.Any(String.IsNullOrEmpty) || playerCards == null || playerCards.Length != 2)
                 return null;
 
-            return HandEvaluators.Evaluate(CardSelectionEnum.AllPlayerAndAllCommunity,playerCards,Cards);
+            return HandEvaluators.Evaluate(Variant == GameVariantEnum.OmahaHoldem ? CardSelectionEnum.TwoPlayersAndThreeCommunity : CardSelectionEnum.AllPlayerAndAllCommunity,playerCards,Cards);
         }
 
         /// <summary>

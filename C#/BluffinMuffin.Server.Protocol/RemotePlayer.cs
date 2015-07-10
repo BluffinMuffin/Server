@@ -4,6 +4,7 @@ using System.Linq;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.DataTypes.EventHandling;
+using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.Logic;
 using BluffinMuffin.Protocol.DataTypes;
@@ -61,12 +62,12 @@ namespace BluffinMuffin.Server.Protocol
                         continue;
                     si.Player = gameSeat.Player.Clone();
 
-                    //If we are not sending the info about the player who is receiving, don't show the cards unless you can
-                    if (i != playerSendingTo.NoSeat && si.Player.IsPlaying&& !si.Player.IsShowingCards)
-                        si.Player.HoleCards = new[] {"??", "??"};
+                    if (si.Player.HoleCards == null || !si.Player.HoleCards.Any())
+                        si.Player.HoleCards = Enumerable.Range(1, table.Variant == GameVariantEnum.OmahaHoldem ? 4 : 2).Select(x => string.Empty).ToArray();
 
-                    if (si.Player.HoleCards == null || si.Player.HoleCards.Length != 2)
-                        si.Player.HoleCards = new[] { String.Empty, String.Empty };
+                    //If we are not sending the info about the player who is receiving, don't show the cards unless you can
+                    if (i != playerSendingTo.NoSeat && si.Player.IsPlaying && !si.Player.IsShowingCards)
+                        si.Player.HoleCards = si.Player.HoleCards.Select(x => "??").ToArray();
 
                     si.SeatAttributes = gameSeat.SeatAttributes;
                 }
@@ -102,7 +103,7 @@ namespace BluffinMuffin.Server.Protocol
         void OnPlayerHoleCardsChanged(object sender, PlayerInfoEventArgs e)
         {
             var p = e.Player;
-            var holeCards = p.NoSeat == Player.NoSeat || p.IsShowingCards ? p.HoleCards : new[] {"??", "??"};
+            var holeCards = p.NoSeat == Player.NoSeat || p.IsShowingCards ? p.HoleCards : p.HoleCards.Select(x => "??").ToArray();
 
             Send(new PlayerHoleCardsChangedCommand()
             {
@@ -196,8 +197,11 @@ namespace BluffinMuffin.Server.Protocol
         {
             if (e.Seat.IsEmpty || Player.NoSeat != e.Seat.NoSeat)
             {
+
+                if (e.Seat.Player.HoleCards == null || !e.Seat.Player.HoleCards.Any())
+                    e.Seat.Player.HoleCards = Enumerable.Range(1,4).Select(x => string.Empty).ToArray();
                 if (!e.Seat.IsEmpty && Player.NoSeat != e.Seat.NoSeat && !e.Seat.Player.IsShowingCards)
-                    e.Seat.Player.HoleCards = new[] {"??", "??"};
+                    e.Seat.Player.HoleCards = e.Seat.Player.HoleCards.Select(x => "??").ToArray();
 
                 Send(new SeatUpdatedCommand()
                 {

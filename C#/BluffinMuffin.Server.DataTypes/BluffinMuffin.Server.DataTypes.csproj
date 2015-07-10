@@ -61,7 +61,7 @@
   <ItemGroup>
     <Compile Include="AbstractDealer.cs" />
     <Compile Include="Enums\GameStateEnum.cs" />
-    <Compile Include="Enums\RoundStateEnum.cs" />
+    <Compile Include="Enums\GameVariantEnum.cs" />
     <Compile Include="EventHandling\ModuleEventArg.cs" />
     <Compile Include="EventHandling\PokerGameObserver.cs" />
     <Compile Include="EventHandling\PotWonEventArgs.cs" />

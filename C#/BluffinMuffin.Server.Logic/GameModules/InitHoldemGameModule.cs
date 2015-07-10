@@ -10,9 +10,9 @@ using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    class InitTexasHoldemGameModule : AbstractGameModule
+    class InitHoldemGameModule : AbstractGameModule
     {
-        public InitTexasHoldemGameModule(PokerGameObserver o, PokerTable table) : base(o, table)
+        public InitHoldemGameModule(PokerGameObserver o, PokerTable table) : base(o, table)
         {
         }
 
@@ -30,7 +30,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             AddModule(new WaitForBlindsModule(Observer, Table));
 
             //Preflop
-            AddModule(new DealCardsToPlayersModule(Observer, Table, 2));
+            AddModule(new DealCardsToPlayersModule(Observer, Table, Table.Variant == GameVariantEnum.OmahaHoldem ? 4 : 2));
             AddModule(new FirstBettingRoundModule(Observer, Table));
             AddModule(new CumulPotsModule(Observer, Table));
             
