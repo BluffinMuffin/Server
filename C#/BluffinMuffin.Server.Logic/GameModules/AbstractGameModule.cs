@@ -26,6 +26,16 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
 
         }
+
+        public virtual void EndModule()
+        {
+
+        }
+
+        public virtual void EndErrorModule()
+        {
+
+        }
         public virtual void OnSitIn()
         {
 
@@ -40,12 +50,19 @@ namespace BluffinMuffin.Server.Logic.GameModules
             return false;
         }
 
+        public virtual bool OnCardDiscarded(PlayerInfo p, string[] cards)
+        {
+            return false;
+        }
+
         protected void RaiseCompleted()
         {
+            EndModule();
             ModuleCompleted(this, new SuccessEventArg() { Success = true });
         }
         protected void RaiseAborted()
         {
+            EndErrorModule();
             ModuleCompleted(this, new SuccessEventArg() { Success = false });
         }
 

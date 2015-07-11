@@ -30,6 +30,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
                 
                 //Game
                 new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient, RemotePlayer>>(typeof(PlayerPlayMoneyCommand), OnPlayerPlayMoneyCommandReceived), 
+                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient, RemotePlayer>>(typeof(PlayerDiscardActionCommand), OnPlayerDiscardActionCommandReceived), 
                 new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient, RemotePlayer>>(typeof(PlayerSitOutCommand), OnPlayerSitOutCommandReceived), 
                 new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient, RemotePlayer>>(typeof(PlayerSitInCommand), OnPlayerSitInCommandReceived)
                 
@@ -113,6 +114,12 @@ namespace BluffinMuffin.Server.Protocol.Workers
         {
             var c = (PlayerPlayMoneyCommand)command;
             p.Game.PlayMoney(p.Player, c.AmountPlayed);
+        }
+
+        private void OnPlayerDiscardActionCommandReceived(AbstractCommand command, IBluffinClient client, RemotePlayer p)
+        {
+            var c = (PlayerDiscardActionCommand)command;
+            p.Game.Discard(p.Player,c.CardsDiscarded);
         }
     }
 }

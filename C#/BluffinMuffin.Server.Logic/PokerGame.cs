@@ -161,7 +161,7 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public bool PlayMoney(PlayerInfo p, int amount)
         {
-            lock(Table)
+            lock (Table)
             {
                 var amnt = Math.Min(amount, p.MoneySafeAmnt);
                 LogManager.Log(LogLevel.MessageLow, "PokerGame.PlayMoney", "{0} is playing {1} money on state: {2}", p.Name, amnt, State);
@@ -170,6 +170,24 @@ namespace BluffinMuffin.Server.Logic
                     return m_CurrentModule.OnMoneyPlayed(p, amount);
 
                 LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} played money but the game is not in the right state", p.Name);
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// The player is discarding cards
+        /// </summary>
+        public bool Discard(PlayerInfo p, string[] cards)
+        {
+            lock (Table)
+            {
+                LogManager.Log(LogLevel.MessageLow, "PokerGame.Discard", "{0} is discarding [{1}] on state: {2}", p.Name, String.Join(", ",cards), State);
+
+                if (m_CurrentModule != null)
+                    return m_CurrentModule.OnCardDiscarded(p, cards);
+
+                LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} tried discarding but the game is not in the right state", p.Name);
 
                 return false;
             }
