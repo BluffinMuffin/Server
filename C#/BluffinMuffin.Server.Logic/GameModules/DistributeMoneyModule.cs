@@ -5,7 +5,7 @@ using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    class DistributeMoneyModule : AbstractGameModule
+    public class DistributeMoneyModule : AbstractGameModule
     {
         public DistributeMoneyModule(PokerGameObserver o, PokerTable table)
             : base(o, table)

@@ -9,7 +9,7 @@ using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    class CumulPotsModule : AbstractGameModule
+    public class CumulPotsModule : AbstractGameModule
     {
         public CumulPotsModule(PokerGameObserver o, PokerTable table)
             : base(o, table)

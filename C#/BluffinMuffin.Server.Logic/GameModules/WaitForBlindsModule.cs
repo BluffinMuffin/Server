@@ -7,7 +7,7 @@ using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    class WaitForBlindsModule : AbstractGameModule
+    public class WaitForBlindsModule : AbstractGameModule
     {
         public WaitForBlindsModule(PokerGameObserver o, PokerTable table)
             : base(o, table)

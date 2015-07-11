@@ -10,7 +10,7 @@ using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    class EndGameModule : AbstractGameModule
+    public class EndGameModule : AbstractGameModule
     {
         public EndGameModule(PokerGameObserver o, PokerTable table)
             : base(o, table)

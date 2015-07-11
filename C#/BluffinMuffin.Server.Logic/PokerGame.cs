@@ -204,7 +204,7 @@ namespace BluffinMuffin.Server.Logic
             if (!m_Modules.Any())
             {
                 Observer.RaiseGameEnded();
-                m_Modules.Enqueue(new InitHoldemGameModule(Observer,Table));
+                m_Modules.Enqueue(Table.Variant.GenerateInitModule(Observer,Table));
             }
             SetModule(m_Modules.Dequeue());
         }

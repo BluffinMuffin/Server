@@ -9,6 +9,8 @@ using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.Attributes;
 using BluffinMuffin.Server.DataTypes.Enums;
+using BluffinMuffin.Server.DataTypes.EventHandling;
+using BluffinMuffin.Server.Logic.GameModules;
 using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
@@ -17,6 +19,9 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     {
         public abstract int NbCardsInHand { get; }
         public abstract CardSelectionEnum CardSelectionType { get; }
+
+        public abstract Type InitModuleType { get; }
+
         public virtual RuleInfo Info
         {
             get
@@ -57,6 +62,16 @@ namespace BluffinMuffin.Server.Logic.GameVariants
                     return true;
                 return false;
             }
+        }
+
+        public virtual AbstractGameModule GenerateInitModule(PokerGameObserver observer,PokerTable table)
+        {
+            if (!InitModuleType.IsSubclassOf(typeof (AbstractGameModule)))
+                return null;
+            var ctor = InitModuleType.GetConstructor(new[] { typeof(PokerGameObserver), typeof(PokerTable) });
+            if (ctor != null)
+                return (AbstractGameModule)ctor.Invoke(new object[] { observer, table });
+            return null;
         }
     }
 }

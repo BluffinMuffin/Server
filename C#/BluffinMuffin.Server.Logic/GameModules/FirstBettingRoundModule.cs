@@ -9,7 +9,7 @@ using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    class FirstBettingRoundModule : BettingRoundModule
+    public class FirstBettingRoundModule : BettingRoundModule
     {
         public FirstBettingRoundModule(PokerGameObserver o, PokerTable table)
             : base(o, table)

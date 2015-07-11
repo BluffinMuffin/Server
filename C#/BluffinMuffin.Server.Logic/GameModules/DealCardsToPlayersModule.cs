@@ -9,7 +9,7 @@ using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    class DealCardsToPlayersModule : AbstractGameModule
+    public class DealCardsToPlayersModule : AbstractGameModule
     {
         protected int NbCards { get; private set; }
         public DealCardsToPlayersModule(PokerGameObserver o, PokerTable table, int nbCards)

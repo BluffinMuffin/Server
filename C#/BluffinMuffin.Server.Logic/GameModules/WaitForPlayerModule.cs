@@ -6,7 +6,7 @@ using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    class WaitForPlayerModule : AbstractGameModule
+    public class WaitForPlayerModule : AbstractGameModule
     {
         public WaitForPlayerModule(PokerGameObserver o, PokerTable table) : base(o, table)
         {

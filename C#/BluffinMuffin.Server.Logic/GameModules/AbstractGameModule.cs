@@ -6,7 +6,7 @@ using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    abstract class AbstractGameModule : IGameModule
+    public abstract class AbstractGameModule : IGameModule
     {
         public event EventHandler<SuccessEventArg> ModuleCompleted = delegate { };
         public event EventHandler<ModuleEventArg> ModuleGenerated = delegate { };

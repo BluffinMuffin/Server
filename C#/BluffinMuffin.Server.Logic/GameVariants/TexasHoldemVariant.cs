@@ -7,6 +7,7 @@ using BluffinMuffin.HandEvaluator.Enums;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Server.DataTypes.Attributes;
 using BluffinMuffin.Server.DataTypes.Enums;
+using BluffinMuffin.Server.Logic.GameModules;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
@@ -22,6 +23,11 @@ namespace BluffinMuffin.Server.Logic.GameVariants
         public override CardSelectionEnum CardSelectionType
         {
             get { return CardSelectionEnum.AllPlayerAndAllCommunity; }
+        }
+
+        public override Type InitModuleType
+        {
+            get { return typeof(InitHoldemGameModule); }
         }
     }
 }

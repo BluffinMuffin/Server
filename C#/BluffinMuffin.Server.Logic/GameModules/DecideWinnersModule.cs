@@ -4,7 +4,7 @@ using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    class DecideWinnersModule : AbstractGameModule
+    public class DecideWinnersModule : AbstractGameModule
     {
         public DecideWinnersModule(PokerGameObserver o, PokerTable table)
             : base(o, table)
