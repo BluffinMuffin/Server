@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BluffinMuffin.HandEvaluator.Enums;
+using BluffinMuffin.Protocol.DataTypes;
+using BluffinMuffin.Server.DataTypes.Attributes;
+using BluffinMuffin.Server.DataTypes.Enums;
+using BluffinMuffin.Server.Logic.GameModules;
+
+namespace BluffinMuffin.Server.Logic.GameVariants
+{
+    [GameVariant(GameVariantEnum.CrazyPineapple)]
+    public class CrazyPineappleVariant : AbstractGameVariant
+    {
+        public override int NbCardsInHand
+        {
+            get { return 3; }
+        }
+
+        public override CardSelectionEnum CardSelectionType
+        {
+            get { return CardSelectionEnum.AllPlayerAndAllCommunity; }
+        }
+
+        public override Type InitModuleType
+        {
+            get { return typeof (InitPineappleGameModule); }
+        }
+    }
+}

@@ -2,6 +2,7 @@
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using System;
 using BluffinMuffin.Protocol.DataTypes.EventHandling;
+using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.DataTypes.EventHandling
 {
@@ -21,6 +22,7 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         public event EventHandler<PlayerInfoEventArgs> PlayerActionNeeded = delegate { };
         public event EventHandler<PotWonEventArgs> PlayerWonPot = delegate { };
         public event EventHandler<PlayerActionEventArgs> PlayerActionTaken = delegate { };
+        public event EventHandler<MinMaxEventArgs> DiscardActionNeeded = delegate { };
 
         public PokerGameObserver(IPokerGame game)
         {
@@ -66,6 +68,10 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         public void RaisePlayerActionNeeded(PlayerInfo p)
         {
             PlayerActionNeeded(m_Game, new PlayerInfoEventArgs(p));
+        }
+        public void RaiseDiscardActionNeeded(int min, int max)
+        {
+            DiscardActionNeeded(m_Game, new MinMaxEventArgs(min,max));
         }
         public void RaisePlayerWonPot(WinningPlayer player, MoneyPot pot, int amntWon)
         {

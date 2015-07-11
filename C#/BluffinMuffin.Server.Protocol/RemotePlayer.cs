@@ -88,6 +88,16 @@ namespace BluffinMuffin.Server.Protocol
             Game.Observer.GameGenerallyUpdated += OnGameGenerallyUpdated;
             Game.Observer.PlayerJoined += OnPlayerJoined;
             Game.Observer.SeatUpdated += OnSeatUpdated;
+            Game.Observer.DiscardActionNeeded += OnDiscardActionNeeded;
+        }
+
+        void OnDiscardActionNeeded(object sender, MinMaxEventArgs e)
+        {
+            Send(new DiscardRoundStartedCommand()
+            {
+                MinimumCardsToDiscard = e.Minimum,
+                MaximumCardsToDiscard = e.Maximum,
+            });
         }
         #region PokerObserver Event Handling
         void OnGameBettingRoundEnded(object sender, EventArgs e)

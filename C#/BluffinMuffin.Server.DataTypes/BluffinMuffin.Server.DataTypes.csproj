@@ -66,6 +66,7 @@
     <Compile Include="Enums\GameVariantEnum.cs" />
     <Compile Include="EventHandling\ModuleEventArg.cs" />
     <Compile Include="EventHandling\PokerGameObserver.cs" />
+    <Compile Include="EventHandling\MinMaxEventArgs.cs" />
     <Compile Include="EventHandling\PotWonEventArgs.cs" />
     <Compile Include="EventHandling\SuccessEventArg.cs" />
     <Compile Include="IGameModule.cs" />

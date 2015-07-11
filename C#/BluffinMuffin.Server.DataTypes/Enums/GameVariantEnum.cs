@@ -8,6 +8,9 @@ namespace BluffinMuffin.Server.DataTypes.Enums
         TexasHoldem,
 
         [Description("Omaha Holdem")]
-        OmahaHoldem
+        OmahaHoldem,
+
+        [Description("Crazy Pineapple")]
+        CrazyPineapple
     }
 }
