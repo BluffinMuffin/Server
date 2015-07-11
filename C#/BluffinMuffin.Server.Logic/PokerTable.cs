@@ -440,10 +440,10 @@ namespace BluffinMuffin.Server.Logic
         /// <returns>A unsigned int that we can use to compare with another hand</returns>
         private HandEvaluationResult EvaluateCards(params string[] playerCards)
         {
-            if (Cards == null || !Cards.Any() || Cards.Any(String.IsNullOrEmpty) || playerCards == null || !playerCards.Any())
+            if (Cards == null || playerCards == null || Cards.Union(playerCards).Count(x => !String.IsNullOrEmpty(x)) < 5)
                 return null;
 
-            return HandEvaluators.Evaluate(Variant.CardSelectionType, playerCards, Cards);
+            return HandEvaluators.Evaluate(Variant.CardSelectionType, playerCards.Where(x => !String.IsNullOrEmpty(x)), Cards.Where(x => !String.IsNullOrEmpty(x)));
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Enums;
@@ -69,6 +70,10 @@ namespace BluffinMuffin.Server.Logic.GameModules
         protected void AddModule(IGameModule module)
         {
             ModuleGenerated(this, new ModuleEventArg() {Module = module});
+        }
+        protected void WaitALittle(int waitingTime)
+        {
+            Thread.Sleep(waitingTime);
         }
     }
 }

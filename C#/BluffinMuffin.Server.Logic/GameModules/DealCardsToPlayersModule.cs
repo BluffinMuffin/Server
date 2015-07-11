@@ -27,7 +27,8 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             foreach (var p in Table.PlayingAndAllInPlayers)
             {
-                p.HoleCards = Table.Dealer.DealCards(NbCards).Select(x => x.ToString()).ToArray();
+                string[] cards = p.HoleCards == null ? new string[0] : p.HoleCards.Where(x => !String.IsNullOrEmpty(x)).ToArray();
+                p.HoleCards = cards.Union(Table.Dealer.DealCards(NbCards - cards.Length).Select(x => x.ToString())).ToArray();
                 Observer.RaisePlayerHoleCardsChanged(p);
             }
             RaiseCompleted();

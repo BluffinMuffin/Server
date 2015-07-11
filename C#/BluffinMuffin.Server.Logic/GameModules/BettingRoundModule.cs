@@ -79,10 +79,6 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             Observer.RaisePlayerActionTaken(p, GameActionEnum.Raise, played);
         }
-        private void WaitALittle(int waitingTime)
-        {
-            Thread.Sleep(waitingTime);
-        }
         private void ContinueBettingRound()
         {
             if (Table.NbPlayingAndAllIn == 1 || Table.NbPlayed >= Table.NbPlayingAndAllIn)

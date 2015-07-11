@@ -11,6 +11,9 @@ namespace BluffinMuffin.Server.DataTypes.Enums
         OmahaHoldem,
 
         [Description("Crazy Pineapple")]
-        CrazyPineapple
+        CrazyPineapple,
+
+        [Description("5 Cards Draw")]
+        FiveCardsDraw
     }
 }

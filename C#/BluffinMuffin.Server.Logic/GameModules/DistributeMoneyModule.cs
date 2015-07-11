@@ -38,9 +38,5 @@ namespace BluffinMuffin.Server.Logic.GameModules
             }
             RaiseCompleted();
         }
-        private void WaitALittle(int waitingTime)
-        {
-            Thread.Sleep(waitingTime);
-        }
     }
 }
