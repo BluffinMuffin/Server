@@ -4,7 +4,6 @@ using System.Linq;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.DataTypes.EventHandling;
-using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.Logic;
 using BluffinMuffin.Protocol.DataTypes;
@@ -63,7 +62,7 @@ namespace BluffinMuffin.Server.Protocol
                     si.Player = gameSeat.Player.Clone();
 
                     if (si.Player.HoleCards == null || !si.Player.HoleCards.Any())
-                        si.Player.HoleCards = Enumerable.Range(1, table.Variant == GameVariantEnum.OmahaHoldem ? 4 : 2).Select(x => string.Empty).ToArray();
+                        si.Player.HoleCards = Enumerable.Range(1, table.Variant.NbCardsInHand).Select(x => string.Empty).ToArray();
 
                     //If we are not sending the info about the player who is receiving, don't show the cards unless you can
                     if (i != playerSendingTo.NoSeat && si.Player.IsPlaying && !si.Player.IsShowingCards)
@@ -199,7 +198,7 @@ namespace BluffinMuffin.Server.Protocol
             {
 
                 if (e.Seat.Player.HoleCards == null || !e.Seat.Player.HoleCards.Any())
-                    e.Seat.Player.HoleCards = Enumerable.Range(1,4).Select(x => string.Empty).ToArray();
+                    e.Seat.Player.HoleCards = Enumerable.Range(1,5).Select(x => string.Empty).ToArray();
                 if (!e.Seat.IsEmpty && Player.NoSeat != e.Seat.NoSeat && !e.Seat.Player.IsShowingCards)
                     e.Seat.Player.HoleCards = e.Seat.Player.HoleCards.Select(x => "??").ToArray();
 

@@ -117,7 +117,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
                 var r = c.ResponseSuccess();
                 r.ImplementedProtocolVersion = currentServerVersion;
                 r.SupportedLobbyTypes = new[] {LobbyTypeEnum.QuickMode, LobbyTypeEnum.RegisteredMode};
-                r.Rules = RuleFactory.SupportedRules;
+                r.Rules = RuleFactory.Variants.Values.Where(x => x.IsFavorite).Union(RuleFactory.Variants.Values.Where(x => !x.IsFavorite)).Select(x => x.Info).ToArray();
                 client.SendCommand(r);
             }
         }

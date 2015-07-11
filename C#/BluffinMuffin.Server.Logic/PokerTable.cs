@@ -8,6 +8,7 @@ using BluffinMuffin.Protocol.DataTypes.Options;
 using System.Linq;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Enums;
+using BluffinMuffin.Server.Logic.GameVariants;
 using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic
@@ -20,6 +21,7 @@ namespace BluffinMuffin.Server.Logic
         private readonly List<PlayerInfo> m_People = new List<PlayerInfo>();
         private readonly List<MoneyPot> m_Pots = new List<MoneyPot>();
         private TableParams m_Params;
+        private AbstractGameVariant m_Variant;
 
         private readonly List<int> m_AllInCaps = new List<int>(); // All the distincts ALL_IN CAPS of the ROUND
         private readonly Dictionary<PlayerInfo, int> m_BlindNeeded = new Dictionary<PlayerInfo, int>();
@@ -40,6 +42,7 @@ namespace BluffinMuffin.Server.Logic
             set
             {
                 m_Params = value;
+                m_Variant = RuleFactory.Variants[EnumFactory<GameVariantEnum>.Parse(Params.Variant)];
                 m_Seats = new SeatInfo[value.MaxPlayers];
                 for (var i = 0; i < value.MaxPlayers; ++i)
                     m_Seats[i] = new SeatInfo() { NoSeat = i };
@@ -187,7 +190,7 @@ namespace BluffinMuffin.Server.Logic
         public AbstractDealer Dealer { get; set; }
         public bool HadPlayers { get; private set; }
 
-        public GameVariantEnum Variant { get { return EnumFactory<GameVariantEnum>.Parse(Params.Variant); } }
+        public AbstractGameVariant Variant { get { return m_Variant; } }
 
         public bool NoMoreRoundsNeeded { get; set; }
         /// <summary>
@@ -440,7 +443,7 @@ namespace BluffinMuffin.Server.Logic
             if (Cards == null || !Cards.Any() || Cards.Any(String.IsNullOrEmpty) || playerCards == null || !playerCards.Any())
                 return null;
 
-            return HandEvaluators.Evaluate(Variant == GameVariantEnum.OmahaHoldem ? CardSelectionEnum.TwoPlayersAndThreeCommunity : CardSelectionEnum.AllPlayerAndAllCommunity,playerCards,Cards);
+            return HandEvaluators.Evaluate(Variant.CardSelectionType, playerCards, Cards);
         }
 
         /// <summary>

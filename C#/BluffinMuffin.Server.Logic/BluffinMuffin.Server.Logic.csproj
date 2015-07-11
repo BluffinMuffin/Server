@@ -69,6 +69,9 @@
     <Compile Include="GameModules\InitHoldemGameModule.cs" />
     <Compile Include="GameModules\WaitForBlindsModule.cs" />
     <Compile Include="GameModules\WaitForPlayerModule.cs" />
+    <Compile Include="GameVariants\AbstractGameVariant.cs" />
+    <Compile Include="GameVariants\OmahaHoldemVariant.cs" />
+    <Compile Include="GameVariants\TexasHoldemVariant.cs" />
     <Compile Include="PokerGame.cs" />
     <Compile Include="PokerTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -30,7 +30,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             AddModule(new WaitForBlindsModule(Observer, Table));
 
             //Preflop
-            AddModule(new DealCardsToPlayersModule(Observer, Table, Table.Variant == GameVariantEnum.OmahaHoldem ? 4 : 2));
+            AddModule(new DealCardsToPlayersModule(Observer, Table, Table.Variant.NbCardsInHand));
             AddModule(new FirstBettingRoundModule(Observer, Table));
             AddModule(new CumulPotsModule(Observer, Table));
             
