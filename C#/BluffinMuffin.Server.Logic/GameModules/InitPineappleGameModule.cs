@@ -26,6 +26,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             Table.NoMoreRoundsNeeded = false;
             Table.BettingRoundId = 0;
+            Table.Players.ForEach(x => x.HoleCards = new string[0]);
 
             AddModule(new WaitForPlayerModule(Observer, Table));
             AddModule(new WaitForBlindsModule(Observer, Table));
