@@ -70,11 +70,11 @@ namespace BluffinMuffin.Server.Protocol.Workers
         void OnIdentifyCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (IdentifyCommand)command;
-            client.PlayerName = c.Name;
             var ok = !Lobby.IsNameUsed(c.Name) && !DataManager.Persistance.IsDisplayNameExist(c.Name);
             LogManager.Log(LogLevel.Message, "BluffinLobbyWorker.OnIdentifyCommandReceived", "> Client indentifying QuickMode server as : {0}. Success={1}", c.Name, ok);
             if (ok)
             {
+                client.PlayerName = c.Name;
                 client.SendCommand(c.ResponseSuccess());
                 Lobby.AddName(c.Name);
             }
