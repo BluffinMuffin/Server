@@ -3,9 +3,9 @@ using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    public class InitFiveCardsDrawGameModule : AbstractGameModule
+    public class InitFiveCardsStudGameModule : AbstractGameModule
     {
-        public InitFiveCardsDrawGameModule(PokerGameObserver o, PokerTable table)
+        public InitFiveCardsStudGameModule(PokerGameObserver o, PokerTable table)
             : base(o, table)
         {
         }
@@ -22,16 +22,22 @@ namespace BluffinMuffin.Server.Logic.GameModules
             AddModule(new WaitForPlayerModule(Observer, Table));
             AddModule(new WaitForBlindsModule(Observer, Table));
 
-            AddModule(new DealMissingCardsToPlayersModule(Observer, Table, Table.Variant.NbCardsInHand));
+            AddModule(new DealCardsToPlayersModule(Observer, Table, 1, 1));
             AddModule(new FirstBettingRoundModule(Observer, Table));
             AddModule(new CumulPotsModule(Observer, Table));
 
-            AddModule(new DiscardRoundModule(Observer, Table, 0, 5));
-
-            AddModule(new DealMissingCardsToPlayersModule(Observer, Table, Table.Variant.NbCardsInHand));
+            AddModule(new DealCardsToPlayersModule(Observer, Table, 0, 1));
             AddModule(new BettingRoundModule(Observer, Table));
             AddModule(new CumulPotsModule(Observer, Table));
-            
+
+            AddModule(new DealCardsToPlayersModule(Observer, Table, 0, 1));
+            AddModule(new BettingRoundModule(Observer, Table));
+            AddModule(new CumulPotsModule(Observer, Table));
+
+            AddModule(new DealCardsToPlayersModule(Observer, Table, 0, 1));
+            AddModule(new BettingRoundModule(Observer, Table));
+            AddModule(new CumulPotsModule(Observer, Table));
+
             AddModule(new ShowDownModule(Observer, Table));
             AddModule(new DecideWinnersModule(Observer, Table));
             AddModule(new DistributeMoneyModule(Observer, Table));

@@ -4,11 +4,11 @@ using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    public class DealCardsToPlayersModule : AbstractGameModule
+    public class DealMissingCardsToPlayersModule : AbstractGameModule
     {
         protected int NbCardsFaceDown { get; }
         protected int NbCardsFaceUp { get; }
-        public DealCardsToPlayersModule(PokerGameObserver o, PokerTable table, int nbCardsFaceDown, int nbCardsFaceUp = 0)
+        public DealMissingCardsToPlayersModule(PokerGameObserver o, PokerTable table, int nbCardsFaceDown, int nbCardsFaceUp = 0)
             : base(o, table)
         {
             NbCardsFaceDown = nbCardsFaceDown;
@@ -22,9 +22,9 @@ namespace BluffinMuffin.Server.Logic.GameModules
             foreach (var p in Table.PlayingAndAllInPlayers)
             {
                 string[] downCards = p.FaceDownCards?.Where(x => !string.IsNullOrEmpty(x)).ToArray() ?? new string[0];
-                p.FaceDownCards = downCards.Union(Table.Dealer.DealCards(NbCardsFaceDown).Select(x => x.ToString())).ToArray();
+                p.FaceDownCards = downCards.Union(Table.Dealer.DealCards(NbCardsFaceDown - downCards.Length).Select(x => x.ToString())).ToArray();
                 string[] upCards = p.FaceUpCards?.Where(x => !string.IsNullOrEmpty(x)).ToArray() ?? new string[0];
-                p.FaceUpCards = upCards.Union(Table.Dealer.DealCards(NbCardsFaceUp).Select(x => x.ToString())).ToArray();
+                p.FaceUpCards = upCards.Union(Table.Dealer.DealCards(NbCardsFaceDown - upCards.Length).Select(x => x.ToString())).ToArray();
                 Observer.RaisePlayerHoleCardsChanged(p);
             }
             RaiseCompleted();
