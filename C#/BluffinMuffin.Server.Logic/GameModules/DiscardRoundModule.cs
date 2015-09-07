@@ -31,7 +31,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             foreach (var p in m_Players.Keys)
             {
-                p.Cards = p.Cards.Select(x => x.ToUpper()).Except(m_Players[p].Select(x => x.ToUpper())).ToArray();
+                p.FaceDownCards = p.FaceDownCards.Select(x => x.ToUpper()).Except(m_Players[p].Select(x => x.ToUpper())).ToArray();
                 Observer.RaisePlayerHoleCardsChanged(p);
             }
             WaitALittle(Table.Params.WaitingTimes.AfterPotWon);

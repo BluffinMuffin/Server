@@ -69,14 +69,13 @@ namespace BluffinMuffin.Server.Protocol
         void OnPlayerHoleCardsChanged(object sender, PlayerInfoEventArgs e)
         {
             var p = e.Player;
-            var holeCards = p.NoSeat == Player.NoSeat || p.IsShowingCards ? p.Cards : new string[0];
 
             Send(new PlayerHoleCardsChangedCommand()
             {
                 NoSeat = p.NoSeat,
                 PlayerState = p.State,
-                Cards = holeCards,
-                NbHiddenCards = p.Cards.Length - holeCards.Length
+                FaceDownCards = p.NoSeat == Player.NoSeat ? p.FaceDownCards : p.FaceDownCards.Select(x => "??").ToArray(),
+                FaceUpCards = p.FaceUpCards
             });
         }
 
@@ -149,13 +148,7 @@ namespace BluffinMuffin.Server.Protocol
                 if (!gameSeat.IsEmpty)
                 {
                     si.Player = gameSeat.Player.Clone();
-
-                    //If we are not sending the info about the player who is receiving, don't show the cards unless you can
-                    if (i != Player.NoSeat && si.Player.IsPlaying && !si.Player.IsShowingCards)
-                        si.Player.Cards = null;
-
-                    if (si.Player.Cards == null || !si.Player.Cards.Any())
-                        si.Player.Cards = new string[0];
+                    PepareCardsForSending(si);
 
                     si.SeatAttributes = gameSeat.SeatAttributes;
                 }
@@ -187,12 +180,7 @@ namespace BluffinMuffin.Server.Protocol
             if (e.Seat.IsEmpty || Player.NoSeat != e.Seat.NoSeat)
             {
                 if (!e.Seat.IsEmpty)
-                {
-                    if (Player.NoSeat != e.Seat.NoSeat && !e.Seat.Player.IsShowingCards)
-                        e.Seat.Player.Cards = null;
-                    if (e.Seat.Player.Cards == null || !e.Seat.Player.Cards.Any())
-                        e.Seat.Player.Cards = Enumerable.Range(1, 5).Select(x => string.Empty).ToArray();
-                }
+                    PepareCardsForSending(e.Seat);
 
                 Send(new SeatUpdatedCommand()
                 {
@@ -200,6 +188,20 @@ namespace BluffinMuffin.Server.Protocol
                 });
             }
         }
+
+        private void PepareCardsForSending(SeatInfo si)
+        {
+            if (si.Player.FaceDownCards == null)
+                si.Player.FaceDownCards = new string[0];
+
+            if (si.Player.FaceUpCards == null)
+                si.Player.FaceUpCards = new string[0];
+
+            //If we are not sending the info about the player who is receiving, don't show the cards
+            if (si.NoSeat != Player.NoSeat)
+                si.Player.FaceDownCards = si.Player.FaceDownCards.Select(x => "??").ToArray();
+        }
+
         #endregion PokerObserver Event Handling
 
         private void Send(AbstractGameCommand c)
