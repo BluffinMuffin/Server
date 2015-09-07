@@ -145,7 +145,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             if (amnt > amntNeeded && amnt < Table.MinRaiseAmnt(p))
             {
-                LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} needed to play at least {1} to raise and tried {2}", p.Name, amntNeeded, amnt);
+                LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} needed to play at least {1} to raise (CallAmount + MinRaiseAmount) and tried {2}", p.Name, Table.MinRaiseAmnt(p), amnt);
                 return false;
             }
 
