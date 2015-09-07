@@ -207,11 +207,13 @@ namespace BluffinMuffin.Server.Protocol
         {
             if (e.Seat.IsEmpty || Player.NoSeat != e.Seat.NoSeat)
             {
-
-                if (e.Seat.Player.HoleCards == null || !e.Seat.Player.HoleCards.Any())
-                    e.Seat.Player.HoleCards = Enumerable.Range(1,5).Select(x => string.Empty).ToArray();
-                if (!e.Seat.IsEmpty && Player.NoSeat != e.Seat.NoSeat && !e.Seat.Player.IsShowingCards)
-                    e.Seat.Player.HoleCards = e.Seat.Player.HoleCards.Select(x => "??").ToArray();
+                if (!e.Seat.IsEmpty)
+                {
+                    if (e.Seat.Player.HoleCards == null || !e.Seat.Player.HoleCards.Any())
+                        e.Seat.Player.HoleCards = Enumerable.Range(1, 5).Select(x => string.Empty).ToArray();
+                    if (Player.NoSeat != e.Seat.NoSeat && !e.Seat.Player.IsShowingCards)
+                        e.Seat.Player.HoleCards = e.Seat.Player.HoleCards.Select(x => "??").ToArray();
+                }
 
                 Send(new SeatUpdatedCommand()
                 {
