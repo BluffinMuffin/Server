@@ -157,7 +157,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             }
 
             //Update the MinimumRaiseAmount
-            Table.MinimumRaiseAmount = Math.Max(Table.MinimumRaiseAmount, p.MoneyBetAmnt - Table.CallAmnt(p));
+            Table.MinimumRaiseAmount = Math.Max(Table.MinimumRaiseAmount, amnt - amntNeeded);
 
             //Is the player All-In?
             if (p.MoneySafeAmnt == 0)
