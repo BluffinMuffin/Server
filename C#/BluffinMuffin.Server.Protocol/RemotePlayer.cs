@@ -168,6 +168,7 @@ namespace BluffinMuffin.Server.Protocol
             Send(new PlayerTurnBeganCommand()
             {
                 NoSeat = e.Player.NoSeat,
+                AmountNeeded = Game.Table.CallAmnt(e.Player),
                 MinimumRaiseAmount = Game.Table.MinimumRaiseAmount,
             });
         }
