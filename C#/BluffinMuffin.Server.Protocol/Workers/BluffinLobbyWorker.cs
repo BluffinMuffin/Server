@@ -108,7 +108,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             bool ok = Version.TryParse(c.ImplementedProtocolVersion,out vClient);
             if (!ok || vClient < new Version(minimumClientVersion))
             {
-                var r = c.ResponseFailure(BluffinMessageId.NotSupported, "The client version must be at least " + minimumClientVersion);
+                var r = c.ResponseFailure(BluffinMessageId.NotSupported, "The client must implement at least protocol version " + minimumClientVersion);
                 r.ImplementedProtocolVersion = currentServerVersion;
                 client.SendCommand(r);
             }
