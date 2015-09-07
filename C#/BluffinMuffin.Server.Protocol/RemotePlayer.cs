@@ -69,14 +69,14 @@ namespace BluffinMuffin.Server.Protocol
         void OnPlayerHoleCardsChanged(object sender, PlayerInfoEventArgs e)
         {
             var p = e.Player;
-            var holeCards = p.NoSeat == Player.NoSeat || p.IsShowingCards ? p.Cards : Enumerable.Range(1, 5).Select(x => string.Empty).ToArray(); ;
+            var holeCards = p.NoSeat == Player.NoSeat || p.IsShowingCards ? p.Cards : new string[0];
 
             Send(new PlayerHoleCardsChangedCommand()
             {
                 NoSeat = p.NoSeat,
                 PlayerState = p.State,
                 Cards = holeCards,
-                NbHiddenCards = p.NbHiddenCards
+                NbHiddenCards = p.Cards.Length - holeCards.Length
             });
         }
 
@@ -146,18 +146,19 @@ namespace BluffinMuffin.Server.Protocol
             {
                 var si = new SeatInfo() { NoSeat = i };
                 var gameSeat = Game.Table.Seats[i];
-                if (gameSeat.IsEmpty)
-                    continue;
-                si.Player = gameSeat.Player.Clone();
+                if (!gameSeat.IsEmpty)
+                {
+                    si.Player = gameSeat.Player.Clone();
 
-                //If we are not sending the info about the player who is receiving, don't show the cards unless you can
-                if (i != Player.NoSeat && si.Player.IsPlaying && !si.Player.IsShowingCards)
-                    si.Player.Cards = null;
+                    //If we are not sending the info about the player who is receiving, don't show the cards unless you can
+                    if (i != Player.NoSeat && si.Player.IsPlaying && !si.Player.IsShowingCards)
+                        si.Player.Cards = null;
 
-                if (si.Player.Cards == null || !si.Player.Cards.Any())
-                    si.Player.Cards = Enumerable.Range(1, Game.Table.Variant.NbCardsInHand).Select(x => string.Empty).ToArray();
+                    if (si.Player.Cards == null || !si.Player.Cards.Any())
+                        si.Player.Cards = new string[0];
 
-                si.SeatAttributes = gameSeat.SeatAttributes;
+                    si.SeatAttributes = gameSeat.SeatAttributes;
+                }
                 yield return si;
             }
         }

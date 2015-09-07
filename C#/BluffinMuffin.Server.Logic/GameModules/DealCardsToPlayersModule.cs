@@ -29,6 +29,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             {
                 string[] cards = p.Cards == null ? new string[0] : p.Cards.Where(x => !String.IsNullOrEmpty(x)).ToArray();
                 p.Cards = cards.Union(Table.Dealer.DealCards(NbCards - cards.Length).Select(x => x.ToString())).ToArray();
+                p.NbHiddenCards = p.Cards.Length;
                 Observer.RaisePlayerHoleCardsChanged(p);
             }
             RaiseCompleted();

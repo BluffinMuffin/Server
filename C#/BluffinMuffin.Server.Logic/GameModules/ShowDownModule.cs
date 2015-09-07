@@ -21,6 +21,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             foreach (var p in Table.Players.Where(p => p.IsPlaying || p.IsAllIn))
             {
                 p.IsShowingCards = true;
+                p.NbHiddenCards = 0;
                 Observer.RaisePlayerHoleCardsChanged(p);
             }
             RaiseCompleted();
