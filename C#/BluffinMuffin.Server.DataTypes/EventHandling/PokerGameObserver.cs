@@ -13,7 +13,6 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         public event EventHandler EverythingEnded = delegate { };
         public event EventHandler GameBlindNeeded = delegate { };
         public event EventHandler GameEnded = delegate { };
-        public event EventHandler GameGenerallyUpdated = delegate { };
         public event EventHandler GameBettingRoundStarted = delegate { };
         public event EventHandler GameBettingRoundEnded = delegate { };
         public event EventHandler<PlayerInfoEventArgs> PlayerJoined = delegate { };
@@ -40,10 +39,6 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         public void RaiseGameEnded()
         {
             GameEnded(m_Game, new EventArgs());
-        }
-        public void RaiseGameGenerallyUpdated()
-        {
-            GameGenerallyUpdated(m_Game, new EventArgs());
         }
         public void RaiseGameBettingRoundStarted()
         {

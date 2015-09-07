@@ -32,47 +32,6 @@ namespace BluffinMuffin.Server.Protocol
             InitializePokerObserver();
             return Game.JoinGame(Player);
         }
-        public void SendTableInfo()
-        {
-            var cmd = new TableInfoCommand
-            {
-                GameHasStarted = Game.IsPlaying
-            };
-            var table = Game.Table;
-            lock (table)
-            {
-                var playerSendingTo = Player;
-
-                cmd.BoardCards = table.Cards.Select(c => c.ToString()).ToArray();
-                cmd.Seats = new List<SeatInfo>();
-
-                cmd.Params = table.Params;
-
-                cmd.TotalPotAmount = table.TotalPotAmnt;
-
-                cmd.PotsAmount = table.PotAmountsPadded.ToList();
-
-                for (var i = 0; i < cmd.Params.MaxPlayers; ++i)
-                {
-                    var si = new SeatInfo() { NoSeat = i };
-                    cmd.Seats.Add(si);
-                    var gameSeat = table.Seats[i];
-                    if (gameSeat.IsEmpty)
-                        continue;
-                    si.Player = gameSeat.Player.Clone();
-
-                    if (si.Player.HoleCards == null || !si.Player.HoleCards.Any())
-                        si.Player.HoleCards = Enumerable.Range(1, table.Variant.NbCardsInHand).Select(x => string.Empty).ToArray();
-
-                    //If we are not sending the info about the player who is receiving, don't show the cards unless you can
-                    if (i != playerSendingTo.NoSeat && si.Player.IsPlaying && !si.Player.IsShowingCards)
-                        si.Player.HoleCards = si.Player.HoleCards.Select(x => "??").ToArray();
-
-                    si.SeatAttributes = gameSeat.SeatAttributes;
-                }
-            }
-            Send(cmd);
-        }
 
         private void InitializePokerObserver()
         {
@@ -85,7 +44,6 @@ namespace BluffinMuffin.Server.Protocol
             Game.Observer.PlayerActionNeeded += OnPlayerActionNeeded;
             Game.Observer.GameBlindNeeded += OnGameBlindNeeded;
             Game.Observer.GameBettingRoundStarted += OnGameBettingRoundStarted;
-            Game.Observer.GameGenerallyUpdated += OnGameGenerallyUpdated;
             Game.Observer.PlayerJoined += OnPlayerJoined;
             Game.Observer.SeatUpdated += OnSeatUpdated;
             Game.Observer.DiscardActionNeeded += OnDiscardActionNeeded;
@@ -105,20 +63,20 @@ namespace BluffinMuffin.Server.Protocol
             Send(new BetTurnEndedCommand()
             {
                 PotsAmounts = Game.Table.PotAmountsPadded.ToList(),
-                Round = (RoundTypeEnum)(Game.Table.BettingRoundId -1),
             });
         }
 
         void OnPlayerHoleCardsChanged(object sender, PlayerInfoEventArgs e)
         {
             var p = e.Player;
-            var holeCards = p.NoSeat == Player.NoSeat || p.IsShowingCards ? p.HoleCards : p.HoleCards.Select(x => "??").ToArray();
+            var holeCards = p.NoSeat == Player.NoSeat || p.IsShowingCards ? p.Cards : Enumerable.Range(1, 5).Select(x => string.Empty).ToArray(); ;
 
             Send(new PlayerHoleCardsChangedCommand()
             {
                 NoSeat = p.NoSeat,
                 PlayerState = p.State,
                 Cards = holeCards,
+                NbHiddenCards = p.NbHiddenCards
             });
         }
 
@@ -175,22 +133,42 @@ namespace BluffinMuffin.Server.Protocol
 
         void OnGameBlindNeeded(object sender, EventArgs e)
         {
-            Send(new GameStartedCommand() { NeededBlindAmount = Game.Table.GetBlindNeeded(Player) });
+            Send(new GameStartedCommand()
+            {
+                NeededBlindAmount = Game.Table.GetBlindNeeded(Player),
+                Seats = AllSeats().ToList()
+            });
+        }
+
+        public IEnumerable<SeatInfo> AllSeats()
+        {
+            for (var i = 0; i < Game.Table.Params.MaxPlayers; ++i)
+            {
+                var si = new SeatInfo() { NoSeat = i };
+                var gameSeat = Game.Table.Seats[i];
+                if (gameSeat.IsEmpty)
+                    continue;
+                si.Player = gameSeat.Player.Clone();
+
+                //If we are not sending the info about the player who is receiving, don't show the cards unless you can
+                if (i != Player.NoSeat && si.Player.IsPlaying && !si.Player.IsShowingCards)
+                    si.Player.Cards = null;
+
+                if (si.Player.Cards == null || !si.Player.Cards.Any())
+                    si.Player.Cards = Enumerable.Range(1, Game.Table.Variant.NbCardsInHand).Select(x => string.Empty).ToArray();
+
+                si.SeatAttributes = gameSeat.SeatAttributes;
+                yield return si;
+            }
         }
 
         void OnGameBettingRoundStarted(object sender, EventArgs e)
         {
             Send(new BetTurnStartedCommand()
             {
-                Round = (RoundTypeEnum)(Game.Table.BettingRoundId - 1),
                 Cards = Game.Table.Cards.Select(x => x.ToString()).ToArray(),
                 BettingRoundId = Game.Table.BettingRoundId
             });
-        }
-
-        private void OnGameGenerallyUpdated(object sender, EventArgs e)
-        {
-            SendTableInfo();
         }
 
         void OnPlayerJoined(object sender, PlayerInfoEventArgs e)
@@ -209,10 +187,10 @@ namespace BluffinMuffin.Server.Protocol
             {
                 if (!e.Seat.IsEmpty)
                 {
-                    if (e.Seat.Player.HoleCards == null || !e.Seat.Player.HoleCards.Any())
-                        e.Seat.Player.HoleCards = Enumerable.Range(1, 5).Select(x => string.Empty).ToArray();
                     if (Player.NoSeat != e.Seat.NoSeat && !e.Seat.Player.IsShowingCards)
-                        e.Seat.Player.HoleCards = e.Seat.Player.HoleCards.Select(x => "??").ToArray();
+                        e.Seat.Player.Cards = null;
+                    if (e.Seat.Player.Cards == null || !e.Seat.Player.Cards.Any())
+                        e.Seat.Player.Cards = Enumerable.Range(1, 5).Select(x => string.Empty).ToArray();
                 }
 
                 Send(new SeatUpdatedCommand()

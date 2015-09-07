@@ -493,7 +493,7 @@ namespace BluffinMuffin.Server.Logic
 
                 foreach (var p in infos)
                 {
-                    var handValue = EvaluateCards(p.HoleCards);
+                    var handValue = EvaluateCards(p.Cards);
                     if (handValue != null)
                     {
                         switch (handValue.CompareTo(bestHand))

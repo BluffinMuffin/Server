@@ -239,9 +239,18 @@ namespace BluffinMuffin.Server.Protocol.Workers
             client.AddPlayer(rp);
 
             LogManager.Log(LogLevel.Message, "BluffinLobbyWorker.OnJoinTableCommandReceived", "> Client '{0}' joined {2}:{1}", client.PlayerName, table.Params.TableName, c.TableId, rp.Player.NoSeat);
-            client.SendCommand(c.ResponseSuccess());
 
-            rp.SendTableInfo();
+
+            var r = c.ResponseSuccess();
+
+            r.GameHasStarted = rp.Game.IsPlaying;
+            r.BoardCards = rp.Game.Table.Cards.Select(x => x.ToString()).ToArray();
+            r.Seats = rp.AllSeats().ToList();
+            r.Params = rp.Game.Table.Params;
+            r.TotalPotAmount = rp.Game.Table.TotalPotAmnt;
+            r.PotsAmount = rp.Game.Table.PotAmountsPadded.ToList();
+
+            client.SendCommand(r);
         }
 
         private void OnLeaveTableCommandReceived(AbstractCommand command, IBluffinClient client)

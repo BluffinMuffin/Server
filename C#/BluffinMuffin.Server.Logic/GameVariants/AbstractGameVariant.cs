@@ -29,7 +29,7 @@ namespace BluffinMuffin.Server.Logic.GameVariants
                 return new RuleInfo()
                 {
                     Name = EnumFactory<GameVariantEnum>.ToString(Variant),
-                    GameType = GameTypeEnum.Holdem,
+                    GameType = GameType,
                     MinPlayers = 2,
                     MaxPlayers = 10,
                     AvailableLimits = new List<LimitTypeEnum>() { LimitTypeEnum.NoLimit /*,LimitTypeEnum.FixedLimit,LimitTypeEnum.PotLimit*/},
@@ -52,6 +52,8 @@ namespace BluffinMuffin.Server.Logic.GameVariants
                 return GameVariantEnum.TexasHoldem;
             }
         }
+
+        public virtual GameTypeEnum GameType => GameTypeEnum.CommunityCardsPoker;
 
         public virtual bool IsFavorite
         {

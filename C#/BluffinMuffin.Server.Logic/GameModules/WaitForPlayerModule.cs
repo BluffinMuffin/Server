@@ -57,7 +57,6 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 Table.InitTable();
                 Table.Dealer.FreshDeck();
                 RaiseCompleted();
-                Observer.RaiseGameGenerallyUpdated();
                 Observer.RaiseGameBlindNeeded();
             }
             else

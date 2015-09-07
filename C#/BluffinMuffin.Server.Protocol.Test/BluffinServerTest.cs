@@ -34,7 +34,6 @@ namespace BluffinMuffin.Server.Protocol.Test
             IdentifyAs(c1, "P1");
             int idTable = CreateTable(c1);
             JoinTable(c1, idTable);
-            ReceiveTableInfo(c1);
 
             var client2 = new ClientForTesting();
             var tokenClient2 = new CancellationTokenSource();
@@ -43,7 +42,6 @@ namespace BluffinMuffin.Server.Protocol.Test
             var c2 = client2.ObtainTcpEntity();
             IdentifyAs(c2, "P2");
             JoinTable(c2, idTable);
-            ReceiveTableInfo(c2);
 
             BeAwareOfOtherPlayerJoined(c1, c2);
 
@@ -191,15 +189,9 @@ namespace BluffinMuffin.Server.Protocol.Test
 
         private int GameIsStarting(RemoteTcpServer serverEntity)
         {
-            ReceiveTableInfo(serverEntity);
             var response = serverEntity.WaitForNextCommand<GameStartedCommand>();
             Assert.AreNotEqual(0,response.NeededBlindAmount);
             return response.NeededBlindAmount;
-        }
-
-        private void ReceiveTableInfo(RemoteTcpServer serverEntity)
-        {
-            serverEntity.WaitForNextCommand<TableInfoCommand>();
         }
 
         private void JoinTable(RemoteTcpServer serverEntity, int table)
@@ -223,7 +215,7 @@ namespace BluffinMuffin.Server.Protocol.Test
                     {
                         MoneyUnit = 10
                     },
-                    GameType = GameTypeEnum.Holdem,
+                    GameType = GameTypeEnum.CommunityCardsPoker,
                     MoneyUnit = 10,
                     Limit = new LimitOptionsNoLimit(),
                     Lobby = new LobbyOptionsQuickMode()
@@ -233,7 +225,7 @@ namespace BluffinMuffin.Server.Protocol.Test
                     MaxPlayers = 10,
                     MinPlayersToStart = 2,
                     TableName = "Table One",
-                    Variant = "Wtf Is this field",
+                    Variant = "Texas Hold'em",
                     WaitingTimes = new ConfigurableWaitingTimes()
                     {
                         AfterBoardDealed = 0,
