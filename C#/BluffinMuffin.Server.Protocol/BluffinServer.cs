@@ -15,8 +15,8 @@ namespace BluffinMuffin.Server.Protocol
 {
     public class BluffinServer : IBluffinServer, IBluffinLobby
     {
-        public BlockingCollection<CommandEntry> LobbyCommands { get; private set; }
-        public BlockingCollection<GameCommandEntry> GameCommands { get; private set; }
+        public BlockingCollection<CommandEntry> LobbyCommands { get; }
+        public BlockingCollection<GameCommandEntry> GameCommands { get; }
 
         private readonly LocalTcpServer m_TcpServer;
 

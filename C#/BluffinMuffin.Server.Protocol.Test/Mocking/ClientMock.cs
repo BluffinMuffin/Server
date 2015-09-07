@@ -6,7 +6,7 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
 {
     public class ClientMock : IBluffinClient
     {
-        private ServerMock m_Server;
+        private readonly ServerMock m_Server;
         public ClientMock(ServerMock server)
         {
             m_Server = server;

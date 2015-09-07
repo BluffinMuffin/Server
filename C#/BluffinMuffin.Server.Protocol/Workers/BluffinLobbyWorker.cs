@@ -20,8 +20,8 @@ namespace BluffinMuffin.Server.Protocol.Workers
     {
         private readonly KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>[] m_Methods;
 
-        private IBluffinServer Server { get; set; }
-        private IBluffinLobby Lobby { get; set; }
+        private IBluffinServer Server { get; }
+        private IBluffinLobby Lobby { get; }
         public BluffinLobbyWorker(IBluffinServer server, IBluffinLobby lobby)
         {
             Server = server;

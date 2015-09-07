@@ -21,41 +21,29 @@ namespace BluffinMuffin.Server.Logic
         private IGameModule m_CurrentModule;
         private readonly Queue<IGameModule> m_Modules = new Queue<IGameModule>();
 
-        public PokerGameObserver Observer { get; private set; }
+        public PokerGameObserver Observer { get; }
 
         /// <summary>
         /// The Table Entity
         /// </summary>
-        public PokerTable Table { get; private set; }
+        public PokerTable Table { get; }
 
         /// <summary>
         /// Is the Game currently Running ? (Not Ended)
         /// </summary>
-        public bool IsRunning
-        {
-            get { return State != GameStateEnum.End; }
-        }
+        public bool IsRunning => State != GameStateEnum.End;
 
-        private bool IsInitializing
-        {
-            get { return State == GameStateEnum.Init; }
-        }
+        private bool IsInitializing => State == GameStateEnum.Init;
 
         /// <summary>
         /// Is the Game currently Running ? (Not Ended)
         /// </summary>
-        public bool IsPlaying
-        {
-            get { return IsRunning && State >= GameStateEnum.WaitForBlinds; }
-        }
+        public bool IsPlaying => IsRunning && State >= GameStateEnum.WaitForBlinds;
 
         /// <summary>
         /// Current State of the Game
         /// </summary>
-        public GameStateEnum State
-        {
-            get { return m_CurrentModule == null ? GameStateEnum.Init : m_CurrentModule.GameState; }
-        }
+        public GameStateEnum State => m_CurrentModule?.GameState ?? GameStateEnum.Init;
 
         #region Ctors & Init
 
@@ -107,8 +95,7 @@ namespace BluffinMuffin.Server.Logic
 
                 Observer.RaiseSeatUpdated(seat.Clone());
 
-                if (m_CurrentModule != null)
-                    m_CurrentModule.OnSitIn();
+                m_CurrentModule?.OnSitIn();
                 return p.NoSeat;
             }
             return -1;
@@ -136,8 +123,7 @@ namespace BluffinMuffin.Server.Logic
                     NoSeat = oldSeat,
                 };
                 Observer.RaiseSeatUpdated(seat);
-                if (m_CurrentModule != null)
-                    m_CurrentModule.OnSitOut();
+                m_CurrentModule?.OnSitOut();
                 return true;
             }
             return false;
@@ -183,7 +169,7 @@ namespace BluffinMuffin.Server.Logic
         {
             lock (Table)
             {
-                LogManager.Log(LogLevel.MessageLow, "PokerGame.Discard", "{0} is discarding [{1}] on state: {2}", p.Name, String.Join(", ",cards), State);
+                LogManager.Log(LogLevel.MessageLow, "PokerGame.Discard", "{0} is discarding [{1}] on state: {2}", p.Name, string.Join(", ",cards), State);
 
                 if (m_CurrentModule != null)
                     return m_CurrentModule.OnCardDiscarded(p, cards);

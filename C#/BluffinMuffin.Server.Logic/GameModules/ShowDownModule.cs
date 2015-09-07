@@ -11,10 +11,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
         }
 
-        public override GameStateEnum GameState
-        {
-            get { return GameStateEnum.Showdown; }
-        }
+        public override GameStateEnum GameState => GameStateEnum.Showdown;
 
         public override void InitModule()
         {

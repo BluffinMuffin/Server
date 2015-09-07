@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
-using BluffinMuffin.Server.DataTypes.Enums;
+﻿using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
@@ -12,10 +10,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
         }
 
-        public override GameStateEnum GameState
-        {
-            get { return GameStateEnum.DistributeMoney; }
-        }
+        public override GameStateEnum GameState => GameStateEnum.DistributeMoney;
 
         public override void InitModule()
         {

@@ -18,10 +18,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             m_Maximum = maximum;
         }
 
-        public override GameStateEnum GameState
-        {
-            get { return GameStateEnum.Playing; }
-        }
+        public override GameStateEnum GameState => GameStateEnum.Playing;
 
         public override void InitModule()
         {

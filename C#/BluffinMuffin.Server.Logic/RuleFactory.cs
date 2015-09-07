@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using BluffinMuffin.Protocol.DataTypes;
-using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.Attributes;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.Logic.GameVariants;
-using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic
 {

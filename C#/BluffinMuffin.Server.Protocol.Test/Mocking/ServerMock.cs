@@ -13,10 +13,11 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
 {
     public class ServerMock : IBluffinServer, IBluffinLobby
     {
-        private ClientMock m_Client;
-        private BluffinLobbyWorker m_Worker;
+        private readonly ClientMock m_Client;
+        private readonly BluffinLobbyWorker m_Worker;
         public ServerMock()
         {
+            GameCommands = new BlockingCollection<GameCommandEntry>();
             LobbyCommands = new BlockingCollection<CommandEntry>();
             ServerSendedCommands = new BlockingCollection<CommandEntry>();
             m_Client = new ClientMock(this);
@@ -41,9 +42,9 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
             LobbyCommands.Add(new CommandEntry(){Client = m_Client,Command = c});
         }
 
-        public BlockingCollection<CommandEntry> LobbyCommands { get; private set; }
-        public BlockingCollection<GameCommandEntry> GameCommands { get; private set; }
-        public BlockingCollection<CommandEntry> ServerSendedCommands { get; private set; }
+        public BlockingCollection<CommandEntry> LobbyCommands { get; }
+        public BlockingCollection<GameCommandEntry> GameCommands { get; }
+        public BlockingCollection<CommandEntry> ServerSendedCommands { get; }
 
         public bool IsNameUsed(string name)
         {

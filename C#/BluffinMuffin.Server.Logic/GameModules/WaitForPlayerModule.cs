@@ -12,10 +12,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
         }
 
-        public override GameStateEnum GameState
-        {
-            get { return GameStateEnum.WaitForPlayers; }
-        }
+        public override GameStateEnum GameState => GameStateEnum.WaitForPlayers;
 
         public override void OnSitIn()
         {

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using BluffinMuffin.HandEvaluator.Enums;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
@@ -22,25 +19,19 @@ namespace BluffinMuffin.Server.Logic.GameVariants
 
         public abstract Type InitModuleType { get; }
 
-        public virtual RuleInfo Info
+        public virtual RuleInfo Info => new RuleInfo()
         {
-            get
-            {
-                return new RuleInfo()
-                {
-                    Name = EnumFactory<GameVariantEnum>.ToString(Variant),
-                    GameType = GameType,
-                    MinPlayers = 2,
-                    MaxPlayers = 10,
-                    AvailableLimits = new List<LimitTypeEnum>() { LimitTypeEnum.NoLimit /*,LimitTypeEnum.FixedLimit,LimitTypeEnum.PotLimit*/},
-                    DefaultLimit = LimitTypeEnum.NoLimit,
-                    AvailableBlinds = new List<BlindTypeEnum>() { BlindTypeEnum.Blinds, BlindTypeEnum.Antes, BlindTypeEnum.None },
-                    DefaultBlind = BlindTypeEnum.Blinds,
-                    CanConfigWaitingTime = true,
-                    AvailableLobbys = new List<LobbyTypeEnum>() { LobbyTypeEnum.QuickMode, LobbyTypeEnum.RegisteredMode },
-                };
-            }
-        }
+            Name = EnumFactory<GameVariantEnum>.ToString(Variant),
+            GameType = GameType,
+            MinPlayers = 2,
+            MaxPlayers = 10,
+            AvailableLimits = new List<LimitTypeEnum>() { LimitTypeEnum.NoLimit /*,LimitTypeEnum.FixedLimit,LimitTypeEnum.PotLimit*/},
+            DefaultLimit = LimitTypeEnum.NoLimit,
+            AvailableBlinds = new List<BlindTypeEnum>() { BlindTypeEnum.Blinds, BlindTypeEnum.Antes, BlindTypeEnum.None },
+            DefaultBlind = BlindTypeEnum.Blinds,
+            CanConfigWaitingTime = true,
+            AvailableLobbys = new List<LobbyTypeEnum>() { LobbyTypeEnum.QuickMode, LobbyTypeEnum.RegisteredMode },
+        };
 
         public virtual GameVariantEnum Variant
         {
@@ -71,9 +62,7 @@ namespace BluffinMuffin.Server.Logic.GameVariants
             if (!InitModuleType.IsSubclassOf(typeof (AbstractGameModule)))
                 return null;
             var ctor = InitModuleType.GetConstructor(new[] { typeof(PokerGameObserver), typeof(PokerTable) });
-            if (ctor != null)
-                return (AbstractGameModule)ctor.Invoke(new object[] { observer, table });
-            return null;
+            return (AbstractGameModule) ctor?.Invoke(new object[] { observer, table });
         }
     }
 }

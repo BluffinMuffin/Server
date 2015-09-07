@@ -17,7 +17,7 @@ namespace BluffinMuffin.Server.Protocol.Test
     [TestClass]
     public class BluffinServerTest
     {
-        private StringWriter m_Sw = new StringWriter();
+        private readonly StringWriter m_Sw = new StringWriter();
         [TestMethod]
         public void BigUglyTest()
         {
@@ -94,17 +94,6 @@ namespace BluffinMuffin.Server.Protocol.Test
             tokenClient2.Cancel();
             tokenClient1.Cancel();
             tokenServer.Cancel();
-        }
-
-        private void SitOut(RemoteTcpServer serverEntity, int tableId, int noSeat)
-        {
-            var cmd = new PlayerSitOutCommand()
-            {
-                TableId = tableId
-            };
-            serverEntity.Send(cmd);
-            var response = serverEntity.WaitForNextCommand<PlayerSitOutResponse>();
-            Assert.IsTrue(response.Success);
         }
 
         void LogManager_MessageLogged(string from, string message, int level)

@@ -1,5 +1,4 @@
 ﻿using BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks;
-using BluffinMuffin.Protocol.DataTypes.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests

@@ -14,10 +14,10 @@ namespace BluffinMuffin.Server.Protocol
 {
     public class RemotePlayer
     {
-        public PokerGame Game { get; private set; }
-        public PlayerInfo Player { get; private set; }
-        public IBluffinClient Client { get; private set; }
-        public int TableId { get; private set; }
+        public PokerGame Game { get; }
+        public PlayerInfo Player { get; }
+        public IBluffinClient Client { get; }
+        public int TableId { get; }
 
         public RemotePlayer(PokerGame game, PlayerInfo player, IBluffinClient client, int tableId)
         {
@@ -96,7 +96,7 @@ namespace BluffinMuffin.Server.Protocol
                 WonAmount = e.AmountWon,
                 TotalPlayerMoney = playerInfo.Player.MoneySafeAmnt,
                 TotalPotAmount = pot.Amount,
-                WinningCards = playerInfo.Hand == null ? new string[0] : playerInfo.Hand.Cards.SelectMany(x => x).Take(5).Select(x => x.ToString()).ToArray(),
+                WinningCards = playerInfo.Hand?.Cards.SelectMany(x => x).Take(5).Select(x => x.ToString()).ToArray() ?? new string[0],
                 WinningHand = playerInfo.Hand == null ? PokerHandEnum.None : (PokerHandEnum)Enum.Parse(typeof(PokerHandEnum), playerInfo.Hand.Hand.ToString())
             });
         }

@@ -9,7 +9,7 @@ namespace BluffinMuffin.Server.Protocol.Test
 {
     public class RemoteTcpServer : RemoteTcpEntity 
     {
-        public BlockingCollection<AbstractCommand> ReceivedCommands { get; private set; } 
+        public BlockingCollection<AbstractCommand> ReceivedCommands { get; } 
         public RemoteTcpServer(TcpClient remoteEntity) : base(remoteEntity)
         {
             ReceivedCommands = new BlockingCollection<AbstractCommand>();

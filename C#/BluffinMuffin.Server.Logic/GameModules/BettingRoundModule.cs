@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.Enums;
@@ -15,10 +14,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
         }
 
-        public override GameStateEnum GameState
-        {
-            get { return GameStateEnum.Playing; }
-        }
+        public override GameStateEnum GameState => GameStateEnum.Playing;
 
         public override void InitModule()
         {

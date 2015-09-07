@@ -5,7 +5,7 @@ namespace BluffinMuffin.Server.DataTypes
 {
     public abstract class AbstractDealer
     {
-        protected Stack<PlayingCard> m_Deck;
+        protected Stack<PlayingCard> Deck { get; set; }
 
         public abstract PlayingCard[] DealCards(int nbCards);
 

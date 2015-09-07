@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Sockets;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.Enums;
@@ -25,7 +24,7 @@ namespace BluffinMuffin.Server.Protocol
 
         protected override void OnDataReceived(string data)
         {
-            if (!String.IsNullOrEmpty(data))
+            if (!string.IsNullOrEmpty(data))
             {
                 var command = BluffinMuffin.Protocol.AbstractCommand.DeserializeCommand(data);
                 switch (command.CommandType)

@@ -2,7 +2,6 @@
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using System;
 using BluffinMuffin.Protocol.DataTypes.EventHandling;
-using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.DataTypes.EventHandling
 {

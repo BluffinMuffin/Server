@@ -12,13 +12,13 @@ namespace BluffinMuffin.Server.Logic
         {
             var set = new PlayingCard[nbCards];
             for(int i = 0; i < nbCards; ++i)
-                set[i] = m_Deck.Pop();
+                set[i] = Deck.Pop();
             return set;
         }
 
         public override void FreshDeck()
         {
-            m_Deck = GetShuffledDeck();
+            Deck = GetShuffledDeck();
         }
 
         private static Stack<PlayingCard> GetShuffledDeck()
