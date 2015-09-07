@@ -87,5 +87,17 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.Game.LeaveGame(nfo.P1);
             Assert.AreEqual(true, nfo.P1.MoneySafeAmnt < safeMoneyBefore, "The player should have less money then before, since blinds were posted automatically before he left");
         }
+
+        [TestMethod]
+        public void StartSecondGameAndCheckNeededBlindOfBothPlayers()
+        {
+            var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
+
+            nfo.PutBlinds(nfo.P1);
+            nfo.PutBlinds(nfo.P2);
+            nfo.CurrentPlayerFolds();
+
+            Assert.AreNotEqual(nfo.BlindNeeded(nfo.P1), nfo.BlindNeeded(nfo.P2), "The game should need a big blind and a small blind, not two big blinds");
+        }
     }
 }

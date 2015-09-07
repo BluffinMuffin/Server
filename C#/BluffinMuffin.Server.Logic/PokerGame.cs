@@ -102,12 +102,13 @@ namespace BluffinMuffin.Server.Logic
             var seat = p.NoSeat == -1 ? null : Table.Seats[p.NoSeat];
             if (seat != null && !seat.IsEmpty)
             {
+                if (State > GameStateEnum.WaitForPlayers)
+                    Table.NewArrivals.Add(p);
+
                 Observer.RaiseSeatUpdated(seat.Clone());
 
                 if (m_CurrentModule != null)
                     m_CurrentModule.OnSitIn();
-                if (State > GameStateEnum.WaitForPlayers)
-                    Table.NewArrivals.Add(p);
                 return p.NoSeat;
             }
             return -1;
