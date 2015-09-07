@@ -101,7 +101,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
         private void OnCheckCompatibilityCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             const string minimumClientVersion = "2.0";
-            const string currentServerVersion = "2.1.0";
+            const string currentServerVersion = "2.3.0";
 
             var c = (CheckCompatibilityCommand)command;
             Version vClient; 
