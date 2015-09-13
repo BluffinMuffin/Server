@@ -200,13 +200,10 @@ namespace BluffinMuffin.Server.Protocol.Test
             {
                 Params = new TableParams()
                 {
-                    Blind = new BlindOptionsBlinds()
-                    {
-                        MoneyUnit = 10
-                    },
-                    GameType = GameTypeEnum.CommunityCardsPoker,
-                    MoneyUnit = 10,
-                    Limit = new LimitOptionsNoLimit(),
+                    Blind = BlindTypeEnum.Blinds,
+                    Options = new GameTypeOptionsCommunity(),
+                    GameSize = 10,
+                    Limit = LimitTypeEnum.NoLimit,
                     Lobby = new LobbyOptionsQuickMode()
                     {
                         StartingAmount = 1500
@@ -214,7 +211,7 @@ namespace BluffinMuffin.Server.Protocol.Test
                     MaxPlayers = 10,
                     MinPlayersToStart = 2,
                     TableName = "Table One",
-                    Variant = "Texas Hold'em",
+                    Variant = GameSubTypeEnum.TexasHoldem,
                     WaitingTimes = new ConfigurableWaitingTimes()
                     {
                         AfterBoardDealed = 0,

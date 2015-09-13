@@ -117,7 +117,36 @@ namespace BluffinMuffin.Server.Protocol.Workers
                 var r = c.ResponseSuccess();
                 r.ImplementedProtocolVersion = currentServerVersion;
                 r.SupportedLobbyTypes = new[] {LobbyTypeEnum.QuickMode, LobbyTypeEnum.RegisteredMode};
-                r.Rules = RuleFactory.Variants.Values.Where(x => x.IsFavorite).Union(RuleFactory.Variants.Values.Where(x => !x.IsFavorite)).Select(x => x.Info).ToArray();
+                r.AvailableGames = new[]
+                {
+                    new GameInfo
+                    {
+                        AvailableBlinds = new [] {BlindTypeEnum.Blinds},
+                        AvailableLimits = new []{LimitTypeEnum.NoLimit},
+                        AvailableVariants = RuleFactory.Variants.Values.Where(x => x.GameType == GameTypeEnum.CommunityCardsPoker).Select(x => x.Variant).ToArray(),
+                        GameType = GameTypeEnum.CommunityCardsPoker,
+                        MaxPlayers = 10,
+                        MinPlayers = 2
+                    },
+                    new GameInfo
+                    {
+                        AvailableBlinds = new [] {BlindTypeEnum.Antes},
+                        AvailableLimits = new []{LimitTypeEnum.NoLimit},
+                        AvailableVariants = RuleFactory.Variants.Values.Where(x => x.GameType == GameTypeEnum.StudPoker).Select(x => x.Variant).ToArray(),
+                        GameType = GameTypeEnum.StudPoker,
+                        MaxPlayers = 10,
+                        MinPlayers = 2
+                    },
+                    new GameInfo
+                    {
+                        AvailableBlinds = new [] {BlindTypeEnum.None},
+                        AvailableLimits = new []{LimitTypeEnum.NoLimit},
+                        AvailableVariants = RuleFactory.Variants.Values.Where(x => x.GameType == GameTypeEnum.DrawPoker).Select(x => x.Variant).ToArray(),
+                        GameType = GameTypeEnum.DrawPoker,
+                        MaxPlayers = 10,
+                        MinPlayers = 2
+                    }
+                };
                 client.SendCommand(r);
             }
         }

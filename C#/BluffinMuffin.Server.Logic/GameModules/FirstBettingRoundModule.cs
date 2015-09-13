@@ -13,7 +13,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         protected override SeatInfo GetSeatOfTheFirstPlayer()
         {
-            if (Table.Params.Blind.OptionType == BlindTypeEnum.Blinds)
+            if (Table.Params.Blind == BlindTypeEnum.Blinds)
             {
                 //Ad B : A      A
                 //Ad B C: A     A->B->C->A

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using BluffinMuffin.HandEvaluator.Enums;
-using BluffinMuffin.Protocol.DataTypes;
+using BluffinMuffin.Protocol.DataTypes.Attributes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.Attributes;
-using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.Logic.GameModules;
 using Com.Ericmas001.Util;
@@ -19,41 +17,25 @@ namespace BluffinMuffin.Server.Logic.GameVariants
 
         public abstract Type InitModuleType { get; }
 
-        public virtual RuleInfo Info => new RuleInfo()
-        {
-            Name = EnumFactory<GameVariantEnum>.ToString(Variant),
-            GameType = GameType,
-            MinPlayers = 2,
-            MaxPlayers = 10,
-            AvailableLimits = new List<LimitTypeEnum>() { LimitTypeEnum.NoLimit /*,LimitTypeEnum.FixedLimit,LimitTypeEnum.PotLimit*/},
-            DefaultLimit = LimitTypeEnum.NoLimit,
-            AvailableBlinds = new List<BlindTypeEnum>() { BlindTypeEnum.Blinds, BlindTypeEnum.Antes, BlindTypeEnum.None },
-            DefaultBlind = BlindTypeEnum.Blinds,
-            CanConfigWaitingTime = true,
-            AvailableLobbys = new List<LobbyTypeEnum>() { LobbyTypeEnum.QuickMode, LobbyTypeEnum.RegisteredMode },
-        };
-
-        public virtual GameVariantEnum Variant
+        public GameSubTypeEnum Variant
         {
             get
             {
                 var att = GetType().GetCustomAttribute<GameVariantAttribute>();
                 if (att != null)
                     return att.Variant;
-                return GameVariantEnum.TexasHoldem;
+                return GameSubTypeEnum.TexasHoldem;
             }
         }
 
-        public virtual GameTypeEnum GameType => GameTypeEnum.CommunityCardsPoker;
-
-        public virtual bool IsFavorite
+        public GameTypeEnum GameType
         {
             get
             {
-                var att = GetType().GetCustomAttribute<FavoriteGameVariantAttribute>();
+                var att = EnumFactory<GameSubTypeEnum>.GetAttribute<GameTypeAttribute>(Variant);
                 if (att != null)
-                    return true;
-                return false;
+                    return att.GameType;
+                return GameTypeEnum.CommunityCardsPoker;
             }
         }
 

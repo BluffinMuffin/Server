@@ -4,7 +4,7 @@ using BluffinMuffin.Protocol.DataTypes;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
 {
-    public class GameInfo
+    public class GameMockInfo
     {
         public PokerGame Game { get; set; }
         public PlayerInfo P1 { get; set; }

@@ -29,7 +29,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             //We Put the current player just before the starting player, then we will take the next player and he will be the first
             Table.ChangeCurrentPlayerTo(Table.GetSeatOfPlayingPlayerJustBefore(GetSeatOfTheFirstPlayer()));
             Table.NbPlayed = 0;
-            Table.MinimumRaiseAmount = Table.Params.MoneyUnit;
+            Table.MinimumRaiseAmount = Table.Params.GameSize;
 
             WaitALittle(Table.Params.WaitingTimes.AfterBoardDealed);
 

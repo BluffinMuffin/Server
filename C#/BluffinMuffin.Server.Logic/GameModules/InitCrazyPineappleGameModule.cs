@@ -3,9 +3,9 @@ using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    public class InitPineappleGameModule : AbstractGameModule
+    public class InitCrazyPineappleGameModule : AbstractGameModule
     {
-        public InitPineappleGameModule(PokerGameObserver o, PokerTable table)
+        public InitCrazyPineappleGameModule(PokerGameObserver o, PokerTable table)
             : base(o, table)
         {
         }

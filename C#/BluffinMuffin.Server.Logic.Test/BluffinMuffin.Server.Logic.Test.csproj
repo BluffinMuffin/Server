@@ -64,7 +64,7 @@
   <ItemGroup>
     <Compile Include="PokerGameTests\BettingRoundsTests.cs" />
     <Compile Include="PokerGameTests\BlindsTests.cs" />
-    <Compile Include="PokerGameTests\DataTypes\GameInfo.cs" />
+    <Compile Include="PokerGameTests\DataTypes\GameMockInfo.cs" />
     <Compile Include="PokerGameTests\GameStateTests.cs" />
     <Compile Include="PokerGameTests\BettingTests.cs" />
     <Compile Include="PokerGameTests\JoiningSittingLeavingTests.cs" />
