@@ -70,6 +70,7 @@
     <Compile Include="GameModules\InitFiveCardsStudGameModule.cs" />
     <Compile Include="GameModules\InitFiveCardsDrawGameModule.cs" />
     <Compile Include="GameModules\InitCrazyPineappleGameModule.cs" />
+    <Compile Include="GameModules\AbstractInitGameModule.cs" />
     <Compile Include="GameModules\ShowDownModule.cs" />
     <Compile Include="GameModules\InitHoldemGameModule.cs" />
     <Compile Include="GameModules\WaitForBlindsModule.cs" />
