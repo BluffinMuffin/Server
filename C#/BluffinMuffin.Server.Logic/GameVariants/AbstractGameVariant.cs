@@ -3,6 +3,7 @@ using System.Reflection;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes.Attributes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Attributes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.Logic.GameModules;
@@ -14,8 +15,12 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     {
         public abstract int NbCardsInHand { get; }
         public abstract EvaluationParams EvaluationParms { get; }
-
         public abstract Type InitModuleType { get; }
+
+        private AbstractDealer m_Dealer;
+        public AbstractDealer Dealer => m_Dealer ?? (m_Dealer = GenerateDealer());
+
+        protected abstract AbstractDealer GenerateDealer();
 
         public GameSubTypeEnum Variant
         {

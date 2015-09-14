@@ -2,6 +2,7 @@
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.HandEvaluator.Selectors;
 using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Attributes;
 using BluffinMuffin.Server.Logic.GameModules;
 
@@ -15,5 +16,9 @@ namespace BluffinMuffin.Server.Logic.GameVariants
         public override EvaluationParams EvaluationParms => new EvaluationParams { Selector = new OnlyHoleCardsSelector() };
 
         public override Type InitModuleType => typeof(InitFiveCardsStudGameModule);
+        protected override AbstractDealer GenerateDealer()
+        {
+            return new Shuffled52CardsDealer();
+        }
     }
 }

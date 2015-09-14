@@ -23,7 +23,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 return;
             }
             
-            Table.AddCards(Table.Dealer.DealCards(NbCards).Select(x => x.ToString()).ToArray());
+            Table.AddCards(Table.Variant.Dealer.DealCards(NbCards).Select(x => x.ToString()).ToArray());
             RaiseCompleted();
         }
     }

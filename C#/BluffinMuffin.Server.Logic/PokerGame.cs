@@ -48,14 +48,8 @@ namespace BluffinMuffin.Server.Logic
         #region Ctors & Init
 
         public PokerGame(PokerTable table)
-            : this(new Shuffled52CardsDealer(), table)
-        {
-        }
-
-        private PokerGame(AbstractDealer dealer, PokerTable table)
         {
             Observer = new PokerGameObserver(this);
-            table.Dealer = dealer;
             Table = table;
         }
         #endregion Ctors & Init

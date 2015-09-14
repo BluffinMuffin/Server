@@ -92,6 +92,8 @@
     <Compile Include="PokerTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleFactory.cs" />
+    <Compile Include="Shuffled28HighCardsDealer.cs" />
+    <Compile Include="Shuffled32HighCardsDealer.cs" />
     <Compile Include="Shuffled52CardsDealer.cs" />
   </ItemGroup>
   <ItemGroup>

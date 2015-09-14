@@ -151,7 +151,6 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public IEnumerable<PlayerInfo> PlayingAndAllInPlayers => PlayingAndAllInPlayersFrom();
 
-        public AbstractDealer Dealer { get; set; }
         public bool HadPlayers { get; private set; }
 
         public AbstractGameVariant Variant => m_Variant;

@@ -49,7 +49,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             {
                 Table.Params.MinPlayersToStart = 2;
                 Table.InitTable();
-                Table.Dealer.FreshDeck();
+                Table.Variant.Dealer.FreshDeck();
                 RaiseCompleted();
                 Observer.RaiseGameBlindNeeded();
             }
