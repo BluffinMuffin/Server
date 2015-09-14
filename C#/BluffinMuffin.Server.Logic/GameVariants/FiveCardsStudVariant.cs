@@ -1,6 +1,5 @@
 ﻿using System;
 using BluffinMuffin.HandEvaluator;
-using BluffinMuffin.HandEvaluator.Enums;
 using BluffinMuffin.HandEvaluator.Selectors;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.Attributes;

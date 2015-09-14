@@ -1,6 +1,5 @@
 ﻿using System;
 using BluffinMuffin.Protocol.DataTypes.Enums;
-using BluffinMuffin.Server.DataTypes.Enums;
 
 namespace BluffinMuffin.Server.DataTypes.Attributes
 {

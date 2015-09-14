@@ -1,6 +1,5 @@
 ﻿using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
-using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using Com.Ericmas001.Util;
