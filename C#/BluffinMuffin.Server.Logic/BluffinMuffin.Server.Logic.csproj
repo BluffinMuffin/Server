@@ -67,6 +67,7 @@
     <Compile Include="GameModules\DealCardsToBoardModule.cs" />
     <Compile Include="GameModules\BettingRoundModule.cs" />
     <Compile Include="GameModules\CumulPotsModule.cs" />
+    <Compile Include="GameModules\InitLongFlopHoldemGameModule.cs" />
     <Compile Include="GameModules\InitIrishPokerGameModule.cs" />
     <Compile Include="GameModules\InitLazyPineappleGameModule.cs" />
     <Compile Include="GameModules\InitPineappleGameModule.cs" />
@@ -86,6 +87,8 @@
     <Compile Include="GameVariants\FiveCardsStudVariant.cs" />
     <Compile Include="GameVariants\OmahaHoldemVariant.cs" />
     <Compile Include="GameVariants\FiveCardsDrawVariant.cs" />
+    <Compile Include="GameVariants\ManilaPokerVariant.cs" />
+    <Compile Include="GameVariants\SpanishPokerVariant.cs" />
     <Compile Include="GameVariants\ThreeCardsHoldemVariant.cs" />
     <Compile Include="GameVariants\TexasHoldemVariant.cs" />
     <Compile Include="PokerGame.cs" />
