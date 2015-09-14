@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.HandEvaluator.HandRankers;
 using BluffinMuffin.HandEvaluator.Selectors;
@@ -12,7 +13,7 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     [GameVariant(GameSubTypeEnum.SpanishPoker)]
     public class SpanishPokerVariant : AbstractGameVariant
     {
-        public override EvaluationParams EvaluationParms => new EvaluationParams {HandRanker = new FlushBeatsFullHouseHandRanker(), Selector = new Use2Player3CommunitySelector() };
+        public override EvaluationParams EvaluationParms => new EvaluationParams {HandRanker = new FlushBeatsFullHouseHandRanker(), Selector = new Use2Player3CommunitySelector(), UsedCardValues = Dealer.UsedValues.ToArray()};
 
         public override Type InitModuleType => typeof(InitLongFlopHoldemGameModule);
 

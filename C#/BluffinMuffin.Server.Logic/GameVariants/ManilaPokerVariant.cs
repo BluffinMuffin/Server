@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.HandEvaluator.HandRankers;
 using BluffinMuffin.HandEvaluator.Selectors;
@@ -12,8 +13,7 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     [GameVariant(GameSubTypeEnum.ManilaPoker)]
     public class ManilaPokerVariant : AbstractGameVariant
     {
-        //TODO: Manila should not have an ace-low straight as a possibility
-        public override EvaluationParams EvaluationParms => new EvaluationParams {HandRanker = new FlushBeatsFullHouseHandRanker(), Selector = new Use2Player3CommunitySelector()};
+        public override EvaluationParams EvaluationParms => new EvaluationParams {HandRanker = new FlushBeatsFullHouseHandRanker(), Selector = new Use2Player3CommunitySelector(), UsedCardValues = Dealer.UsedValues.ToArray(), UseAceForLowStraight = false};
 
         public override Type InitModuleType => typeof(InitLongFlopHoldemGameModule);
         protected override AbstractDealer GenerateDealer()
