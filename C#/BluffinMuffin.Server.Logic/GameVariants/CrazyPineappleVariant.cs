@@ -12,12 +12,6 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     {
         public override int NbCardsInHand => 3;
 
-        public override EvaluationParams EvaluationParms => new EvaluationParams();
-
         public override Type InitModuleType => typeof (InitCrazyPineappleGameModule);
-        protected override AbstractDealer GenerateDealer()
-        {
-            return new Shuffled52CardsDealer();
-        }
     }
 }

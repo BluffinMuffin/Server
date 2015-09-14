@@ -16,9 +16,5 @@ namespace BluffinMuffin.Server.Logic.GameVariants
         public override EvaluationParams EvaluationParms => new EvaluationParams {Selector = new OnlyHoleCardsSelector()};
 
         public override Type InitModuleType => typeof(InitFiveCardsDrawGameModule);
-        protected override AbstractDealer GenerateDealer()
-        {
-            return new Shuffled52CardsDealer();
-        }
     }
 }

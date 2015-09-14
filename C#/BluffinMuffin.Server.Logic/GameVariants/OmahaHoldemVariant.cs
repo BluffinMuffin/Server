@@ -14,11 +14,5 @@ namespace BluffinMuffin.Server.Logic.GameVariants
         public override int NbCardsInHand => 4;
 
         public override EvaluationParams EvaluationParms => new EvaluationParams {Selector = new Use2Player3CommunitySelector()};
-
-        public override Type InitModuleType => typeof (InitHoldemGameModule);
-        protected override AbstractDealer GenerateDealer()
-        {
-            return new Shuffled52CardsDealer();
-        }
     }
 }

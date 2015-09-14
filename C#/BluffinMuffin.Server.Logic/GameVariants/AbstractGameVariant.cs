@@ -13,14 +13,17 @@ namespace BluffinMuffin.Server.Logic.GameVariants
 {
     public abstract class AbstractGameVariant
     {
-        public abstract int NbCardsInHand { get; }
-        public abstract EvaluationParams EvaluationParms { get; }
-        public abstract Type InitModuleType { get; }
+        public virtual int NbCardsInHand => 2;
+        public virtual EvaluationParams EvaluationParms => new EvaluationParams();
+        public virtual Type InitModuleType => typeof(InitHoldemGameModule);
 
         private AbstractDealer m_Dealer;
         public AbstractDealer Dealer => m_Dealer ?? (m_Dealer = GenerateDealer());
-
-        protected abstract AbstractDealer GenerateDealer();
+        
+        protected virtual AbstractDealer GenerateDealer()
+        {
+            return new Shuffled52CardsDealer();
+        }
 
         public GameSubTypeEnum Variant
         {

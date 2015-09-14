@@ -11,13 +11,5 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     public class ThreeCardsHoldemVariant : AbstractGameVariant
     {
         public override int NbCardsInHand => 3;
-
-        public override EvaluationParams EvaluationParms => new EvaluationParams();
-
-        public override Type InitModuleType => typeof(InitHoldemGameModule);
-        protected override AbstractDealer GenerateDealer()
-        {
-            return new Shuffled52CardsDealer();
-        }
     }
 }

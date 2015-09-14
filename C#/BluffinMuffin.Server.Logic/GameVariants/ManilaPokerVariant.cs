@@ -12,8 +12,6 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     [GameVariant(GameSubTypeEnum.ManilaPoker)]
     public class ManilaPokerVariant : AbstractGameVariant
     {
-        public override int NbCardsInHand => 2;
-
         //TODO: Manila should not have an ace-low straight as a possibility
         public override EvaluationParams EvaluationParms => new EvaluationParams {HandRanker = new FlushBeatsFullHouseHandRanker(), Selector = new Use2Player3CommunitySelector()};
 

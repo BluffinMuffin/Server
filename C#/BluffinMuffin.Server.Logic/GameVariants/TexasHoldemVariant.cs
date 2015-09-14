@@ -11,14 +11,6 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     [GameVariant(GameSubTypeEnum.TexasHoldem)]
     public class TexasHoldemVariant : AbstractGameVariant
     {
-        public override int NbCardsInHand => 2;
-
-        public override EvaluationParams EvaluationParms => new EvaluationParams();
-
-        public override Type InitModuleType => typeof(InitHoldemGameModule);
-        protected override AbstractDealer GenerateDealer()
-        {
-            return new Shuffled52CardsDealer();
-        }
+      
     }
 }
