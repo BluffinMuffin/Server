@@ -13,7 +13,13 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     [GameVariant(GameSubTypeEnum.ManilaPoker)]
     public class ManilaPokerVariant : AbstractGameVariant
     {
-        public override EvaluationParams EvaluationParms => new EvaluationParams {HandRanker = new FlushBeatsFullHouseHandRanker(), Selector = new Use2Player3CommunitySelector(), UsedCardValues = Dealer.UsedValues.ToArray(), UseAceForLowStraight = false};
+        public override EvaluationParams EvaluationParms => new EvaluationParams
+        {
+            HandRanker = new FlushBeatsFullHouseHandRanker(),
+            Selector = new Use2Player3CommunitySelector(),
+            UsedCardValues = Dealer.UsedValues.ToArray(),
+            UseAceForLowStraight = false
+        };
 
         public override Type InitModuleType => typeof(InitLongFlopHoldemGameModule);
         protected override AbstractDealer GenerateDealer()
