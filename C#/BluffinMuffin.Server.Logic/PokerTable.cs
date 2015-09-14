@@ -412,7 +412,7 @@ namespace BluffinMuffin.Server.Logic
             if (Cards == null || playerCards == null || Cards.Union(playerCards).Count(x => !string.IsNullOrEmpty(x)) < 5)
                 return null;
 
-            return HandEvaluators.Evaluate(Variant.CardSelectionType, playerCards.Where(x => !string.IsNullOrEmpty(x)), Cards.Where(x => !string.IsNullOrEmpty(x)));
+            return HandEvaluators.Evaluate(playerCards.Where(x => !string.IsNullOrEmpty(x)), Cards.Where(x => !string.IsNullOrEmpty(x)));
         }
 
         /// <summary>

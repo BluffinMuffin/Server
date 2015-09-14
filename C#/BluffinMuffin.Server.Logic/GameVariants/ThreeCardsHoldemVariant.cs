@@ -1,4 +1,5 @@
 ﻿using System;
+using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.HandEvaluator.Enums;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.Attributes;
@@ -12,7 +13,7 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     {
         public override int NbCardsInHand => 3;
 
-        public override CardSelectionEnum CardSelectionType => CardSelectionEnum.AllPlayerAndAllCommunity;
+        public override EvaluationParams EvaluationParms => new EvaluationParams();
 
         public override Type InitModuleType => typeof(InitHoldemGameModule);
     }

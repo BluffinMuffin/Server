@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.HandEvaluator.Enums;
 using BluffinMuffin.Protocol.DataTypes.Attributes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
@@ -13,7 +14,7 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     public abstract class AbstractGameVariant
     {
         public abstract int NbCardsInHand { get; }
-        public abstract CardSelectionEnum CardSelectionType { get; }
+        public abstract EvaluationParams EvaluationParms { get; }
 
         public abstract Type InitModuleType { get; }
 
