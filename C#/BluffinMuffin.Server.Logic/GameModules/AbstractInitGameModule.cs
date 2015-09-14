@@ -17,6 +17,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             Table.BettingRoundId = 0;
             Table.Players.ForEach(x => x.FaceDownCards = new string[0]);
             Table.Players.ForEach(x => x.FaceUpCards = new string[0]);
+            Table.InitCards();
 
             AddModule(new WaitForPlayerModule(Observer, Table));
             AddModule(new WaitForBlindsModule(Observer, Table));

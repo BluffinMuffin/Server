@@ -10,7 +10,7 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     [GameVariant(GameSubTypeEnum.IrishPoker)]
     public class IrishPokerVariant : AbstractGameVariant
     {
-        public override int NbCardsInHand => 3;
+        public override int NbCardsInHand => 4;
 
         public override CardSelectionEnum CardSelectionType => CardSelectionEnum.AllPlayerAndAllCommunity;
 

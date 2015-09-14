@@ -139,7 +139,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
                     },
                     new GameInfo
                     {
-                        AvailableBlinds = new [] {BlindTypeEnum.None},
+                        AvailableBlinds = new [] {BlindTypeEnum.Antes},
                         AvailableLimits = new []{LimitTypeEnum.NoLimit},
                         AvailableVariants = RuleFactory.Variants.Values.Where(x => x.GameType == GameTypeEnum.DrawPoker).Select(x => x.Variant).ToArray(),
                         GameType = GameTypeEnum.DrawPoker,

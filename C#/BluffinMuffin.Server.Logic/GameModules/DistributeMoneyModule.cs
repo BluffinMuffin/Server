@@ -20,15 +20,15 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 if (players.Length > 0)
                 {
                     var wonAmount = pot.Amount / players.Length;
-                    if (wonAmount > 0)
-                    {
+                    //if (wonAmount > 0)
+                    //{
                         foreach (var p in players)
                         {
                             p.Player.MoneySafeAmnt += wonAmount;
                             Observer.RaisePlayerWonPot(p, pot, wonAmount);
                             WaitALittle(Table.Params.WaitingTimes.AfterPotWon);
                         }
-                    }
+                    //}
                 }
             }
             RaiseCompleted();

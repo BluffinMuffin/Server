@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
-using BluffinMuffin.Protocol.DataTypes.Options;
 using System.Linq;
 using BluffinMuffin.Server.DataTypes;
-using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.Logic.GameVariants;
 using Com.Ericmas001.Util;
 
@@ -15,7 +13,6 @@ namespace BluffinMuffin.Server.Logic
     public class PokerTable
     {
         #region Fields
-        private readonly string[] m_Cards = new string[5];
         private SeatInfo[] m_Seats;
         private readonly List<MoneyPot> m_Pots = new List<MoneyPot>();
         private TableParams m_Params;
@@ -54,18 +51,7 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// Cards on the Board
         /// </summary>
-        public string[] Cards
-        {
-            get { return m_Cards.Select(c => c ?? string.Empty).ToArray(); }
-            protected set
-            {
-                if (value != null && value.Length == 5)
-                {
-                    for (var i = 0; i < 5; ++i)
-                        m_Cards[i] = value[i];
-                }
-            }
-        }
+        public string[] Cards { get; set; }
 
         /// <summary>
         /// List of MoneyPots currently on the table. There should always have at least one MoneyPot
@@ -198,7 +184,7 @@ namespace BluffinMuffin.Server.Logic
 
         public void InitTable()
         {
-            Cards = new string[5];
+            Cards = new string[0];
             NbPlayed = 0;
             TotalPotAmnt = 0;
             m_Pots.Clear();
@@ -345,11 +331,16 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// Add cards to the board
         /// </summary>
+        public void InitCards()
+        {
+            Cards = new string[0];
+        }
+        /// <summary>
+        /// Add cards to the board
+        /// </summary>
         public void AddCards(params string[] c)
         {
-            var firstUnused =  Enumerable.Range(0,m_Cards.Length).First(i => string.IsNullOrEmpty(m_Cards[i]));
-            for (var j = firstUnused; j < Math.Min(5, c.Length + firstUnused); ++j)
-                m_Cards[j] = c[j - firstUnused];
+            Cards = Cards.Concat(c).ToArray();
         }
 
         /// <summary>

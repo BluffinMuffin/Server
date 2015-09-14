@@ -1,5 +1,4 @@
-﻿using BluffinMuffin.Server.DataTypes.Enums;
-using BluffinMuffin.Server.DataTypes.EventHandling;
+﻿using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
