@@ -161,7 +161,8 @@ namespace BluffinMuffin.Server.Protocol
             Send(new BetTurnStartedCommand()
             {
                 Cards = Game.Table.Cards.Select(x => x.ToString()).ToArray(),
-                BettingRoundId = Game.Table.BettingRoundId
+                BettingRoundId = Game.Table.BettingRoundId,
+                Seats = AllSeats().ToList()
             });
         }
 

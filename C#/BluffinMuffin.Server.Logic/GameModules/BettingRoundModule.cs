@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
+using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using Com.Ericmas001.Util;
@@ -24,10 +27,25 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 return;
             }
             Table.BettingRoundId++;
+
+            if (Table.FirstTalkerSeat != null)
+                Table.FirstTalkerSeat.SeatAttributes = Table.FirstTalkerSeat.SeatAttributes.Except(new[] { SeatAttributeEnum.FirstTalker }).ToArray();
+
+            if (Table.FirstTalkerSeat != null)
+                Table.FirstTalkerSeat.SeatAttributes = Table.FirstTalkerSeat.SeatAttributes.Except(new[] { SeatAttributeEnum.FirstTalker }).ToArray();
+
+            var firstPlayer = GetSeatOfTheFirstPlayer();
+
+            if (Table.Params.Options.OptionType == GameTypeEnum.StudPoker)
+                firstPlayer.SeatAttributes = firstPlayer.SeatAttributes.Union(new[] { SeatAttributeEnum.FirstTalker }).ToArray();
+
+            Table.ChangeCurrentPlayerTo(null);
             Observer.RaiseGameBettingRoundStarted();
 
             //We Put the current player just before the starting player, then we will take the next player and he will be the first
-            Table.ChangeCurrentPlayerTo(Table.GetSeatOfPlayingPlayerJustBefore(GetSeatOfTheFirstPlayer()));
+            Table.ChangeCurrentPlayerTo(Table.GetSeatOfPlayingPlayerJustBefore(firstPlayer));
+
+
             Table.NbPlayed = 0;
             Table.MinimumRaiseAmount = Table.Params.GameSize;
 
@@ -41,6 +59,11 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         protected virtual SeatInfo GetSeatOfTheFirstPlayer()
         {
+            if (Table.Params.Options.OptionType == GameTypeEnum.StudPoker)
+            {
+                return Table.Seats[HandEvaluators.Evaluate(Table.PlayingPlayers.Select(p => new CardHolder(p, p.FaceUpCards, new string[0])).Cast<IStringCardsHolder>().ToArray(), new EvaluationParams {UseSuitRanking = true}).First().Select(x => x.CardsHolder).Cast<CardHolder>().First().Player.NoSeat];
+            }
+
             return Table.GetSeatOfPlayingPlayerNextTo(Table.DealerSeat);
         }
 

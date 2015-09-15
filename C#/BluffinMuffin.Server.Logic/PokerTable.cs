@@ -87,6 +87,17 @@ namespace BluffinMuffin.Server.Logic
             }
         }
 
+        /// <summary>
+        /// Where is the FirstTalker
+        /// </summary>
+        public SeatInfo FirstTalkerSeat
+        {
+            get
+            {
+                return m_Seats.FirstOrDefault(s => s.SeatAttributes.Contains(SeatAttributeEnum.FirstTalker));
+            }
+        }
+
         public SeatInfo CurrentPlayerSeat
         {
             get
@@ -526,8 +537,11 @@ namespace BluffinMuffin.Server.Logic
             
             Seats.ForEach(s => s.SeatAttributes = new SeatAttributeEnum[0]);
 
-            var nextDealerSeat = GetSeatOfPlayingPlayerNextTo(previousDealer);
-            nextDealerSeat.SeatAttributes = nextDealerSeat.SeatAttributes.Union(new[] { SeatAttributeEnum.Dealer }).ToArray();
+            if (Params.Options.OptionType != GameTypeEnum.StudPoker)
+            {
+                var nextDealerSeat = GetSeatOfPlayingPlayerNextTo(previousDealer);
+                nextDealerSeat.SeatAttributes = nextDealerSeat.SeatAttributes.Union(new[] {SeatAttributeEnum.Dealer}).ToArray();
+            }
 
             m_BlindNeeded.Clear();
 
