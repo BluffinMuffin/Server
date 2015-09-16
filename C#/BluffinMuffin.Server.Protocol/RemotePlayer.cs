@@ -120,13 +120,15 @@ namespace BluffinMuffin.Server.Protocol
             Send(new TableClosedCommand());
         }
 
-        void OnPlayerActionNeeded(object sender, PlayerInfoEventArgs e)
+        void OnPlayerActionNeeded(object sender, ActionNeededEventArgs e)
         {
             Send(new PlayerTurnBeganCommand()
             {
                 NoSeat = e.Player.NoSeat,
-                AmountNeeded = Game.Table.CallAmnt(e.Player),
-                MinimumRaiseAmount = Game.Table.MinimumRaiseAmount,
+                AmountNeeded = e.AmountNeeded,
+                MinimumRaiseAmount = e.MinimumRaiseAmount,
+                MaximumRaiseAmount = e.MaximumRaiseAmount,
+                CanFold = e.CanFold
             });
         }
 

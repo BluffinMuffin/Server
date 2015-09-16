@@ -115,7 +115,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             Table.ChangeCurrentPlayerTo(next);
 
-            Observer.RaisePlayerActionNeeded(next.Player);
+            Observer.RaisePlayerActionNeeded(next.Player, Table.CallAmnt(next.Player), true, Table.MinimumRaiseAmount, int.MaxValue);
 
             if (next.Player.IsZombie)
             {

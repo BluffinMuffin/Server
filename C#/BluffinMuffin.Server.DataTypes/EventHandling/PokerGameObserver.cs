@@ -17,7 +17,7 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         public event EventHandler<PlayerInfoEventArgs> PlayerJoined = delegate { };
         public event EventHandler<PlayerInfoEventArgs> PlayerHoleCardsChanged = delegate { };
         public event EventHandler<SeatEventArgs> SeatUpdated = delegate { };
-        public event EventHandler<PlayerInfoEventArgs> PlayerActionNeeded = delegate { };
+        public event EventHandler<ActionNeededEventArgs> PlayerActionNeeded = delegate { };
         public event EventHandler<PotWonEventArgs> PlayerWonPot = delegate { };
         public event EventHandler<PlayerActionEventArgs> PlayerActionTaken = delegate { };
         public event EventHandler<MinMaxEventArgs> DiscardActionNeeded = delegate { };
@@ -59,9 +59,9 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         {
             SeatUpdated(m_Game, new SeatEventArgs(s));
         }
-        public void RaisePlayerActionNeeded(PlayerInfo p)
+        public void RaisePlayerActionNeeded(PlayerInfo p, int amountNeeded, bool canFold, int minimumRaiseAmount, int maximumRaiseAmount)
         {
-            PlayerActionNeeded(m_Game, new PlayerInfoEventArgs(p));
+            PlayerActionNeeded(m_Game, new ActionNeededEventArgs(p, amountNeeded, canFold, minimumRaiseAmount, maximumRaiseAmount));
         }
         public void RaiseDiscardActionNeeded(int min, int max)
         {
