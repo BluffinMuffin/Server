@@ -12,7 +12,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         public override void InitModulePlaying()
         {
             AddModule(new DealCardsToPlayersModule(Observer, Table, 1, 1));
-            AddModule(new FirstBettingRoundModule(Observer, Table));
+            AddModule(new StudFirstBettingRoundModule(Observer, Table));
             AddModule(new CumulPotsModule(Observer, Table));
 
             AddModule(new DealCardsToPlayersModule(Observer, Table, 0, 1));

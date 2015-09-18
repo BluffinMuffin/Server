@@ -4,6 +4,7 @@ using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
+using BluffinMuffin.Server.Logic.GameVariants;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
@@ -16,11 +17,6 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         protected override SeatInfo GetSeatOfTheFirstPlayer()
         {
-            if (Table.Params.Options.OptionType == GameTypeEnum.StudPoker)
-            {
-                return Table.Seats[HandEvaluators.Evaluate(Table.PlayingPlayers.Select(p => new CardHolder(p, p.FaceUpCards, new string[0])).Cast<IStringCardsHolder>().ToArray(), new EvaluationParams { UseSuitRanking = true }).Last().Select(x => x.CardsHolder).Cast<CardHolder>().First().Player.NoSeat];
-            }
-
             if (Table.Params.Blind == BlindTypeEnum.Blinds)
             {
                 //Ad B : A      A

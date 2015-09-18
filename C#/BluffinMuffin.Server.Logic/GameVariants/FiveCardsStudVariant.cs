@@ -8,14 +8,9 @@ using BluffinMuffin.Server.Logic.GameModules;
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
     [GameVariant(GameSubTypeEnum.FiveCardsStud)]
-    public class FiveCardsStudVariant : AbstractGameVariant
+    public class FiveCardsStudVariant : AbstractStudGameVariant
     {
         public override int NbCardsInHand => 5;
-
-        public override EvaluationParams EvaluationParms => new EvaluationParams
-        {
-            Selector = new OnlyHoleCardsSelector()
-        };
 
         public override Type InitModuleType => typeof(InitFiveCardsStudGameModule);
     }

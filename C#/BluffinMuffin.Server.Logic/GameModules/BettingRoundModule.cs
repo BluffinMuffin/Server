@@ -6,6 +6,7 @@ using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
+using BluffinMuffin.Server.Logic.GameVariants;
 using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic.GameModules
@@ -18,6 +19,11 @@ namespace BluffinMuffin.Server.Logic.GameModules
         }
 
         public override GameStateEnum GameState => GameStateEnum.Playing;
+
+        protected virtual void InitModuleSpecific()
+        {
+            
+        }
 
         public override void InitModule()
         {
@@ -48,6 +54,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             Table.NbPlayed = 0;
             Table.MinimumRaiseAmount = Table.Params.GameSize;
+            InitModuleSpecific();
 
             WaitALittle(Table.Params.WaitingTimes.AfterBoardDealed);
 
@@ -109,7 +116,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             RaiseCompleted();
         }
-        private void ChooseNextPlayer()
+        protected virtual void ChooseNextPlayer()
         {
             var next = Table.GetSeatOfPlayingPlayerNextTo(Table.CurrentPlayerSeat);
 

@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameModules\AbstractGameModule.cs" />
+    <Compile Include="GameModules\StudFirstBettingRoundModule.cs" />
     <Compile Include="GameModules\DealCardsToPlayersModule.cs" />
     <Compile Include="GameModules\DealMissingCardsToPlayersModule.cs" />
     <Compile Include="GameModules\DiscardRoundModule.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="GameModules\WaitForBlindsModule.cs" />
     <Compile Include="GameModules\WaitForPlayerModule.cs" />
     <Compile Include="GameVariants\AbstractGameVariant.cs" />
+    <Compile Include="GameVariants\AbstractStudGameVariant.cs" />
     <Compile Include="GameVariants\IrishPokerVariant.cs" />
     <Compile Include="GameVariants\LazyPineappleVariant.cs" />
     <Compile Include="GameVariants\PineappleVariant.cs" />
