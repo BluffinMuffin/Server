@@ -58,10 +58,15 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             WaitALittle(Table.Params.WaitingTimes.AfterBoardDealed);
 
-            if (Table.NbPlaying <= 1)
+            if (Table.NbPlaying <= 1 || Table.NbPlayingAndAllIn == 1 || Table.NbPlayed >= Table.NbPlayingAndAllIn)
                 EndBettingRound();
             else
-                ContinueBettingRound();
+                ChooseNextPlayer();
+        }
+
+        protected virtual bool CanFold()
+        {
+            return true;
         }
 
         protected virtual SeatInfo GetSeatOfTheFirstPlayer()
@@ -105,7 +110,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             Observer.RaisePlayerActionTaken(p, GameActionEnum.Raise, played);
         }
-        private void ContinueBettingRound()
+        protected virtual void ContinueBettingRound()
         {
             if (Table.NbPlayingAndAllIn == 1 || Table.NbPlayed >= Table.NbPlayingAndAllIn)
                 EndBettingRound();
@@ -122,7 +127,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             Table.ChangeCurrentPlayerTo(next);
 
-            Observer.RaisePlayerActionNeeded(next.Player, Table.CallAmnt(next.Player), true, Table.MinimumRaiseAmount, int.MaxValue);
+            Observer.RaisePlayerActionNeeded(next.Player, Table.CallAmnt(next.Player), CanFold(), Table.MinimumRaiseAmount, int.MaxValue);
 
             if (next.Player.IsZombie)
             {

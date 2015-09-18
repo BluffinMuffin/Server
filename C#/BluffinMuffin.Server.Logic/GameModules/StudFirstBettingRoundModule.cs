@@ -21,6 +21,10 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 throw new Exception("This should only used with STUD games.");
         }
 
+        protected override bool CanFold()
+        {
+            return !Variant.NeedsBringIn;
+        }
 
         protected override SeatInfo GetSeatOfTheFirstPlayer()
         {
@@ -44,14 +48,17 @@ namespace BluffinMuffin.Server.Logic.GameModules
                     return false;
             }
 
-            var ok = base.OnMoneyPlayed(p, amnt);
+            return base.OnMoneyPlayed(p, amnt);
+        }
 
-            if (!ok || !Variant.NeedsBringIn)
-                return ok;
-
-            Table.MinimumRaiseAmount = Table.Params.GameSize;
-            Variant.NeedsBringIn = false;
-            return true;
+        protected override void ContinueBettingRound()
+        {
+            if (Variant.NeedsBringIn)
+            {
+                Table.MinimumRaiseAmount = Table.Params.GameSize;
+                Variant.NeedsBringIn = false;
+            }
+            base.ContinueBettingRound();
         }
     }
 }
