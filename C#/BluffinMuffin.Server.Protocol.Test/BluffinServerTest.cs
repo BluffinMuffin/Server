@@ -172,8 +172,10 @@ namespace BluffinMuffin.Server.Protocol.Test
 
         private void BeAwareOfOtherPlayerJoined(RemoteTcpServer serverEntity, RemoteTcpServer other)
         {
-            var response = serverEntity.WaitForNextCommand<PlayerJoinedCommand>();
-            Assert.AreEqual(other.Name,response.PlayerName);
+            var response = serverEntity.WaitForNextCommand<GameMessageCommand>();
+            Assert.AreEqual(GameMessageEnum.PlayerJoined, response.Info.OptionType);
+            var info = (GameMessageOptionPlayerJoined)response.Info;
+            Assert.AreEqual(other.Name, info.PlayerName);
         }
 
         private int GameIsStarting(RemoteTcpServer serverEntity)

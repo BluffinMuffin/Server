@@ -7,6 +7,7 @@ using BluffinMuffin.Protocol.DataTypes.EventHandling;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.Logic;
 using BluffinMuffin.Protocol.DataTypes;
+using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Protocol.Game;
 using BluffinMuffin.Server.Protocol.DataTypes;
 
@@ -172,9 +173,12 @@ namespace BluffinMuffin.Server.Protocol
         {
             var p = e.Player;
             if(p != Player)
-                Send(new PlayerJoinedCommand()
+                Send(new GameMessageCommand
                 {
-                    PlayerName = p.Name,
+                    Info = new GameMessageOptionPlayerJoined
+                    {
+                        PlayerName = p.Name
+                    }
                 });
         }
 
