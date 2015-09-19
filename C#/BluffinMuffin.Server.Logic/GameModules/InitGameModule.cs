@@ -34,7 +34,8 @@ namespace BluffinMuffin.Server.Logic.GameModules
         public override void InitModule()
         {
             InitModuleBegginning();
-            Table.Variant.GetModules(Observer, Table);
+            foreach (var m in Table.Variant.GetModules(Observer, Table))
+                AddModule(m);
             InitModuleEnding();
         }
     }
