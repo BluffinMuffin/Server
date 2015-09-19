@@ -6,7 +6,7 @@ using BluffinMuffin.Server.DataTypes.Attributes;
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
     [GameVariant(GameSubTypeEnum.OmahaHoldem)]
-    public class OmahaHoldemVariant : AbstractGameVariant
+    public class OmahaHoldemVariant : AbstractHoldemGameVariant
     {
         public override int NbCardsInHand => 4;
 

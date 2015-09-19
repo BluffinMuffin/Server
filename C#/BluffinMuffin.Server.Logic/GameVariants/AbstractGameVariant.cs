@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes.Attributes;
@@ -6,7 +7,6 @@ using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Attributes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
-using BluffinMuffin.Server.Logic.GameModules;
 using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
@@ -15,7 +15,8 @@ namespace BluffinMuffin.Server.Logic.GameVariants
     {
         public virtual int NbCardsInHand => 2;
         public virtual EvaluationParams EvaluationParms => new EvaluationParams();
-        public virtual Type InitModuleType => typeof(InitHoldemGameModule);
+
+        public abstract IEnumerable<IGameModule> GetModules(PokerGameObserver o, PokerTable table); 
 
         private AbstractDealer m_Dealer;
         public AbstractDealer Dealer => m_Dealer ?? (m_Dealer = GenerateDealer());
@@ -45,14 +46,6 @@ namespace BluffinMuffin.Server.Logic.GameVariants
                     return att.GameType;
                 return GameTypeEnum.CommunityCardsPoker;
             }
-        }
-
-        public virtual AbstractGameModule GenerateInitModule(PokerGameObserver observer,PokerTable table)
-        {
-            if (!InitModuleType.IsSubclassOf(typeof (AbstractGameModule)))
-                return null;
-            var ctor = InitModuleType.GetConstructor(new[] { typeof(PokerGameObserver), typeof(PokerTable) });
-            return (AbstractGameModule) ctor?.Invoke(new object[] { observer, table });
         }
     }
 }

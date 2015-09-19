@@ -3,9 +3,9 @@ using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
-    public abstract class AbstractInitGameModule : AbstractGameModule
+    public class InitGameModule : AbstractGameModule
     {
-        protected AbstractInitGameModule(PokerGameObserver o, PokerTable table) : base(o, table)
+        public InitGameModule(PokerGameObserver o, PokerTable table) : base(o, table)
         {
         }
 
@@ -23,8 +23,6 @@ namespace BluffinMuffin.Server.Logic.GameModules
             AddModule(new WaitForBlindsModule(Observer, Table));
         }
 
-        public abstract void InitModulePlaying();
-
         public virtual void InitModuleEnding()
         {
             AddModule(new ShowDownModule(Observer, Table));
@@ -36,7 +34,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         public override void InitModule()
         {
             InitModuleBegginning();
-            InitModulePlaying();
+            Table.Variant.GetModules(Observer, Table);
             InitModuleEnding();
         }
     }

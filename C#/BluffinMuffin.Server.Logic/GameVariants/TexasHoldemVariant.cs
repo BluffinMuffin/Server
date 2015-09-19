@@ -3,9 +3,8 @@ using BluffinMuffin.Server.DataTypes.Attributes;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
-    [FavoriteGameVariant]
     [GameVariant(GameSubTypeEnum.TexasHoldem)]
-    public class TexasHoldemVariant : AbstractGameVariant
+    public class TexasHoldemVariant : AbstractHoldemGameVariant
     {
       
     }

@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.HandEvaluator;
+using BluffinMuffin.HandEvaluator.Selectors;
 using BluffinMuffin.Server.DataTypes;
-using BluffinMuffin.Server.DataTypes.Attributes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.Logic.GameModules;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
-    [GameVariant(GameSubTypeEnum.IrishPoker)]
-    public class IrishPokerVariant : AbstractGameVariant
+    public abstract class AbstractLongFlopHoldemGameVariant : AbstractHoldemGameVariant
     {
-        public override int NbCardsInHand => 4;
+
         public override IEnumerable<IGameModule> GetModules(PokerGameObserver o, PokerTable t)
         {
             //Preflop
@@ -19,13 +18,20 @@ namespace BluffinMuffin.Server.Logic.GameVariants
             yield return new FirstBettingRoundModule(o, t);
             yield return new CumulPotsModule(o, t);
 
-            //Flop
-            yield return new DealCardsToBoardModule(o, t, 3);
+            //Flop 1
+            yield return new DealCardsToBoardModule(o, t, 1);
             yield return new BettingRoundModule(o, t);
             yield return new CumulPotsModule(o, t);
 
-            //Discard 2 to go back to 2 hole cards
-            yield return new DiscardRoundModule(o, t, 2, 2);
+            //Flop 2
+            yield return new DealCardsToBoardModule(o, t, 1);
+            yield return new BettingRoundModule(o, t);
+            yield return new CumulPotsModule(o, t);
+
+            //Flop 3
+            yield return new DealCardsToBoardModule(o, t, 1);
+            yield return new BettingRoundModule(o, t);
+            yield return new CumulPotsModule(o, t);
 
             //Turn
             yield return new DealCardsToBoardModule(o, t, 1);

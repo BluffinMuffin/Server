@@ -11,7 +11,7 @@ using BluffinMuffin.Server.Logic.GameModules;
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
     [GameVariant(GameSubTypeEnum.ManilaPoker)]
-    public class ManilaPokerVariant : AbstractGameVariant
+    public class ManilaPokerVariant : AbstractLongFlopHoldemGameVariant
     {
         public override EvaluationParams EvaluationParms => new EvaluationParams
         {
@@ -21,7 +21,6 @@ namespace BluffinMuffin.Server.Logic.GameVariants
             UseAceForLowStraight = false
         };
 
-        public override Type InitModuleType => typeof(InitLongFlopHoldemGameModule);
         protected override AbstractDealer GenerateDealer()
         {
             return new Shuffled32HighCardsDealer();

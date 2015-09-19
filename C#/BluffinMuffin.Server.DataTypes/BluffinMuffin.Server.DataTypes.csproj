@@ -60,7 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractDealer.cs" />
-    <Compile Include="Attributes\FavoriteGameVariantAttribute.cs" />
     <Compile Include="Attributes\GameVariantAttribute.cs" />
     <Compile Include="CardHolder.cs" />
     <Compile Include="Enums\GameStateEnum.cs" />

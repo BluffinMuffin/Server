@@ -11,7 +11,7 @@ using BluffinMuffin.Server.Logic.GameModules;
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
     [GameVariant(GameSubTypeEnum.SpanishPoker)]
-    public class SpanishPokerVariant : AbstractGameVariant
+    public class SpanishPokerVariant : AbstractLongFlopHoldemGameVariant
     {
         public override EvaluationParams EvaluationParms => new EvaluationParams
         {
@@ -19,8 +19,6 @@ namespace BluffinMuffin.Server.Logic.GameVariants
             Selector = new Use2Player3CommunitySelector(),
             UsedCardValues = Dealer.UsedValues.ToArray()
         };
-
-        public override Type InitModuleType => typeof(InitLongFlopHoldemGameModule);
 
         protected override AbstractDealer GenerateDealer()
         {
