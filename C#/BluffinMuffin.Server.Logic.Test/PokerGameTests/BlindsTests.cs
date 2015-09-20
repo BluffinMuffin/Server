@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -11,7 +12,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void AntesGameAllPlayerNeedsToPutTheSameBlind()
         {
             var nfo = Simple4PlayersAntesGameMock.WithAllPlayersSeated();
-            Assert.AreEqual(true, nfo.Players.All(x => nfo.BlindNeeded(x) == nfo.Game.Table.Params.MoneyUnit), "The game should need the same blind for everybody (Antes)");
+            Assert.AreEqual(true, nfo.Players.All(x => nfo.BlindNeeded(x) == Math.Max(nfo.Game.Table.Params.GameSize/10,1)), "The game should need the same blind for everybody (Antes)");
         }
 
         [TestMethod]
@@ -47,6 +48,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         {
             var nfo = Simple2PlayersBlindsGameMock.WithOnlyP1Seated();
             nfo.P2 = PlayerMock.GenerateP2PoorSeated(nfo);
+            nfo.P2.MoneySafeAmnt = 2; // Make it poorer than ever
 
             Assert.AreEqual(true, nfo.Game.PlayMoney(nfo.P2, nfo.P2.MoneySafeAmnt), "The game should accept a blind that is under what is needed if that is all the player got");
         }

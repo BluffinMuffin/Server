@@ -11,16 +11,14 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
         }
 
-        public override GameStateEnum GameState
-        {
-            get { return GameStateEnum.Showdown; }
-        }
+        public override GameStateEnum GameState => GameStateEnum.Showdown;
 
         public override void InitModule()
         {
             foreach (var p in Table.Players.Where(p => p.IsPlaying || p.IsAllIn))
             {
-                p.IsShowingCards = true;
+                p.FaceUpCards = p.FaceUpCards.Concat(p.FaceDownCards).ToArray();
+                p.FaceDownCards = new string[0];
                 Observer.RaisePlayerHoleCardsChanged(p);
             }
             RaiseCompleted();

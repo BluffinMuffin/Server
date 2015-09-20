@@ -18,10 +18,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             m_Maximum = maximum;
         }
 
-        public override GameStateEnum GameState
-        {
-            get { return GameStateEnum.Playing; }
-        }
+        public override GameStateEnum GameState => GameStateEnum.Playing;
 
         public override void InitModule()
         {
@@ -34,7 +31,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             foreach (var p in m_Players.Keys)
             {
-                p.HoleCards = p.HoleCards.Select(x => x.ToUpper()).Except(m_Players[p].Select(x => x.ToUpper())).ToArray();
+                p.FaceDownCards = p.FaceDownCards.Select(x => x.ToUpper()).Except(m_Players[p].Select(x => x.ToUpper())).ToArray();
                 Observer.RaisePlayerHoleCardsChanged(p);
             }
             WaitALittle(Table.Params.WaitingTimes.AfterPotWon);

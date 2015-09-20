@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using BluffinMuffin.Server.DataTypes.Enums;
+﻿using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.Logic.GameModules
@@ -11,10 +10,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
         }
 
-        public override GameStateEnum GameState
-        {
-            get { return GameStateEnum.DecideWinners; }
-        }
+        public override GameStateEnum GameState => GameStateEnum.DecideWinners;
 
         public override void InitModule()
         {

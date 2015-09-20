@@ -1,33 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BluffinMuffin.HandEvaluator.Enums;
-using BluffinMuffin.Protocol.DataTypes;
+﻿using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.Attributes;
-using BluffinMuffin.Server.DataTypes.Enums;
-using BluffinMuffin.Server.Logic.GameModules;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
-    [FavoriteGameVariant]
-    [GameVariant(GameVariantEnum.TexasHoldem)]
-    public class TexasHoldemVariant : AbstractGameVariant
+    [GameVariant(GameSubTypeEnum.TexasHoldem)]
+    public class TexasHoldemVariant : AbstractHoldemGameVariant
     {
-        public override int NbCardsInHand
-        {
-            get { return 2; }
-        }
-
-        public override CardSelectionEnum CardSelectionType
-        {
-            get { return CardSelectionEnum.AllPlayerAndAllCommunity; }
-        }
-
-        public override Type InitModuleType
-        {
-            get { return typeof(InitHoldemGameModule); }
-        }
+      
     }
 }

@@ -5,7 +5,6 @@ using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.Persistance;
-using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.Enums;
 using BluffinMuffin.Protocol.Game;
@@ -18,7 +17,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
     {
         private readonly KeyValuePair<Type, Action<AbstractCommand, IBluffinClient, RemotePlayer>>[] m_Methods;
 
-        private IBluffinServer Server { get; set; }
+        private IBluffinServer Server { get; }
         public BluffinGameWorker(IBluffinServer server)
         {
             Server = server;

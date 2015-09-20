@@ -1,32 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BluffinMuffin.HandEvaluator.Enums;
-using BluffinMuffin.Protocol.DataTypes;
+using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Attributes;
-using BluffinMuffin.Server.DataTypes.Enums;
+using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.Logic.GameModules;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
-    [GameVariant(GameVariantEnum.CrazyPineapple)]
+    [GameVariant(GameSubTypeEnum.CrazyPineapple)]
     public class CrazyPineappleVariant : AbstractGameVariant
     {
-        public override int NbCardsInHand
-        {
-            get { return 3; }
-        }
+        public override int NbCardsInHand => 3;
 
-        public override CardSelectionEnum CardSelectionType
+        public override IEnumerable<IGameModule> GetModules(PokerGameObserver o, PokerTable t)
         {
-            get { return CardSelectionEnum.AllPlayerAndAllCommunity; }
-        }
+            //Preflop
+            yield return new DealMissingCardsToPlayersModule(o, t, NbCardsInHand);
+            yield return new FirstBettingRoundModule(o, t);
+            yield return new CumulPotsModule(o, t);
 
-        public override Type InitModuleType
-        {
-            get { return typeof (InitPineappleGameModule); }
+            //Flop
+            yield return new DealCardsToBoardModule(o, t, 3);
+            yield return new BettingRoundModule(o, t);
+            yield return new CumulPotsModule(o, t);
+
+            //Discard 1 to go back to 2 hole cards
+            yield return new DiscardRoundModule(o, t, 1, 1);
+
+            //Turn
+            yield return new DealCardsToBoardModule(o, t, 1);
+            yield return new BettingRoundModule(o, t);
+            yield return new CumulPotsModule(o, t);
+
+            //River
+            yield return new DealCardsToBoardModule(o, t, 1);
+            yield return new BettingRoundModule(o, t);
+            yield return new CumulPotsModule(o, t);
         }
     }
 }

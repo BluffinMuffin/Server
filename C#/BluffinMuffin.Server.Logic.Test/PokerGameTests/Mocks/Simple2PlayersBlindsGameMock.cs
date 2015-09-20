@@ -1,77 +1,70 @@
 ﻿using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
 using BluffinMuffin.Protocol.DataTypes;
+using BluffinMuffin.Protocol.DataTypes.Enums;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks
 {
     public static class Simple2PlayersBlindsGameMock
     {
-        public static GameInfo Empty()
+        public static GameMockInfo Empty()
         {
-            return new GameInfo()
+            return new GameMockInfo()
             {
                 Game = new PokerGame(
                     new PokerTable(
                         new TableParams()
                         {
                             MaxPlayers = 2,
-                            MoneyUnit = 10,
-                            Blind = new BlindOptionsBlinds()
-                            {
-                                MoneyUnit = 10
-                            },
+                            GameSize = 10,
+                            Blind = BlindTypeEnum.Blinds,
                             Lobby = new LobbyOptionsRegisteredMode()
                             {
-                                IsMaximumBuyInLimited = false,
-                                MoneyUnit = 0 // Little trick to not get bothered.
+                                IsMaximumBuyInLimited = false
                             }
                         }))
             };
         }
-        public static GameInfo EmptyWithBuyInsSetted()
+        public static GameMockInfo EmptyWithBuyInsSetted()
         {
-            return new GameInfo()
+            return new GameMockInfo()
             {
                 Game = new PokerGame(
                     new PokerTable(
                         new TableParams()
                         {
                             MaxPlayers = 2,
-                            MoneyUnit = 10,
-                            Blind = new BlindOptionsBlinds()
-                            {
-                                MoneyUnit = 10
-                            },
+                            GameSize = 10,
+                            Blind = BlindTypeEnum.Blinds,
                             Lobby = new LobbyOptionsRegisteredMode()
                             {
-                                IsMaximumBuyInLimited = true,
-                                MoneyUnit=10
+                                IsMaximumBuyInLimited = true
                             }
                         }))
             };
         }
-        public static GameInfo EmptyButStarted()
+        public static GameMockInfo EmptyButStarted()
         {
             var nfo = Empty();
             nfo.Game.Start();
 
             return nfo;
         }
-        public static GameInfo WithOnlyP1Seated()
+        public static GameMockInfo WithOnlyP1Seated()
         {
             var nfo = EmptyButStarted();
             nfo.P1 = PlayerMock.GenerateP1Seated(nfo);
 
             return nfo;
         }
-        public static GameInfo WithBothPlayersSeated()
+        public static GameMockInfo WithBothPlayersSeated()
         {
             var nfo = WithOnlyP1Seated();
             nfo.P2 = PlayerMock.GenerateP2Seated(nfo);
 
             return nfo;
         }
-        public static GameInfo BlindsPosted()
+        public static GameMockInfo BlindsPosted()
         {
             var nfo = WithBothPlayersSeated();
 
@@ -80,7 +73,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks
 
             return nfo;
         }
-        public static GameInfo AfterPreflop()
+        public static GameMockInfo AfterPreflop()
         {
             var nfo = BlindsPosted();
 
@@ -89,7 +82,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks
 
             return nfo;
         }
-        public static GameInfo AfterFlop()
+        public static GameMockInfo AfterFlop()
         {
             var nfo = AfterPreflop();
 
@@ -98,7 +91,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks
 
             return nfo;
         }
-        public static GameInfo AfterTurn()
+        public static GameMockInfo AfterTurn()
         {
             var nfo = AfterFlop();
 

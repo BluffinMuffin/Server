@@ -7,7 +7,7 @@ namespace BluffinMuffin.Server.Protocol.Test
 {
     public class ClientForTesting : SimpleTcpClient
     {
-        private BlockingCollection<RemoteTcpServer> m_Servers = new BlockingCollection<RemoteTcpServer>();
+        private readonly BlockingCollection<RemoteTcpServer> m_Servers = new BlockingCollection<RemoteTcpServer>();
         public RemoteTcpServer ObtainTcpEntity()
         {
             return m_Servers.GetConsumingEnumerable().First();

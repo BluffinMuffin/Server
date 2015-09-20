@@ -1,32 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BluffinMuffin.HandEvaluator.Enums;
-using BluffinMuffin.Protocol.DataTypes;
+﻿using BluffinMuffin.HandEvaluator;
+using BluffinMuffin.HandEvaluator.Selectors;
+using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.Attributes;
-using BluffinMuffin.Server.DataTypes.Enums;
-using BluffinMuffin.Server.Logic.GameModules;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
-    [GameVariant(GameVariantEnum.OmahaHoldem)]
-    public class OmahaHoldemVariant : AbstractGameVariant
+    [GameVariant(GameSubTypeEnum.OmahaHoldem)]
+    public class OmahaHoldemVariant : AbstractHoldemGameVariant
     {
-        public override int NbCardsInHand
-        {
-            get { return 4; }
-        }
+        public override int NbCardsInHand => 4;
 
-        public override CardSelectionEnum CardSelectionType
+        public override EvaluationParams EvaluationParms => new EvaluationParams
         {
-            get { return CardSelectionEnum.TwoPlayersAndThreeCommunity; }
-        }
-
-        public override Type InitModuleType
-        {
-            get { return typeof (InitHoldemGameModule); }
-        }
+            Selector = new Use2Player3CommunitySelector()
+        };
     }
 }

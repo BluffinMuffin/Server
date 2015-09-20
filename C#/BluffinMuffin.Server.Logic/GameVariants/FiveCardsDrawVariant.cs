@@ -1,32 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BluffinMuffin.HandEvaluator.Enums;
-using BluffinMuffin.Protocol.DataTypes;
+using BluffinMuffin.HandEvaluator;
+using BluffinMuffin.HandEvaluator.Selectors;
+using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Attributes;
-using BluffinMuffin.Server.DataTypes.Enums;
+using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.Logic.GameModules;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
-    [GameVariant(GameVariantEnum.FiveCardsDraw)]
+    [GameVariant(GameSubTypeEnum.FiveCardsDraw)]
     public class FiveCardsDrawVariant : AbstractGameVariant
     {
-        public override int NbCardsInHand
-        {
-            get { return 5; }
-        }
+        public override int NbCardsInHand => 5;
 
-        public override CardSelectionEnum CardSelectionType
+        public override EvaluationParams EvaluationParms => new EvaluationParams
         {
-            get { return CardSelectionEnum.AllPlayerAndAllCommunity; }
-        }
+            Selector = new OnlyHoleCardsSelector()
+        };
 
-        public override Type InitModuleType
+        public override IEnumerable<IGameModule> GetModules(PokerGameObserver o, PokerTable t)
         {
-            get { return typeof(InitFiveCardsDrawGameModule); }
+            yield return new DealMissingCardsToPlayersModule(o, t, NbCardsInHand);
+            yield return new FirstBettingRoundModule(o, t);
+            yield return new CumulPotsModule(o, t);
+
+            yield return new DiscardRoundModule(o, t, 0, 5);
+
+            yield return new DealMissingCardsToPlayersModule(o, t, NbCardsInHand);
+            yield return new BettingRoundModule(o, t);
+            yield return new CumulPotsModule(o, t);
         }
     }
 }

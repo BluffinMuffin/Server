@@ -17,7 +17,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         protected PokerGameObserver Observer { get; private set; }
         protected PokerTable Table { get; private set; }
 
-        public AbstractGameModule(PokerGameObserver o, PokerTable table)
+        protected AbstractGameModule(PokerGameObserver o, PokerTable table)
         {
             Observer = o;
             Table = table;

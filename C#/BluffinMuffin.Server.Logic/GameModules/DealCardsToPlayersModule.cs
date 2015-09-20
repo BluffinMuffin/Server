@@ -1,34 +1,30 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using BluffinMuffin.Protocol.DataTypes;
-using BluffinMuffin.Protocol.DataTypes.Enums;
+﻿using System.Linq;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
-using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
     public class DealCardsToPlayersModule : AbstractGameModule
     {
-        protected int NbCards { get; private set; }
-        public DealCardsToPlayersModule(PokerGameObserver o, PokerTable table, int nbCards)
+        protected int NbCardsFaceDown { get; }
+        protected int NbCardsFaceUp { get; }
+        public DealCardsToPlayersModule(PokerGameObserver o, PokerTable table, int nbCardsFaceDown, int nbCardsFaceUp = 0)
             : base(o, table)
         {
-            NbCards = nbCards;
+            NbCardsFaceDown = nbCardsFaceDown;
+            NbCardsFaceUp = nbCardsFaceUp;
         }
 
-        public override GameStateEnum GameState
-        {
-            get { return GameStateEnum.Playing; }
-        }
+        public override GameStateEnum GameState => GameStateEnum.Playing;
 
         public override void InitModule()
         {
             foreach (var p in Table.PlayingAndAllInPlayers)
             {
-                string[] cards = p.HoleCards == null ? new string[0] : p.HoleCards.Where(x => !String.IsNullOrEmpty(x)).ToArray();
-                p.HoleCards = cards.Union(Table.Dealer.DealCards(NbCards - cards.Length).Select(x => x.ToString())).ToArray();
+                string[] downCards = p.FaceDownCards?.Where(x => !string.IsNullOrEmpty(x)).ToArray() ?? new string[0];
+                p.FaceDownCards = downCards.Union(Table.Variant.Dealer.DealCards(NbCardsFaceDown).Select(x => x.ToString())).ToArray();
+                string[] upCards = p.FaceUpCards?.Where(x => !string.IsNullOrEmpty(x)).ToArray() ?? new string[0];
+                p.FaceUpCards = upCards.Union(Table.Variant.Dealer.DealCards(NbCardsFaceUp).Select(x => x.ToString())).ToArray();
                 Observer.RaisePlayerHoleCardsChanged(p);
             }
             RaiseCompleted();

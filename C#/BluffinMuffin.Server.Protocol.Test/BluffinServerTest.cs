@@ -17,7 +17,7 @@ namespace BluffinMuffin.Server.Protocol.Test
     [TestClass]
     public class BluffinServerTest
     {
-        private StringWriter m_Sw = new StringWriter();
+        private readonly StringWriter m_Sw = new StringWriter();
         [TestMethod]
         public void BigUglyTest()
         {
@@ -34,7 +34,6 @@ namespace BluffinMuffin.Server.Protocol.Test
             IdentifyAs(c1, "P1");
             int idTable = CreateTable(c1);
             JoinTable(c1, idTable);
-            ReceiveTableInfo(c1);
 
             var client2 = new ClientForTesting();
             var tokenClient2 = new CancellationTokenSource();
@@ -43,7 +42,6 @@ namespace BluffinMuffin.Server.Protocol.Test
             var c2 = client2.ObtainTcpEntity();
             IdentifyAs(c2, "P2");
             JoinTable(c2, idTable);
-            ReceiveTableInfo(c2);
 
             BeAwareOfOtherPlayerJoined(c1, c2);
 
@@ -96,17 +94,6 @@ namespace BluffinMuffin.Server.Protocol.Test
             tokenClient2.Cancel();
             tokenClient1.Cancel();
             tokenServer.Cancel();
-        }
-
-        private void SitOut(RemoteTcpServer serverEntity, int tableId, int noSeat)
-        {
-            var cmd = new PlayerSitOutCommand()
-            {
-                TableId = tableId
-            };
-            serverEntity.Send(cmd);
-            var response = serverEntity.WaitForNextCommand<PlayerSitOutResponse>();
-            Assert.IsTrue(response.Success);
         }
 
         void LogManager_MessageLogged(string from, string message, int level)
@@ -185,21 +172,17 @@ namespace BluffinMuffin.Server.Protocol.Test
 
         private void BeAwareOfOtherPlayerJoined(RemoteTcpServer serverEntity, RemoteTcpServer other)
         {
-            var response = serverEntity.WaitForNextCommand<PlayerJoinedCommand>();
-            Assert.AreEqual(other.Name,response.PlayerName);
+            var response = serverEntity.WaitForNextCommand<GameMessageCommand>();
+            Assert.AreEqual(GameMessageEnum.PlayerJoined, response.Info.OptionType);
+            var info = (GameMessageOptionPlayerJoined)response.Info;
+            Assert.AreEqual(other.Name, info.PlayerName);
         }
 
         private int GameIsStarting(RemoteTcpServer serverEntity)
         {
-            ReceiveTableInfo(serverEntity);
             var response = serverEntity.WaitForNextCommand<GameStartedCommand>();
             Assert.AreNotEqual(0,response.NeededBlindAmount);
             return response.NeededBlindAmount;
-        }
-
-        private void ReceiveTableInfo(RemoteTcpServer serverEntity)
-        {
-            serverEntity.WaitForNextCommand<TableInfoCommand>();
         }
 
         private void JoinTable(RemoteTcpServer serverEntity, int table)
@@ -219,13 +202,10 @@ namespace BluffinMuffin.Server.Protocol.Test
             {
                 Params = new TableParams()
                 {
-                    Blind = new BlindOptionsBlinds()
-                    {
-                        MoneyUnit = 10
-                    },
-                    GameType = GameTypeEnum.Holdem,
-                    MoneyUnit = 10,
-                    Limit = new LimitOptionsNoLimit(),
+                    Blind = BlindTypeEnum.Blinds,
+                    Options = new GameTypeOptionsCommunity(),
+                    GameSize = 10,
+                    Limit = LimitTypeEnum.NoLimit,
                     Lobby = new LobbyOptionsQuickMode()
                     {
                         StartingAmount = 1500
@@ -233,7 +213,7 @@ namespace BluffinMuffin.Server.Protocol.Test
                     MaxPlayers = 10,
                     MinPlayersToStart = 2,
                     TableName = "Table One",
-                    Variant = "Wtf Is this field",
+                    Variant = GameSubTypeEnum.TexasHoldem,
                     WaitingTimes = new ConfigurableWaitingTimes()
                     {
                         AfterBoardDealed = 0,

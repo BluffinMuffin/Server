@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Linq;
+using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
-using BluffinMuffin.Server.DataTypes.Enums;
+using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
-using Com.Ericmas001.Util;
+using BluffinMuffin.Server.Logic.GameVariants;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
@@ -18,13 +17,14 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         protected override SeatInfo GetSeatOfTheFirstPlayer()
         {
-            if (Table.Params.Blind.OptionType == BlindTypeEnum.Blinds)
+            if (Table.Params.Blind == BlindTypeEnum.Blinds)
             {
                 //Ad B : A      A
                 //Ad B C: A     A->B->C->A
                 //Ad B C D: D   A->B->C->D
                 return Table.NbPlayingAndAllIn < 3 ? Table.DealerSeat : Table.GetSeatOfPlayingPlayerNextTo(Table.GetSeatOfPlayingPlayerNextTo(Table.GetSeatOfPlayingPlayerNextTo(Table.DealerSeat)));
             }
+
             return base.GetSeatOfTheFirstPlayer();
         }
     }

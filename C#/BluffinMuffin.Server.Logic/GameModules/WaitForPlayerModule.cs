@@ -12,10 +12,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
         }
 
-        public override GameStateEnum GameState
-        {
-            get { return GameStateEnum.WaitForPlayers; }
-        }
+        public override GameStateEnum GameState => GameStateEnum.WaitForPlayers;
 
         public override void OnSitIn()
         {
@@ -42,10 +39,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 if (p.IsZombie && SitOut(p))
                     Table.LeaveTable(p);
                 else if (p.CanPlay)
-                {
                     p.State = PlayerStateEnum.Playing;
-                    p.IsShowingCards = false;
-                }
                 else
                     p.State = PlayerStateEnum.SitIn;
             }
@@ -55,9 +49,8 @@ namespace BluffinMuffin.Server.Logic.GameModules
             {
                 Table.Params.MinPlayersToStart = 2;
                 Table.InitTable();
-                Table.Dealer.FreshDeck();
+                Table.Variant.Dealer.FreshDeck();
                 RaiseCompleted();
-                Observer.RaiseGameGenerallyUpdated();
                 Observer.RaiseGameBlindNeeded();
             }
             else

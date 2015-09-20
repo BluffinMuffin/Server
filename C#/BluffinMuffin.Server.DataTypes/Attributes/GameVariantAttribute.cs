@@ -1,13 +1,13 @@
 ﻿using System;
-using BluffinMuffin.Server.DataTypes.Enums;
+using BluffinMuffin.Protocol.DataTypes.Enums;
 
 namespace BluffinMuffin.Server.DataTypes.Attributes
 {
     public class GameVariantAttribute : Attribute
     {
-        public GameVariantEnum Variant { get; private set; }
+        public GameSubTypeEnum Variant { get; private set; }
 
-        public GameVariantAttribute(GameVariantEnum variant)
+        public GameVariantAttribute(GameSubTypeEnum variant)
         {
             Variant = variant;
         }

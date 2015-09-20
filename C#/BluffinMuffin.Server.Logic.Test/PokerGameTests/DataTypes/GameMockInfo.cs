@@ -4,7 +4,7 @@ using BluffinMuffin.Protocol.DataTypes;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
 {
-    public class GameInfo
+    public class GameMockInfo
     {
         public PokerGame Game { get; set; }
         public PlayerInfo P1 { get; set; }
@@ -13,13 +13,13 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
         public PlayerInfo P4 { get; set; }
         
 
-        public IEnumerable<PlayerInfo> Players{ get { return Game.Table.PlayingPlayers; }}
-        public PlayerInfo CurrentPlayer { get { return Game.Table.CurrentPlayer; } }
+        public IEnumerable<PlayerInfo> Players => Game.Table.PlayingPlayers;
+        public PlayerInfo CurrentPlayer => Game.Table.CurrentPlayer;
         public PlayerInfo PoorestPlayer { get { return Players.OrderBy(x => x.MoneySafeAmnt).First(); } }
 
         public PlayerInfo CalculatedSmallBlind { get { return Players.Where(x => BlindNeeded(x) > 0).OrderBy(BlindNeeded).First(); } }
         public PlayerInfo CalculatedBigBlind { get { return Players.Where(x => BlindNeeded(x) > 0).OrderBy(BlindNeeded).Last(); } }
-        public PlayerInfo Dealer { get { return Game.Table.DealerSeat.Player; } }
+        public PlayerInfo Dealer => Game.Table.DealerSeat.Player;
 
 
         public bool CurrentPlayerPlays(int amount)

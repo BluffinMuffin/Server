@@ -1,6 +1,5 @@
 ﻿using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
-using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using Com.Ericmas001.Util;
@@ -14,10 +13,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
         }
 
-        public override GameStateEnum GameState
-        {
-            get { return GameStateEnum.WaitForBlinds; }
-        }
+        public override GameStateEnum GameState => GameStateEnum.WaitForBlinds;
 
         public override void InitModule()
         {
@@ -66,13 +62,9 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             //Take note of the action
             var whatAmIDoing = GameActionEnum.PostAnte;
-            if (Table.Params.Blind.OptionType == BlindTypeEnum.Blinds)
+            if (Table.Params.Blind == BlindTypeEnum.Blinds)
             {
-                var bob = Table.Params.Blind as BlindOptionsBlinds;
-                if (bob != null && needed == bob.SmallBlindAmount)
-                    whatAmIDoing = GameActionEnum.PostSmallBlind;
-                else
-                    whatAmIDoing = GameActionEnum.PostBigBlind;
+                whatAmIDoing = (needed == Table.Params.GameSize ? GameActionEnum.PostBigBlind : GameActionEnum.PostSmallBlind);
             }
             LogManager.Log(LogLevel.MessageLow, "PokerGame.PlayMoney", "{0} POSTED BLIND ({1})", p.Name, whatAmIDoing);
             Observer.RaisePlayerActionTaken(p, whatAmIDoing, amnt);

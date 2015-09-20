@@ -28,10 +28,8 @@ namespace BluffinMuffin.Server.DataTypes
         /// <summary>
         /// Number of player playing for this Pot
         /// </summary>
-        public WinningPlayer[] AttachedPlayers
-        {
-            get { return m_AttachedPlayers.ToArray(); }
-        }
+        public WinningPlayer[] AttachedPlayers => m_AttachedPlayers.ToArray();
+
         #endregion Properties
 
         #region Ctors & Init

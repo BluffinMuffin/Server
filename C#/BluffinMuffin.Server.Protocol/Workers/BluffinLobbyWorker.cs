@@ -20,8 +20,8 @@ namespace BluffinMuffin.Server.Protocol.Workers
     {
         private readonly KeyValuePair<Type, Action<AbstractCommand, IBluffinClient>>[] m_Methods;
 
-        private IBluffinServer Server { get; set; }
-        private IBluffinLobby Lobby { get; set; }
+        private IBluffinServer Server { get; }
+        private IBluffinLobby Lobby { get; }
         public BluffinLobbyWorker(IBluffinServer server, IBluffinLobby lobby)
         {
             Server = server;
@@ -100,15 +100,15 @@ namespace BluffinMuffin.Server.Protocol.Workers
 
         private void OnCheckCompatibilityCommandReceived(AbstractCommand command, IBluffinClient client)
         {
-            const string minimumClientVersion = "2.0";
-            const string currentServerVersion = "2.3.0";
+            const string minimumClientVersion = "3.0";
+            const string currentServerVersion = "3.0.0";
 
             var c = (CheckCompatibilityCommand)command;
             Version vClient; 
             bool ok = Version.TryParse(c.ImplementedProtocolVersion,out vClient);
             if (!ok || vClient < new Version(minimumClientVersion))
             {
-                var r = c.ResponseFailure(BluffinMessageId.NotSupported, "The client version must be at least " + minimumClientVersion);
+                var r = c.ResponseFailure(BluffinMessageId.NotSupported, "The client must implement at least protocol version " + minimumClientVersion);
                 r.ImplementedProtocolVersion = currentServerVersion;
                 client.SendCommand(r);
             }
@@ -117,7 +117,36 @@ namespace BluffinMuffin.Server.Protocol.Workers
                 var r = c.ResponseSuccess();
                 r.ImplementedProtocolVersion = currentServerVersion;
                 r.SupportedLobbyTypes = new[] {LobbyTypeEnum.QuickMode, LobbyTypeEnum.RegisteredMode};
-                r.Rules = RuleFactory.Variants.Values.Where(x => x.IsFavorite).Union(RuleFactory.Variants.Values.Where(x => !x.IsFavorite)).Select(x => x.Info).ToArray();
+                r.AvailableGames = new[]
+                {
+                    new GameInfo
+                    {
+                        AvailableBlinds = new [] {BlindTypeEnum.Blinds},
+                        AvailableLimits = new []{LimitTypeEnum.NoLimit},
+                        AvailableVariants = RuleFactory.Variants.Values.Where(x => x.GameType == GameTypeEnum.CommunityCardsPoker).Select(x => x.Variant).ToArray(),
+                        GameType = GameTypeEnum.CommunityCardsPoker,
+                        MaxPlayers = 10,
+                        MinPlayers = 2
+                    },
+                    new GameInfo
+                    {
+                        AvailableBlinds = new [] {BlindTypeEnum.Antes},
+                        AvailableLimits = new []{LimitTypeEnum.NoLimit},
+                        AvailableVariants = RuleFactory.Variants.Values.Where(x => x.GameType == GameTypeEnum.StudPoker).Select(x => x.Variant).ToArray(),
+                        GameType = GameTypeEnum.StudPoker,
+                        MaxPlayers = 10,
+                        MinPlayers = 2
+                    },
+                    new GameInfo
+                    {
+                        AvailableBlinds = new [] {BlindTypeEnum.Antes},
+                        AvailableLimits = new []{LimitTypeEnum.NoLimit},
+                        AvailableVariants = RuleFactory.Variants.Values.Where(x => x.GameType == GameTypeEnum.DrawPoker).Select(x => x.Variant).ToArray(),
+                        GameType = GameTypeEnum.DrawPoker,
+                        MaxPlayers = 10,
+                        MinPlayers = 2
+                    }
+                };
                 client.SendCommand(r);
             }
         }
@@ -239,9 +268,18 @@ namespace BluffinMuffin.Server.Protocol.Workers
             client.AddPlayer(rp);
 
             LogManager.Log(LogLevel.Message, "BluffinLobbyWorker.OnJoinTableCommandReceived", "> Client '{0}' joined {2}:{1}", client.PlayerName, table.Params.TableName, c.TableId, rp.Player.NoSeat);
-            client.SendCommand(c.ResponseSuccess());
 
-            rp.SendTableInfo();
+
+            var r = c.ResponseSuccess();
+
+            r.GameHasStarted = rp.Game.IsPlaying;
+            r.BoardCards = rp.Game.Table.Cards.Select(x => x.ToString()).ToArray();
+            r.Seats = rp.AllSeats().ToList();
+            r.Params = rp.Game.Table.Params;
+            r.TotalPotAmount = rp.Game.Table.TotalPotAmnt;
+            r.PotsAmount = rp.Game.Table.PotAmountsPadded.ToList();
+
+            client.SendCommand(r);
         }
 
         private void OnLeaveTableCommandReceived(AbstractCommand command, IBluffinClient client)

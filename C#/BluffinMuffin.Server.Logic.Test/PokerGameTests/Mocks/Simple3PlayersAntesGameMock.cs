@@ -1,14 +1,15 @@
 ﻿using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
 using BluffinMuffin.Protocol.DataTypes;
+using BluffinMuffin.Protocol.DataTypes.Enums;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks
 {
     public static class Simple3PlayersAntesGameMock
     {
-        public static GameInfo Empty()
+        public static GameMockInfo Empty()
         {
-            return new GameInfo()
+            return new GameMockInfo()
             {
                 Game = new PokerGame(
                     new PokerTable(
@@ -16,47 +17,43 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks
                         {
                             MaxPlayers = 3,
                             MinPlayersToStart = 3,
-                            Blind = new BlindOptionsAnte()
-                            {
-                                MoneyUnit = 10
-                            },
+                            Blind = BlindTypeEnum.Antes,
                             Lobby = new LobbyOptionsRegisteredMode()
                             {
-                                IsMaximumBuyInLimited = false,
-                                MoneyUnit = 0 // Little trick to not get bothered.
+                                IsMaximumBuyInLimited = false
                             }
                         }))
             };
         }
-        public static GameInfo EmptyButStarted()
+        public static GameMockInfo EmptyButStarted()
         {
             var nfo = Empty();
             nfo.Game.Start();
 
             return nfo;
         }
-        public static GameInfo WithOnlyP1Seated()
+        public static GameMockInfo WithOnlyP1Seated()
         {
             var nfo = EmptyButStarted();
             nfo.P1 = PlayerMock.GenerateP1Seated(nfo);
 
             return nfo;
         }
-        public static GameInfo WithOnlyP1P2Seated()
+        public static GameMockInfo WithOnlyP1P2Seated()
         {
             var nfo = WithOnlyP1Seated();
             nfo.P2 = PlayerMock.GenerateP2Seated(nfo);
 
             return nfo;
         }
-        public static GameInfo WithAllPlayersSeated()
+        public static GameMockInfo WithAllPlayersSeated()
         {
             var nfo = WithOnlyP1P2Seated();
             nfo.P3 = PlayerMock.GenerateP3Seated(nfo);
 
             return nfo;
         }
-        public static GameInfo BlindsPosted()
+        public static GameMockInfo BlindsPosted()
         {
             var nfo = WithAllPlayersSeated();
 
@@ -66,7 +63,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks
 
             return nfo;
         }
-        public static GameInfo AfterPreflop()
+        public static GameMockInfo AfterPreflop()
         {
             var nfo = BlindsPosted();
 
@@ -76,7 +73,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks
 
             return nfo;
         }
-        public static GameInfo AfterFlop()
+        public static GameMockInfo AfterFlop()
         {
             var nfo = AfterPreflop();
 
@@ -86,7 +83,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks
 
             return nfo;
         }
-        public static GameInfo AfterTurn()
+        public static GameMockInfo AfterTurn()
         {
             var nfo = AfterFlop();
 

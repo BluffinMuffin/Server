@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using BluffinMuffin.HandEvaluator;
-using BluffinMuffin.HandEvaluator.Enums;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
-using BluffinMuffin.Protocol.DataTypes.Options;
 using System.Linq;
 using BluffinMuffin.Server.DataTypes;
-using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.Logic.GameVariants;
 using Com.Ericmas001.Util;
 
@@ -16,9 +13,7 @@ namespace BluffinMuffin.Server.Logic
     public class PokerTable
     {
         #region Fields
-        private readonly string[] m_Cards = new string[5];
         private SeatInfo[] m_Seats;
-        private readonly List<PlayerInfo> m_People = new List<PlayerInfo>();
         private readonly List<MoneyPot> m_Pots = new List<MoneyPot>();
         private TableParams m_Params;
         private AbstractGameVariant m_Variant;
@@ -42,7 +37,7 @@ namespace BluffinMuffin.Server.Logic
             set
             {
                 m_Params = value;
-                m_Variant = RuleFactory.Variants[EnumFactory<GameVariantEnum>.Parse(Params.Variant)];
+                m_Variant = RuleFactory.Variants[Params.Variant];
                 m_Seats = new SeatInfo[value.MaxPlayers];
                 for (var i = 0; i < value.MaxPlayers; ++i)
                     m_Seats[i] = new SeatInfo() { NoSeat = i };
@@ -51,31 +46,17 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// Contains all the People that are watching anbd playing the game. Everybody in the room.
         /// </summary>
-        public List<PlayerInfo> People { get { return m_People; } }
+        public List<PlayerInfo> People { get; } = new List<PlayerInfo>();
 
         /// <summary>
         /// Cards on the Board
         /// </summary>
-        public string[] Cards
-        {
-            get { return m_Cards.Select(c => c ?? String.Empty).ToArray(); }
-            protected set
-            {
-                if (value != null && value.Length == 5)
-                {
-                    for (var i = 0; i < 5; ++i)
-                        m_Cards[i] = value[i];
-                }
-            }
-        }
+        public string[] Cards { get; set; }
 
         /// <summary>
         /// List of MoneyPots currently on the table. There should always have at least one MoneyPot
         /// </summary>
-        public List<MoneyPot> Pots
-        {
-            get { return m_Pots; }
-        }
+        public List<MoneyPot> Pots => m_Pots;
 
         public IEnumerable<int> PotAmountsPadded
         {
@@ -106,6 +87,17 @@ namespace BluffinMuffin.Server.Logic
             }
         }
 
+        /// <summary>
+        /// Where is the FirstTalker
+        /// </summary>
+        public SeatInfo FirstTalkerSeat
+        {
+            get
+            {
+                return m_Seats.FirstOrDefault(s => s.SeatAttributes.Contains(SeatAttributeEnum.FirstTalker));
+            }
+        }
+
         public SeatInfo CurrentPlayerSeat
         {
             get
@@ -113,24 +105,12 @@ namespace BluffinMuffin.Server.Logic
                 return m_Seats.FirstOrDefault(s => s.SeatAttributes.Contains(SeatAttributeEnum.CurrentPlayer));
             }
         }
-        public int NoSeatCurrentPlayer
-        {
-            get
-            {
-                return CurrentPlayerSeat == null ? -1 : CurrentPlayerSeat.NoSeat;
-            }
-        }
+        public int NoSeatCurrentPlayer => CurrentPlayerSeat?.NoSeat ?? -1;
 
         /// <summary>
         /// Who is the current player
         /// </summary>
-        public PlayerInfo CurrentPlayer
-        {
-            get
-            {
-                return CurrentPlayerSeat == null ? null : CurrentPlayerSeat.Player;
-            }
-        }
+        public PlayerInfo CurrentPlayer => CurrentPlayerSeat?.Player;
 
         /// <summary>
         /// How many player have played this round and are ready to play the next one
@@ -145,12 +125,12 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// How many players are still in the Game (All-In not included)
         /// </summary>
-        public int NbPlaying { get { return PlayingPlayers.Count; } }
+        public int NbPlaying => PlayingPlayers.Count;
 
         /// <summary>
         /// How many players are still in the Game (All-In included)
         /// </summary>
-        public int NbPlayingAndAllIn { get { return NbPlaying + NbAllIn; } }
+        public int NbPlayingAndAllIn => NbPlaying + NbAllIn;
 
         /// <summary>
         /// What is the amount to equal to stay in the game ?
@@ -170,35 +150,29 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// List of the Seats
         /// </summary>
-        public List<SeatInfo> Seats { get { return m_Seats.ToList(); } }
+        public List<SeatInfo> Seats => m_Seats.ToList();
 
         /// <summary>
         /// List of the playing Players in order starting from the first seat
         /// </summary>
-        public List<PlayerInfo> PlayingPlayers
-        {
-            get { return PlayingPlayersFrom(); }
-        }
+        public List<PlayerInfo> PlayingPlayers => PlayingPlayersFrom();
 
         /// <summary>
         /// List of the playing Players in order starting from the first seat
         /// </summary>
-        public IEnumerable<PlayerInfo> PlayingAndAllInPlayers
-        {
-            get { return PlayingAndAllInPlayersFrom(); }
-        }
-        public AbstractDealer Dealer { get; set; }
+        public IEnumerable<PlayerInfo> PlayingAndAllInPlayers => PlayingAndAllInPlayersFrom();
+
         public bool HadPlayers { get; private set; }
 
-        public AbstractGameVariant Variant { get { return m_Variant; } }
+        public AbstractGameVariant Variant => m_Variant;
 
         public bool NoMoreRoundsNeeded { get; set; }
         /// <summary>
         /// Total amount of money still needed as Blinds for the game to start
         /// </summary>
-        public int TotalBlindNeeded { get { return m_BlindNeeded.Values.Sum(); } }
+        public int TotalBlindNeeded => m_BlindNeeded.Values.Sum();
 
-        public List<PlayerInfo> NewArrivals { get; private set; }
+        public List<PlayerInfo> NewArrivals { get; }
 
         #endregion Properties
 
@@ -220,7 +194,7 @@ namespace BluffinMuffin.Server.Logic
 
         public void InitTable()
         {
-            Cards = new string[5];
+            Cards = new string[0];
             NbPlayed = 0;
             TotalPotAmnt = 0;
             m_Pots.Clear();
@@ -239,7 +213,7 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public SeatInfo GetSeatOfPlayingPlayerNextTo(SeatInfo seat)
         {
-            var noSeat = seat == null ? -1 : seat.NoSeat;
+            var noSeat = seat?.NoSeat ?? -1;
             for (var i = 0; i < Params.MaxPlayers; ++i)
             {
                 var si = m_Seats[(noSeat + 1 + i) % Params.MaxPlayers];
@@ -250,7 +224,7 @@ namespace BluffinMuffin.Server.Logic
         }
         public SeatInfo GetSeatOfPlayingPlayerJustBefore(SeatInfo seat)
         {
-            var noSeat = seat == null ? -1 : seat.NoSeat;
+            var noSeat = seat?.NoSeat ?? -1;
             for (var i = 0; i < Params.MaxPlayers; ++i)
             {
                 var id = (noSeat - 1 - i) % Params.MaxPlayers;
@@ -360,18 +334,23 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// Is there already a player of that name, seated at the table ?
         /// </summary>
-        public bool ContainsPlayer(String name)
+        public bool ContainsPlayer(string name)
         {
             return Players.Any(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
         /// <summary>
         /// Add cards to the board
         /// </summary>
+        public void InitCards()
+        {
+            Cards = new string[0];
+        }
+        /// <summary>
+        /// Add cards to the board
+        /// </summary>
         public void AddCards(params string[] c)
         {
-            var firstUnused =  Enumerable.Range(0,m_Cards.Length).First(i => String.IsNullOrEmpty(m_Cards[i]));
-            for (var j = firstUnused; j < Math.Min(5, c.Length + firstUnused); ++j)
-                m_Cards[j] = c[j - firstUnused];
+            Cards = Cards.Concat(c).ToArray();
         }
 
         /// <summary>
@@ -412,9 +391,9 @@ namespace BluffinMuffin.Server.Logic
                 return null;
             }
 
-            if (p.MoneyAmnt < Params.Lobby.MinimumAmountForBuyIn || p.MoneyAmnt > Params.Lobby.MaximumAmountForBuyIn)
+            if (p.MoneyAmnt < Params.MinimumBuyInAmount || p.MoneyAmnt > Params.MaximumBuyInAmount)
             {
-                LogManager.Log(LogLevel.Error, "TableInfo.JoinTable", "Player Money ({0}) is not between Minimum ({1}) and Maximum ({2})", p.MoneyAmnt, Params.Lobby.MinimumAmountForBuyIn, Params.Lobby.MaximumAmountForBuyIn);
+                LogManager.Log(LogLevel.Error, "TableInfo.JoinTable", "Player Money ({0}) is not between Minimum ({1}) and Maximum ({2})", p.MoneyAmnt, Params.MinimumBuyInAmount, Params.MaximumBuyInAmount);
                 return null;
             }
 
@@ -440,10 +419,10 @@ namespace BluffinMuffin.Server.Logic
         /// <returns>A unsigned int that we can use to compare with another hand</returns>
         private HandEvaluationResult EvaluateCards(params string[] playerCards)
         {
-            if (Cards == null || playerCards == null || Cards.Union(playerCards).Count(x => !String.IsNullOrEmpty(x)) < 5)
+            if (Cards == null || playerCards == null || Cards.Union(playerCards).Count(x => !string.IsNullOrEmpty(x)) < 5)
                 return null;
 
-            return HandEvaluators.Evaluate(Variant.CardSelectionType, playerCards.Where(x => !String.IsNullOrEmpty(x)), Cards.Where(x => !String.IsNullOrEmpty(x)));
+            return HandEvaluators.Evaluate(playerCards.Where(x => !string.IsNullOrEmpty(x)), Cards.Where(x => !string.IsNullOrEmpty(x)));
         }
 
         /// <summary>
@@ -493,7 +472,7 @@ namespace BluffinMuffin.Server.Logic
 
                 foreach (var p in infos)
                 {
-                    var handValue = EvaluateCards(p.HoleCards);
+                    var handValue = EvaluateCards(p.Cards);
                     if (handValue != null)
                     {
                         switch (handValue.CompareTo(bestHand))
@@ -558,21 +537,22 @@ namespace BluffinMuffin.Server.Logic
             
             Seats.ForEach(s => s.SeatAttributes = new SeatAttributeEnum[0]);
 
-            var nextDealerSeat = GetSeatOfPlayingPlayerNextTo(previousDealer);
-            nextDealerSeat.SeatAttributes = nextDealerSeat.SeatAttributes.Union(new[] { SeatAttributeEnum.Dealer }).ToArray();
+            if (Params.Options.OptionType != GameTypeEnum.StudPoker)
+            {
+                var nextDealerSeat = GetSeatOfPlayingPlayerNextTo(previousDealer);
+                nextDealerSeat.SeatAttributes = nextDealerSeat.SeatAttributes.Union(new[] {SeatAttributeEnum.Dealer}).ToArray();
+            }
 
             m_BlindNeeded.Clear();
 
-            switch(Params.Blind.OptionType)
+            switch(Params.Blind)
             {
                 case BlindTypeEnum.Blinds:
-                    var bob = Params.Blind as BlindOptionsBlinds;
-
                     var smallSeat = NbPlaying == 2 ? DealerSeat : GetSeatOfPlayingPlayerNextTo(DealerSeat);
                     if (NewArrivals.All(x => x.NoSeat != smallSeat.NoSeat))
                     {
                         smallSeat.SeatAttributes = smallSeat.SeatAttributes.Union(new[] { SeatAttributeEnum.SmallBlind }).ToArray();
-                        if (bob != null) m_BlindNeeded.Add(smallSeat.Player, bob.SmallBlindAmount);
+                        m_BlindNeeded.Add(smallSeat.Player, Params.GameSize / 2);
                     }
 
                     var bigSeat = GetSeatOfPlayingPlayerNextTo(smallSeat);
@@ -581,11 +561,10 @@ namespace BluffinMuffin.Server.Logic
                     NewArrivals.ForEach(x => Seats[x.NoSeat].SeatAttributes = Seats[x.NoSeat].SeatAttributes.Union(new[] { SeatAttributeEnum.BigBlind }).ToArray());
                     NewArrivals.Clear();
 
-                    Seats.Where(x => x.SeatAttributes.Contains(SeatAttributeEnum.BigBlind)).ToList().ForEach(x => { if (bob != null) m_BlindNeeded.Add(x.Player, bob.BigBlindAmount); });
+                    Seats.Where(x => x.SeatAttributes.Contains(SeatAttributeEnum.BigBlind)).ToList().ForEach(x => { m_BlindNeeded.Add(x.Player, Params.GameSize); });
                     break;
                 case BlindTypeEnum.Antes:
-                    var boa = Params.Blind as BlindOptionsAnte;
-                    PlayingPlayers.ForEach(x => { if (boa != null) m_BlindNeeded.Add(x, boa.AnteAmount); });
+                    PlayingPlayers.ForEach(x => { m_BlindNeeded.Add(x, Math.Max(1, Params.GameSize / 10)); });
                     break;
             }
         }
