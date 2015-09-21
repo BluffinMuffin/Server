@@ -24,7 +24,7 @@ namespace BluffinMuffin.Server.Protocol
             : base(remoteEntity)
         {
             m_BluffinServer = bluffinServer;
-            LogClient = new Client($"{Assembly.GetExecutingAssembly().GetName().Name} {Assembly.GetExecutingAssembly().GetName().Version}", Assembly.GetAssembly(typeof(BluffinMuffin.Protocol.AbstractCommand)).GetName().Version, remoteEntity.Client.RemoteEndPoint.ToString());
+            LogClient = new Client($"{Assembly.GetEntryAssembly().GetName().Name} {Assembly.GetEntryAssembly().GetName().Version.ToString(3)}", Assembly.GetAssembly(typeof(BluffinMuffin.Protocol.AbstractCommand)).GetName().Version, remoteEntity.Client.RemoteEndPoint.ToString());
             LogClient.RegisterClient();
         }
 
@@ -54,7 +54,7 @@ namespace BluffinMuffin.Server.Protocol
                         {
                             if (m_GamePlayers.ContainsKey(gc.TableId))
                             {
-                                Command.RegisterGameCommandFromClient(command.CommandName, m_GamePlayers[gc.TableId].LogGame, LogClient, data);
+                                Command.RegisterGameCommandFromClient(command.CommandName, m_BluffinServer.LogGame(gc.TableId), LogClient, data);
                                 m_BluffinServer.GameCommands.Add(new GameCommandEntry() {Client = this, Command = command, Player = m_GamePlayers[gc.TableId]});
                             }
                         }

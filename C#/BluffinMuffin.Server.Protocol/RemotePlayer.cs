@@ -22,10 +22,6 @@ namespace BluffinMuffin.Server.Protocol
         public IBluffinServer Server { get; }
         public int TableId { get; }
 
-        public Table LogTable { get; }
-
-        public Game LogGame { get; private set; }
-
         public RemotePlayer(PokerGame game, PlayerInfo player, IBluffinClient client, IBluffinServer server, int tableId)
         {
             Game = game;
@@ -33,11 +29,6 @@ namespace BluffinMuffin.Server.Protocol
             Client = client;
             TableId = tableId;
             Server = server;
-            var p = game.Table.Params;
-            LogTable = new Table(p.TableName, (Logger.DBAccess.Enums.GameSubTypeEnum)Enum.Parse(typeof (Logger.DBAccess.Enums.GameSubTypeEnum),p.Variant.ToString()),p.MinPlayersToStart,p.MaxPlayers, (Logger.DBAccess.Enums.BlindTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.BlindTypeEnum), p.Blind.ToString()), (Logger.DBAccess.Enums.LobbyTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.LobbyTypeEnum), p.Lobby.OptionType.ToString()), (Logger.DBAccess.Enums.LimitTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.LimitTypeEnum), p.Limit.ToString()),Server.LogServer);
-            LogTable.RegisterTable();
-            LogGame = new Game(LogTable);
-            LogGame.RegisterGame();
         }
 
         public bool JoinGame()
@@ -95,8 +86,7 @@ namespace BluffinMuffin.Server.Protocol
         void OnGameEnded(object sender, EventArgs e)
         {
             Send(new GameEndedCommand());
-            LogGame = new Game(LogTable);
-            LogGame.RegisterGame();
+            Server.KillGame(TableId);
         }
 
         void OnPlayerWonPot(object sender, PotWonEventArgs e)
@@ -149,6 +139,7 @@ namespace BluffinMuffin.Server.Protocol
 
         void OnGameBlindNeeded(object sender, EventArgs e)
         {
+            Server.StartGame(TableId);
             Send(new GameStartedCommand()
             {
                 NeededBlindAmount = Game.Table.GetBlindNeeded(Player),
@@ -228,7 +219,7 @@ namespace BluffinMuffin.Server.Protocol
         private void Send(AbstractGameCommand c)
         {
             c.TableId = TableId;
-            Command.RegisterGameCommandFromServer(c.CommandName, LogGame, Client.LogClient, c.Encode());
+            Command.RegisterGameCommandFromServer(c.CommandName, Server.LogGame(TableId), Client.LogClient, c.Encode());
             Client.SendCommand(c);
         }
     }

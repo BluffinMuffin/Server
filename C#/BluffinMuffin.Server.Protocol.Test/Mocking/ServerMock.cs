@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BluffinMuffin.Logger.DBAccess;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Server.Logic;
 using BluffinMuffin.Protocol.DataTypes;
@@ -45,6 +46,26 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
         public BlockingCollection<CommandEntry> LobbyCommands { get; }
         public BlockingCollection<GameCommandEntry> GameCommands { get; }
         public Logger.DBAccess.Server LogServer => null;
+        public Game LogGame(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Table LogTable(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void KillGame(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void StartGame(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public BlockingCollection<CommandEntry> ServerSendedCommands { get; }
 
         public bool IsNameUsed(string name)
