@@ -35,6 +35,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\BluffinMuffin.HandEvaluator.dll</HintPath>
     </Reference>
+    <Reference Include="BluffinMuffin.Logger.DBAccess">
+      <HintPath>..\References\BluffinMuffin.Logger.DBAccess.dll</HintPath>
+    </Reference>
     <Reference Include="BluffinMuffin.Protocol, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\BluffinMuffin.Protocol.dll</HintPath>

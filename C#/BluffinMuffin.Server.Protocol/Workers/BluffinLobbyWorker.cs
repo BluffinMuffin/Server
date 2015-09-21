@@ -75,6 +75,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             if (ok)
             {
                 client.PlayerName = c.Name;
+                client.LogClient.Identify(client.PlayerName);
                 client.SendCommand(c.ResponseSuccess());
                 Lobby.AddName(c.Name);
             }
@@ -258,7 +259,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
                 client.SendCommand(c.ResponseFailure(BluffinMessageId.NameAlreadyUsed, "Someone with your name is already in this game !"));
                 return;
             }
-            var rp = new RemotePlayer(game, new PlayerInfo(client.PlayerName, 0), client, c.TableId);
+            var rp = new RemotePlayer(game, new PlayerInfo(client.PlayerName, 0), client, Server, c.TableId);
             if (!rp.JoinGame())
             {
                 client.SendCommand(c.ResponseFailure(BluffinMessageId.SpecificServerMessage, "Unknown failure"));

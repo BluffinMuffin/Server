@@ -44,6 +44,7 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
 
         public BlockingCollection<CommandEntry> LobbyCommands { get; }
         public BlockingCollection<GameCommandEntry> GameCommands { get; }
+        public Logger.DBAccess.Server LogServer => null;
         public BlockingCollection<CommandEntry> ServerSendedCommands { get; }
 
         public bool IsNameUsed(string name)

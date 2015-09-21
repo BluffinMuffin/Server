@@ -10,5 +10,7 @@ namespace BluffinMuffin.Server.Protocol.DataTypes
 
         void AddPlayer(RemotePlayer p);
         void RemovePlayer(RemotePlayer p);
+
+        Logger.DBAccess.Client LogClient { get; }
     }
 }

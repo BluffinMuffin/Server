@@ -1,4 +1,5 @@
 ﻿using System;
+using BluffinMuffin.Logger.DBAccess;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Server.Protocol.DataTypes;
 
@@ -28,5 +29,7 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
         {
             throw new NotImplementedException();
         }
+
+        public Client LogClient => null;
     }
 }

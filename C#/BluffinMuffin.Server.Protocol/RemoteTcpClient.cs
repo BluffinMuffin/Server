@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Reflection;
+using BluffinMuffin.Logger.DBAccess;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.Enums;
 using BluffinMuffin.Server.Protocol.DataTypes;
@@ -16,10 +18,14 @@ namespace BluffinMuffin.Server.Protocol
 
         public string PlayerName { get; set; }
 
+        public Client LogClient { get; }
+
         public RemoteTcpClient(TcpClient remoteEntity, IBluffinServer bluffinServer)
             : base(remoteEntity)
         {
             m_BluffinServer = bluffinServer;
+            LogClient = new Client($"{Assembly.GetExecutingAssembly().GetName().Name} {Assembly.GetExecutingAssembly().GetName().Version}", Assembly.GetAssembly(typeof(BluffinMuffin.Protocol.AbstractCommand)).GetName().Version, remoteEntity.Client.RemoteEndPoint.ToString());
+            LogClient.RegisterClient();
         }
 
         protected override void OnDataReceived(string data)
@@ -30,6 +36,7 @@ namespace BluffinMuffin.Server.Protocol
                 switch (command.CommandType)
                 {
                     case BluffinCommandEnum.General:
+                        Command.RegisterGeneralCommandFromClient(command.CommandName,m_BluffinServer.LogServer,LogClient,data);
                         m_BluffinServer.LobbyCommands.Add(new CommandEntry() { Client = this, Command = command });
                         lock (m_GamePlayers)
                         {
@@ -38,14 +45,18 @@ namespace BluffinMuffin.Server.Protocol
                         }
                         break;
                     case BluffinCommandEnum.Lobby:
+                        Command.RegisterLobbyCommandFromClient(command.CommandName, m_BluffinServer.LogServer, LogClient, data);
                         m_BluffinServer.LobbyCommands.Add(new CommandEntry() { Client = this, Command = command });
                         break;
                     case BluffinCommandEnum.Game:
                         var gc = (AbstractGameCommand) command;
                         lock (m_GamePlayers)
                         {
-                            if(m_GamePlayers.ContainsKey(gc.TableId))
-                                m_BluffinServer.GameCommands.Add(new GameCommandEntry() { Client = this, Command = command, Player = m_GamePlayers[gc.TableId] });
+                            if (m_GamePlayers.ContainsKey(gc.TableId))
+                            {
+                                Command.RegisterGameCommandFromClient(command.CommandName, m_GamePlayers[gc.TableId].LogGame, LogClient, data);
+                                m_BluffinServer.GameCommands.Add(new GameCommandEntry() {Client = this, Command = command, Player = m_GamePlayers[gc.TableId]});
+                            }
                         }
                         break;
                 }
@@ -64,6 +75,17 @@ namespace BluffinMuffin.Server.Protocol
         public void SendCommand(BluffinMuffin.Protocol.AbstractCommand command)
         {
             string line = command.Encode();
+            switch (command.CommandType)
+            {
+                case BluffinCommandEnum.General:
+                    Command.RegisterGeneralCommandFromServer(command.CommandName, m_BluffinServer.LogServer, LogClient, line);
+                    break;
+                case BluffinCommandEnum.Lobby:
+                    Command.RegisterLobbyCommandFromServer(command.CommandName, m_BluffinServer.LogServer, LogClient, line);
+                    break;
+                case BluffinCommandEnum.Game:
+                    break;
+            }
             LogManager.Log(LogLevel.MessageVeryLow, "ServerClientLobby.Send", "Server SEND to {0} [{1}]", PlayerName, line);
             LogManager.Log(LogLevel.MessageVeryLow, "ServerClientLobby.Send", "-------------------------------------------");
             Send(line);

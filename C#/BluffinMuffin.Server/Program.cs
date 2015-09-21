@@ -4,6 +4,7 @@ using BluffinMuffin.Server.Protocol;
 using Com.Ericmas001.Util;
 using System.IO;
 using System.Reflection;
+using BluffinMuffin.Logger.DBAccess;
 
 namespace BluffinMuffin.Server
 {
@@ -14,6 +15,7 @@ namespace BluffinMuffin.Server
         static StreamWriter m_SwVerbose;
         static void Main(string[] args)
         {
+            Database.InitDatabase("turnsol.arvixe.com", "BluffinMuffin_Logger_Test", "1ti3gre2", "BluffinMuffin_Logs_Test");
             LogManager.MessageLogged += LogManager_MessageLogged;
             if ((args.Length % 2) == 0)
             {

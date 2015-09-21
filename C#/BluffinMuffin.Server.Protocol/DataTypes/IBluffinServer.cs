@@ -5,6 +5,8 @@ namespace BluffinMuffin.Server.Protocol.DataTypes
     public interface IBluffinServer
     {
         BlockingCollection<CommandEntry> LobbyCommands { get; }
-        BlockingCollection<GameCommandEntry> GameCommands { get; } 
+        BlockingCollection<GameCommandEntry> GameCommands { get; }
+
+        Logger.DBAccess.Server LogServer { get; }
     }
 }

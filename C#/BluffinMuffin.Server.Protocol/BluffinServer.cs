@@ -9,6 +9,8 @@ using BluffinMuffin.Server.Protocol.DataTypes;
 using BluffinMuffin.Server.Protocol.Workers;
 using Com.Ericmas001.Util;
 using System.Linq;
+using System.Reflection;
+using BluffinMuffin.Protocol;
 using BluffinMuffin.Server.Logic;
 
 namespace BluffinMuffin.Server.Protocol
@@ -17,6 +19,8 @@ namespace BluffinMuffin.Server.Protocol
     {
         public BlockingCollection<CommandEntry> LobbyCommands { get; }
         public BlockingCollection<GameCommandEntry> GameCommands { get; }
+
+        public Logger.DBAccess.Server LogServer { get; }
 
         private readonly LocalTcpServer m_TcpServer;
 
@@ -33,6 +37,8 @@ namespace BluffinMuffin.Server.Protocol
         public BluffinServer(int port)
         {
             LogManager.Log(LogLevel.Message, "BluffinServerLobby", "Server started on port {0} !", port);
+            LogServer = new Logger.DBAccess.Server($"{Assembly.GetExecutingAssembly().GetName().Name} {Assembly.GetExecutingAssembly().GetName().Version}",Assembly.GetAssembly(typeof(AbstractCommand)).GetName().Version);
+            LogServer.RegisterServer();
             LobbyCommands = new BlockingCollection<CommandEntry>();
             GameCommands = new BlockingCollection<GameCommandEntry>();
             Task.Factory.StartNew(new BluffinLobbyWorker(this, this).Start);
