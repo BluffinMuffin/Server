@@ -24,7 +24,7 @@ namespace BluffinMuffin.Server.Protocol
             : base(remoteEntity)
         {
             m_BluffinServer = bluffinServer;
-            LogClient = new Client($"{Assembly.GetEntryAssembly().GetName().Name} {Assembly.GetEntryAssembly().GetName().Version.ToString(3)}", Assembly.GetAssembly(typeof(BluffinMuffin.Protocol.AbstractCommand)).GetName().Version, remoteEntity.Client.RemoteEndPoint.ToString());
+            LogClient = new Client(remoteEntity.Client.RemoteEndPoint.ToString());
             LogClient.RegisterClient();
         }
 
