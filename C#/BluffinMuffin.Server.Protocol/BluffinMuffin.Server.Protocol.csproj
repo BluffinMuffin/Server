@@ -35,9 +35,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\BluffinMuffin.HandEvaluator.dll</HintPath>
     </Reference>
-    <Reference Include="BluffinMuffin.Logger.DBAccess">
-      <HintPath>..\References\BluffinMuffin.Logger.DBAccess.dll</HintPath>
-    </Reference>
     <Reference Include="BluffinMuffin.Protocol, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\BluffinMuffin.Protocol.dll</HintPath>
@@ -72,11 +69,6 @@
     <Compile Include="Workers\BluffinLobbyWorker.cs" />
     <Compile Include="BluffinServer.cs" />
     <Compile Include="LocalTcpServer.cs" />
-    <Compile Include="DataTypes\GameCommandEntry.cs" />
-    <Compile Include="DataTypes\CommandEntry.cs" />
-    <Compile Include="DataTypes\IBluffinClient.cs" />
-    <Compile Include="DataTypes\IBluffinLobby.cs" />
-    <Compile Include="DataTypes\IBluffinServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemotePlayer.cs" />
     <Compile Include="RemoteTcpClient.cs" />

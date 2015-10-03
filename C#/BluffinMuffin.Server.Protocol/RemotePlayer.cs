@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BluffinMuffin.Logger.DBAccess;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.DataTypes.EventHandling;
@@ -10,11 +9,12 @@ using BluffinMuffin.Server.Logic;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Protocol.Game;
-using BluffinMuffin.Server.Protocol.DataTypes;
+using BluffinMuffin.Server.DataTypes;
+using BluffinMuffin.Server.DataTypes.Protocol;
 
 namespace BluffinMuffin.Server.Protocol
 {
-    public class RemotePlayer
+    public class RemotePlayer : IPokerPlayer
     {
         public PokerGame Game { get; }
         public PlayerInfo Player { get; }
@@ -86,7 +86,7 @@ namespace BluffinMuffin.Server.Protocol
         void OnGameEnded(object sender, EventArgs e)
         {
             Send(new GameEndedCommand());
-            Server.KillGame(TableId);
+            Logger.LogGameEnded(this, TableId);
         }
 
         void OnPlayerWonPot(object sender, PotWonEventArgs e)
@@ -139,7 +139,7 @@ namespace BluffinMuffin.Server.Protocol
 
         void OnGameBlindNeeded(object sender, EventArgs e)
         {
-            Server.StartGame(TableId);
+            Logger.LogGameCreated(this, TableId);
             Send(new GameStartedCommand()
             {
                 NeededBlindAmount = Game.Table.GetBlindNeeded(Player),
@@ -219,7 +219,6 @@ namespace BluffinMuffin.Server.Protocol
         private void Send(AbstractGameCommand c)
         {
             c.TableId = TableId;
-            Command.RegisterGameCommandFromServer(c.CommandName, Server.LogGame(TableId), Client.LogClient, c.Encode());
             Client.SendCommand(c);
         }
     }

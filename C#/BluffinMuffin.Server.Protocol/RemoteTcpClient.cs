@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Reflection;
-using BluffinMuffin.Logger.DBAccess;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.Enums;
-using BluffinMuffin.Server.Protocol.DataTypes;
+using BluffinMuffin.Server.DataTypes;
+using BluffinMuffin.Server.DataTypes.Protocol;
 using Com.Ericmas001.Net.Protocol;
 using Com.Ericmas001.Util;
 
@@ -18,14 +17,11 @@ namespace BluffinMuffin.Server.Protocol
 
         public string PlayerName { get; set; }
 
-        public Client LogClient { get; }
-
         public RemoteTcpClient(TcpClient remoteEntity, IBluffinServer bluffinServer)
             : base(remoteEntity)
         {
             m_BluffinServer = bluffinServer;
-            LogClient = new Client(remoteEntity.Client.RemoteEndPoint.ToString());
-            LogClient.RegisterClient();
+            Logger.LogClientCreated(this, remoteEntity, this);
         }
 
         protected override void OnDataReceived(string data)
@@ -33,10 +29,10 @@ namespace BluffinMuffin.Server.Protocol
             if (!string.IsNullOrEmpty(data))
             {
                 var command = BluffinMuffin.Protocol.AbstractCommand.DeserializeCommand(data);
+                Logger.LogCommandReceived(this, command, this, data);
                 switch (command.CommandType)
                 {
                     case BluffinCommandEnum.General:
-                        Command.RegisterGeneralCommandFromClient(command.CommandName,m_BluffinServer.LogServer,LogClient,data);
                         m_BluffinServer.LobbyCommands.Add(new CommandEntry() { Client = this, Command = command });
                         lock (m_GamePlayers)
                         {
@@ -45,7 +41,6 @@ namespace BluffinMuffin.Server.Protocol
                         }
                         break;
                     case BluffinCommandEnum.Lobby:
-                        Command.RegisterLobbyCommandFromClient(command.CommandName, m_BluffinServer.LogServer, LogClient, data);
                         m_BluffinServer.LobbyCommands.Add(new CommandEntry() { Client = this, Command = command });
                         break;
                     case BluffinCommandEnum.Game:
@@ -53,10 +48,7 @@ namespace BluffinMuffin.Server.Protocol
                         lock (m_GamePlayers)
                         {
                             if (m_GamePlayers.ContainsKey(gc.TableId))
-                            {
-                                Command.RegisterGameCommandFromClient(command.CommandName, m_BluffinServer.LogGame(gc.TableId), LogClient, data);
                                 m_BluffinServer.GameCommands.Add(new GameCommandEntry() {Client = this, Command = command, Player = m_GamePlayers[gc.TableId]});
-                            }
                         }
                         break;
                 }
@@ -74,32 +66,22 @@ namespace BluffinMuffin.Server.Protocol
 
         public void SendCommand(BluffinMuffin.Protocol.AbstractCommand command)
         {
-            string line = command.Encode();
-            switch (command.CommandType)
-            {
-                case BluffinCommandEnum.General:
-                    Command.RegisterGeneralCommandFromServer(command.CommandName, m_BluffinServer.LogServer, LogClient, line);
-                    break;
-                case BluffinCommandEnum.Lobby:
-                    Command.RegisterLobbyCommandFromServer(command.CommandName, m_BluffinServer.LogServer, LogClient, line);
-                    break;
-                case BluffinCommandEnum.Game:
-                    break;
-            }
+            var line = command.Encode();
+            Logger.LogCommandSent(this, command, this, line);
             LogManager.Log(LogLevel.MessageVeryLow, "ServerClientLobby.Send", "Server SEND to {0} [{1}]", PlayerName, line);
             LogManager.Log(LogLevel.MessageVeryLow, "ServerClientLobby.Send", "-------------------------------------------");
             Send(line);
         }
 
-        public void AddPlayer(RemotePlayer p)
+        public void AddPlayer(IPokerPlayer p)
         {
             lock (m_GamePlayers)
             {
-                m_GamePlayers.Add(p.TableId,p);
+                m_GamePlayers.Add(p.TableId,(RemotePlayer)p);
             }
         }
 
-        public void RemovePlayer(RemotePlayer p)
+        public void RemovePlayer(IPokerPlayer p)
         {
             lock (m_GamePlayers)
             {

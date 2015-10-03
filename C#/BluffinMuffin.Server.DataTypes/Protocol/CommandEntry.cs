@@ -1,6 +1,6 @@
 ﻿using BluffinMuffin.Protocol;
 
-namespace BluffinMuffin.Server.Protocol.DataTypes
+namespace BluffinMuffin.Server.DataTypes.Protocol
 {
     public class CommandEntry
     {

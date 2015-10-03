@@ -1,7 +1,7 @@
 ﻿using System;
-using BluffinMuffin.Logger.DBAccess;
 using BluffinMuffin.Protocol;
-using BluffinMuffin.Server.Protocol.DataTypes;
+using BluffinMuffin.Server.DataTypes;
+using BluffinMuffin.Server.DataTypes.Protocol;
 
 namespace BluffinMuffin.Server.Protocol.Test.Mocking
 {
@@ -20,16 +20,14 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
             m_Server.ServerSendedCommands.Add(new CommandEntry() { Client = this, Command = command });
         }
 
-        public void AddPlayer(RemotePlayer p)
+        public void AddPlayer(IPokerPlayer p)
         {
             throw new NotImplementedException();
         }
 
-        public void RemovePlayer(RemotePlayer p)
+        public void RemovePlayer(IPokerPlayer p)
         {
             throw new NotImplementedException();
         }
-
-        public Client LogClient => null;
     }
 }

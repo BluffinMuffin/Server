@@ -8,7 +8,7 @@ using BluffinMuffin.Server.Persistance;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.Enums;
 using BluffinMuffin.Protocol.Game;
-using BluffinMuffin.Server.Protocol.DataTypes;
+using BluffinMuffin.Server.DataTypes.Protocol;
 using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Protocol.Workers
@@ -42,7 +42,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             {
                 GameCommandEntry e = entry;
                 var liste = m_Methods.Where(x => e.Command.GetType().IsSubclassOf(x.Key) || x.Key == e.Command.GetType()).ToList();
-                    liste.ForEach(x => x.Value(e.Command, e.Client, e.Player));
+                    liste.ForEach(x => x.Value(e.Command, e.Client, (RemotePlayer)e.Player));
             }
         }
 

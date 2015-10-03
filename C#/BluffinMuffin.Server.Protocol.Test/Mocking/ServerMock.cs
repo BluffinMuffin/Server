@@ -1,13 +1,13 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BluffinMuffin.Logger.DBAccess;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Server.Logic;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.Lobby;
-using BluffinMuffin.Server.Protocol.DataTypes;
+using BluffinMuffin.Server.DataTypes;
+using BluffinMuffin.Server.DataTypes.Protocol;
 using BluffinMuffin.Server.Protocol.Workers;
 
 namespace BluffinMuffin.Server.Protocol.Test.Mocking
@@ -45,16 +45,6 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
 
         public BlockingCollection<CommandEntry> LobbyCommands { get; }
         public BlockingCollection<GameCommandEntry> GameCommands { get; }
-        public Logger.DBAccess.Server LogServer => null;
-        public Game LogGame(int id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Table LogTable(int id)
-        {
-            throw new System.NotImplementedException();
-        }
 
         public void KillGame(int id)
         {
@@ -82,7 +72,7 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
         {
         }
 
-        public PokerGame GetGame(int id)
+        public IPokerGame GetGame(int id)
         {
             return new PokerGame(new PokerTable());
         }

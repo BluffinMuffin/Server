@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.Lobby;
-using BluffinMuffin.Server.Protocol.DataTypes;
 using BluffinMuffin.Server.Protocol.Workers;
 using Com.Ericmas001.Util;
 using System.Linq;
-using System.Reflection;
-using BluffinMuffin.Logger.DBAccess;
-using BluffinMuffin.Protocol;
+using BluffinMuffin.Server.DataTypes;
+using BluffinMuffin.Server.DataTypes.Protocol;
 using BluffinMuffin.Server.Logic;
 
 namespace BluffinMuffin.Server.Protocol
@@ -21,54 +19,23 @@ namespace BluffinMuffin.Server.Protocol
         public BlockingCollection<CommandEntry> LobbyCommands { get; }
         public BlockingCollection<GameCommandEntry> GameCommands { get; }
 
-        public Logger.DBAccess.Server LogServer { get; }
-
         private readonly LocalTcpServer m_TcpServer;
 
         private readonly List<string> m_UsedNames = new List<string>();
         private readonly Dictionary<int, PokerGame> m_Games = new Dictionary<int, PokerGame>();
-        private readonly Dictionary<int, Game> m_LogGames = new Dictionary<int, Game>();
-        private readonly Dictionary<int, bool> m_LogGamesStatus = new Dictionary<int, bool>();
-        private readonly Dictionary<int, Table> m_LogTables = new Dictionary<int, Table>();
 
         private int m_LastUsedId;
 
-        public PokerGame GetGame(int id)
+        public IPokerGame GetGame(int id)
         {
             return m_Games[id];
-        }
-        public Game LogGame(int id)
-        {
-            return m_LogGames[id];
-        }
-        public void KillGame(int id)
-        {
-            m_LogGamesStatus[id] = false;
-        }
-        public void StartGame(int id)
-        {
-            if (!m_LogGamesStatus[id])
-            {
-                m_LogGamesStatus[id] = true;
-                m_LogGames[id] = new Game(m_LogTables[id]);
-                m_LogGames[id].RegisterGame();
-            }
-        }
-        public Table LogTable(int id)
-        {
-            return m_LogTables[id];
         }
 
         public BluffinServer(int port)
         {
-            LogManager.Log(LogLevel.Message, "BluffinServerLobby", "Server started on port {0} !", port);
-            LogServer = new Logger.DBAccess.Server($"{Assembly.GetEntryAssembly().GetName().Name} {Assembly.GetEntryAssembly().GetName().Version.ToString(3)}",Assembly.GetAssembly(typeof(AbstractCommand)).GetName().Version);
-            LogServer.RegisterServer();
+            m_TcpServer = new LocalTcpServer(port, this);
             LobbyCommands = new BlockingCollection<CommandEntry>();
             GameCommands = new BlockingCollection<GameCommandEntry>();
-            Task.Factory.StartNew(new BluffinLobbyWorker(this, this).Start);
-            Task.Factory.StartNew(new BluffinGameWorker(this).Start);
-            m_TcpServer = new LocalTcpServer(port, this);
         }
 
         public bool IsNameUsed(string name)
@@ -88,6 +55,9 @@ namespace BluffinMuffin.Server.Protocol
 
         public void Start()
         {
+            LogManager.Log(LogLevel.Message, "BluffinServerLobby", "Server started on port {0} !", m_TcpServer.Port);
+            Task.Factory.StartNew(new BluffinLobbyWorker(this, this).Start);
+            Task.Factory.StartNew(new BluffinGameWorker(this).Start);
             m_TcpServer.Run().Wait();
         }
 
@@ -104,10 +74,8 @@ namespace BluffinMuffin.Server.Protocol
             m_Games.Add(m_LastUsedId, game);
 
             var p = game.Table.Params;
-            m_LogTables[m_LastUsedId] = new Table(p.TableName, (Logger.DBAccess.Enums.GameSubTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.GameSubTypeEnum), p.Variant.ToString()), p.MinPlayersToStart, p.MaxPlayers, (Logger.DBAccess.Enums.BlindTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.BlindTypeEnum), p.Blind.ToString()), (Logger.DBAccess.Enums.LobbyTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.LobbyTypeEnum), p.Lobby.OptionType.ToString()), (Logger.DBAccess.Enums.LimitTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.LimitTypeEnum), p.Limit.ToString()), LogServer);
-            m_LogTables[m_LastUsedId].RegisterTable();
-            m_LogGamesStatus[m_LastUsedId] = false;
-            StartGame(m_LastUsedId);
+            Logger.LogTableCreated(this, m_LastUsedId, p);
+            Logger.LogGameCreated(this, m_LastUsedId);
             game.Start();
 
             return m_LastUsedId;

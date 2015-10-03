@@ -11,7 +11,7 @@ using BluffinMuffin.Protocol.Enums;
 using BluffinMuffin.Protocol.Lobby;
 using BluffinMuffin.Protocol.Lobby.RegisteredMode;
 using BluffinMuffin.Protocol.Lobby.QuickMode;
-using BluffinMuffin.Server.Protocol.DataTypes;
+using BluffinMuffin.Server.DataTypes.Protocol;
 using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Protocol.Workers
@@ -75,7 +75,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             if (ok)
             {
                 client.PlayerName = c.Name;
-                client.LogClient.Identify(client.PlayerName);
+                Logger.LogClientIdentified(this, client);
                 client.SendCommand(c.ResponseSuccess());
                 Lobby.AddName(c.Name);
             }
@@ -247,7 +247,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
         private void OnJoinTableCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (JoinTableCommand)command;
-            var game = Lobby.GetGame(c.TableId);
+            var game = (PokerGame)Lobby.GetGame(c.TableId);
             var table = game.Table;
             if (!game.IsRunning)
             {
@@ -259,7 +259,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
                 client.SendCommand(c.ResponseFailure(BluffinMessageId.NameAlreadyUsed, "Someone with your name is already in this game !"));
                 return;
             }
-            var rp = new RemotePlayer(game, new PlayerInfo(client.PlayerName, 0), client, Server, c.TableId);
+            var rp = new RemotePlayer((PokerGame)game, new PlayerInfo(client.PlayerName, 0), client, Server, c.TableId);
             if (!rp.JoinGame())
             {
                 client.SendCommand(c.ResponseFailure(BluffinMessageId.SpecificServerMessage, "Unknown failure"));
@@ -286,7 +286,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
         private void OnLeaveTableCommandReceived(AbstractCommand command, IBluffinClient client)
         {
             var c = (LeaveTableCommand)command;
-            var game = Lobby.GetGame(c.TableId);
+            var game = (PokerGame)Lobby.GetGame(c.TableId);
             game.LeaveGame(game.Table.Players.Single(x => x.Name == client.PlayerName));
         }
     }

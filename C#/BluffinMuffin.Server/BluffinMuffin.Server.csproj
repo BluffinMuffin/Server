@@ -43,6 +43,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\BluffinMuffin.Logger.DBAccess.dll</HintPath>
     </Reference>
+    <Reference Include="BluffinMuffin.Protocol, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="BluffinMuffin.Protocol.DataTypes, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\BluffinMuffin.Protocol.DataTypes.dll</HintPath>
+    </Reference>
     <Reference Include="Com.Ericmas001.Net.Protocol">
       <HintPath>..\References\Com.Ericmas001.Net.Protocol.dll</HintPath>
     </Reference>

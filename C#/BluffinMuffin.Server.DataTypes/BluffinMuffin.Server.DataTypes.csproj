@@ -34,6 +34,9 @@
     <Reference Include="BluffinMuffin.HandEvaluator">
       <HintPath>..\References\BluffinMuffin.HandEvaluator.dll</HintPath>
     </Reference>
+    <Reference Include="BluffinMuffin.Protocol">
+      <HintPath>..\References\BluffinMuffin.Protocol.dll</HintPath>
+    </Reference>
     <Reference Include="BluffinMuffin.Protocol.DataTypes">
       <HintPath>..\References\BluffinMuffin.Protocol.DataTypes.dll</HintPath>
     </Reference>
@@ -64,16 +67,28 @@
     <Compile Include="CardHolder.cs" />
     <Compile Include="Enums\GameStateEnum.cs" />
     <Compile Include="Enums\GameVariantEnum.cs" />
+    <Compile Include="EventHandling\LogClientIdentificationEventArg.cs" />
+    <Compile Include="EventHandling\LogGameEventArg.cs" />
+    <Compile Include="EventHandling\LogClientCreationEventArg.cs" />
+    <Compile Include="EventHandling\LogTableCreationEventArg.cs" />
     <Compile Include="EventHandling\ModuleEventArg.cs" />
     <Compile Include="EventHandling\PokerGameObserver.cs" />
     <Compile Include="EventHandling\MinMaxEventArgs.cs" />
     <Compile Include="EventHandling\ActionNeededEventArgs.cs" />
     <Compile Include="EventHandling\PotWonEventArgs.cs" />
+    <Compile Include="EventHandling\LogCommandEventArg.cs" />
     <Compile Include="EventHandling\SuccessEventArg.cs" />
     <Compile Include="IGameModule.cs" />
+    <Compile Include="IPokerPlayer.cs" />
     <Compile Include="IPokerGame.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="MoneyPot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocol\CommandEntry.cs" />
+    <Compile Include="Protocol\GameCommandEntry.cs" />
+    <Compile Include="Protocol\IBluffinClient.cs" />
+    <Compile Include="Protocol\IBluffinLobby.cs" />
+    <Compile Include="Protocol\IBluffinServer.cs" />
     <Compile Include="UserInfo.cs" />
     <Compile Include="WinningPlayer.cs" />
   </ItemGroup>
