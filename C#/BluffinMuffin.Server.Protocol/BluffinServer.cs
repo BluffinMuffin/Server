@@ -54,7 +54,7 @@ namespace BluffinMuffin.Server.Protocol
 
         public void Start()
         {
-            Logger.LogInformation("BluffinServerLobby", "Server started on port {0} !", m_TcpServer.Port);
+            Logger.LogInformation("Server started on port {0} !", m_TcpServer.Port);
             Task.Factory.StartNew(new BluffinLobbyWorker(this, this).Start);
             Task.Factory.StartNew(new BluffinGameWorker(this).Start);
             m_TcpServer.Run().Wait();

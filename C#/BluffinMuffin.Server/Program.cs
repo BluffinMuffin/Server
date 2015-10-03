@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using BluffinMuffin.Server.Protocol;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Reflection;
 using BluffinMuffin.Logger.DBAccess;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.Enums;
+using BluffinMuffin.Server.Configuration;
 using BluffinMuffin.Server.DataTypes.Protocol;
 using Com.Ericmas001.Portable.Util;
 
@@ -14,6 +16,7 @@ namespace BluffinMuffin.Server
 {
     public static class Program
     {
+        private static BluffinMuffinDataSection m_Config;
         static StreamWriter m_SwNormal;
         static StreamWriter m_SwDebug;
         static StreamWriter m_SwVerbose;
@@ -23,7 +26,93 @@ namespace BluffinMuffin.Server
         private static readonly Dictionary<int, Game> m_LogGames = new Dictionary<int, Game>();
         private static readonly Dictionary<int, bool> m_LogGamesStatus = new Dictionary<int, bool>();
         private static readonly Dictionary<IBluffinClient, Client> m_LogClients = new Dictionary<IBluffinClient, Client>();
-        static void Main(string[] args)
+
+        private static void Main()
+        {
+            InitConfiguration();
+
+            InitDbLogging();
+
+            RegisterToLogEvents();
+
+            InitConsoleLogging();
+
+            InitFileLogging();
+
+            RegisterServerOnDb();
+
+            StartServer();
+        }
+
+        private static void StartServer()
+        {
+            try
+            {
+                m_Server = new BluffinServer(m_Config.Port);
+                m_Server.Start();
+            }
+            catch
+            {
+                DataTypes.Logger.LogError("Can't start server !!");
+            }
+        }
+
+        private static void RegisterServerOnDb()
+        {
+            if (!m_Config.Logging.DbCommand.HasIt)
+                return;
+
+            m_LogServer = new Logger.DBAccess.Server($"{Assembly.GetEntryAssembly().GetName().Name} {Assembly.GetEntryAssembly().GetName().Version.ToString(3)}", Assembly.GetAssembly(typeof (AbstractCommand)).GetName().Version);
+            m_LogServer.RegisterServer();
+        }
+
+        private static void InitFileLogging()
+        {
+            var uri = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+            var path = Path.GetDirectoryName(uri.LocalPath + uri.Fragment) + "\\log";
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            var logName = DateTime.Now.ToString("yyyy-MM-dd.HH-mm-ss");
+            switch (m_Config.Logging.File.Level)
+            {
+                case "VERBOSE":
+                    m_SwVerbose = File.CreateText(path + "\\server." + logName + ".verbose.txt");
+                    m_SwVerbose.AutoFlush = true;
+                    LogManager.MessageLogged += (from, message, level) => LogManager.LogInFile(m_SwVerbose, @from, message, level, LogLevel.MessageVeryLow);
+                    goto case "DEBUG";
+                case "DEBUG":
+                    m_SwDebug = File.CreateText(path + "\\server." + logName + ".debug.txt");
+                    m_SwDebug.AutoFlush = true;
+                    LogManager.MessageLogged += (from, message, level) => LogManager.LogInFile(m_SwDebug, @from, message, level, LogLevel.MessageLow);
+                    goto case "NORMAL";
+                case "NORMAL":
+                    m_SwNormal = File.CreateText(path + "\\server." + logName + ".normal.txt");
+                    m_SwNormal.AutoFlush = true;
+                    LogManager.MessageLogged += (from, message, level) => LogManager.LogInFile(m_SwNormal, @from, message, level, LogLevel.Message);
+                    break;
+            }
+        }
+
+        private static void InitConsoleLogging()
+        {
+            switch (m_Config.Logging.Console.Level)
+            {
+                case "VERBOSE":
+                    LogManager.MessageLogged += (from, message, level) => LogInConsole(@from, message, level, LogLevel.MessageVeryLow);
+                    break;
+                case "DEBUG":
+                    LogManager.MessageLogged += (from, message, level) => LogInConsole(@from, message, level, LogLevel.MessageLow);
+                    break;
+                case "NORMAL":
+                    LogManager.MessageLogged += (from, message, level) => LogInConsole(@from, message, level, LogLevel.Message);
+                    break;
+                default:
+                    LogManager.MessageLogged += (from, message, level) => LogInConsole(@from, message, level, LogLevel.WarningLow);
+                    break;
+            }
+        }
+
+        private static void RegisterToLogEvents()
         {
             DataTypes.Logger.CommandSent += OnLogCommandSent;
             DataTypes.Logger.CommandReceived += OnLogCommandReceived;
@@ -35,63 +124,19 @@ namespace BluffinMuffin.Server
             DataTypes.Logger.InformationLogged += OnInformationLogged;
             DataTypes.Logger.WarningLogged += OnWarningLogged;
             DataTypes.Logger.ErrorLogged += OnErrorLogged;
+        }
 
-            Database.InitDatabase("turnsol.arvixe.com", "BluffinMuffin_Logger_Test", "1ti3gre2", "BluffinMuffin_Logs_Test");
+        private static void InitDbLogging()
+        {
+            if (m_Config.Logging.DbCommand.HasIt)
+                Database.InitDatabase(m_Config.Logging.DbCommand.Url, m_Config.Logging.DbCommand.User, m_Config.Logging.DbCommand.Password, m_Config.Logging.DbCommand.Database);
+        }
 
-            m_LogServer = new Logger.DBAccess.Server($"{Assembly.GetEntryAssembly().GetName().Name} {Assembly.GetEntryAssembly().GetName().Version.ToString(3)}", Assembly.GetAssembly(typeof(AbstractCommand)).GetName().Version);
-            m_LogServer.RegisterServer();
-
-            LogManager.MessageLogged += LogManager_MessageLogged;
-            if ((args.Length % 2) == 0)
-            {
-                try
-                {
-
-                    var map = new Dictionary<string, string>();
-                    for (var i = 0; i < args.Length; i += 2)
-                        map.Add(args[i].ToLower(), args[i + 1]);
-                    var port = 4242;
-                    if (map.ContainsKey("-p"))
-                        port = int.Parse(map["-p"]);
-                    if(map.ContainsKey("-log"))
-                    {
-                    var uri = new Uri(Assembly.GetExecutingAssembly().CodeBase);
-                    var path = Path.GetDirectoryName(uri.LocalPath + uri.Fragment) + "\\log";
-                        if (!Directory.Exists(path))
-                            Directory.CreateDirectory(path);
-                        var logName = DateTime.Now.ToString("yyyy-MM-dd.HH-mm-ss");
-                        var logType = map["-log"];
-                        if(logType == "normal" || logType == "debug" || logType == "verbose")
-                        {
-                            m_SwNormal = File.CreateText(path + "\\server." + logName + ".normal.txt");
-                            m_SwNormal.AutoFlush = true;
-                            LogManager.MessageLogged += LogManager_MessageLoggedToFileNormal;
-                            if (logType == "debug" || logType == "verbose")
-                            {
-                                m_SwDebug = File.CreateText(path + "\\server." + logName + ".debug.txt");
-                                m_SwDebug.AutoFlush = true;
-                                LogManager.MessageLogged += LogManager_MessageLoggedToFileDebug;
-                                if (logType == "verbose")
-                                {
-                                    m_SwVerbose = File.CreateText(path + "\\server." + logName + ".verbose.txt");
-                                    m_SwVerbose.AutoFlush = true;
-                                    LogManager.MessageLogged += LogManager_MessageLoggedToFileVerbose;
-                                }
-                            }
-                        }
-
-                    }
-                    m_Server = new BluffinServer(port);
-                    m_Server.Start();
-                    DataTypes.Logger.LogInformation("Server started on port {0}", port);
-                }
-                catch
-                {
-                    DataTypes.Logger.LogError("Can't start server !!");
-                }
-            }
-            else
-                DataTypes.Logger.LogError("Incorrect number of application arguments");
+        private static void InitConfiguration()
+        {
+            m_Config = ConfigurationManager.GetSection(BluffinMuffinDataSection.NAME) as BluffinMuffinDataSection;
+            if (m_Config == null)
+                throw new Exception("No configuration found !!!");
         }
 
         private static string GetCaller(object sender)
@@ -121,27 +166,39 @@ namespace BluffinMuffin.Server
 
         private static void OnLogClientCreated(object sender, DataTypes.EventHandling.LogClientCreationEventArg e)
         {
+            if (!m_Config.Logging.DbCommand.HasIt)
+                return;
+
             m_LogClients[e.Client] = new Client(e.Endpoint.Client.RemoteEndPoint.ToString());
             m_LogClients[e.Client].RegisterClient();
         }
 
         private static void OnLogGameEnded(object sender, DataTypes.EventHandling.LogGameEventArg e)
         {
+            if (!m_Config.Logging.DbCommand.HasIt)
+                return;
+
             m_LogGamesStatus[e.Id] = false;
         }
 
         private static void OnLogGameCreated(object sender, DataTypes.EventHandling.LogGameEventArg e)
         {
-            if (!m_LogGamesStatus[e.Id])
-            {
-                m_LogGamesStatus[e.Id] = true;
-                m_LogGames[e.Id] = new Game(m_LogTables[e.Id]);
-                m_LogGames[e.Id].RegisterGame();
-            }
+            if (!m_Config.Logging.DbCommand.HasIt)
+                return;
+
+            if (m_LogGamesStatus[e.Id])
+                return;
+
+            m_LogGamesStatus[e.Id] = true;
+            m_LogGames[e.Id] = new Game(m_LogTables[e.Id]);
+            m_LogGames[e.Id].RegisterGame();
         }
 
         private static void OnLogTableCreated(object sender, DataTypes.EventHandling.LogTableCreationEventArg e)
         {
+            if (!m_Config.Logging.DbCommand.HasIt)
+                return;
+
             var p = e.Params;
             m_LogTables[e.Id] = new Table(p.TableName, (Logger.DBAccess.Enums.GameSubTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.GameSubTypeEnum), p.Variant.ToString()), p.MinPlayersToStart, p.MaxPlayers, (Logger.DBAccess.Enums.BlindTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.BlindTypeEnum), p.Blind.ToString()), (Logger.DBAccess.Enums.LobbyTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.LobbyTypeEnum), p.Lobby.OptionType.ToString()), (Logger.DBAccess.Enums.LimitTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.LimitTypeEnum), p.Limit.ToString()), m_LogServer);
             m_LogTables[e.Id].RegisterTable();
@@ -152,6 +209,10 @@ namespace BluffinMuffin.Server
         {
             LogManager.Log(LogLevel.MessageVeryLow, GetCaller(sender), "Server SEND to {0} [{1}]", m_LogClients[e.Client].DisplayName, e.CommandData);
             LogManager.Log(LogLevel.MessageVeryLow, GetCaller(sender), "-------------------------------------------");
+
+            if (!m_Config.Logging.DbCommand.HasIt)
+                return;
+
             switch (e.Command.CommandType)
             {
                 case BluffinCommandEnum.General:
@@ -172,6 +233,10 @@ namespace BluffinMuffin.Server
         {
             LogManager.Log(LogLevel.MessageVeryLow, GetCaller(sender), "Server RECV from {0} [{1}]", m_LogClients[e.Client].DisplayName, e.CommandData);
             LogManager.Log(LogLevel.MessageVeryLow, GetCaller(sender), "-------------------------------------------");
+
+            if (!m_Config.Logging.DbCommand.HasIt)
+                return;
+
             switch (e.Command.CommandType)
             {
                 case BluffinCommandEnum.General:
@@ -188,28 +253,6 @@ namespace BluffinMuffin.Server
             }
         }
 
-        private static void LogManager_MessageLogged(string from, string message, int level)
-        {
-            // ATTENTION: This must contain "LogLevel.Message" for RELEASE
-            //                              "LogLevel.MessageLow" for DEBUGGING
-            //                              "LogLevel.MessageVeryLow" for XTREM DEBUGGING
-            LogInConsole(from, message, level, LogLevel.MessageVeryLow);
-        }
-
-        private static void LogManager_MessageLoggedToFileNormal(string from, string message, int level)
-        {
-            LogManager.LogInFile(m_SwNormal, from, message, level, LogLevel.Message);
-        }
-
-        private static void LogManager_MessageLoggedToFileDebug(string from, string message, int level)
-        {
-            LogManager.LogInFile(m_SwDebug, from, message, level, LogLevel.MessageLow);
-        }
-
-        private static void LogManager_MessageLoggedToFileVerbose(string from, string message, int level)
-        {
-            LogManager.LogInFile(m_SwVerbose, from, message, level, LogLevel.MessageVeryLow);
-        }
         public static void LogInConsole(string from, string message, int level, LogLevel minLevelToLog)
         {
             var fc = Console.ForegroundColor;
