@@ -6,8 +6,6 @@ using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
-using BluffinMuffin.Server.Logic.GameVariants;
-using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
@@ -140,19 +138,19 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override bool OnMoneyPlayed(PlayerInfo p, int amnt)
         {
-            LogManager.Log(LogLevel.MessageVeryLow, "PokerGame.PlayMoney", "Currently, we need {0} minimum money from this player", Table.CallAmnt(p));
+            Logger.LogDebugInformation("Currently, we need {0} minimum money from this player", Table.CallAmnt(p));
 
             //Validation: Is it the player's turn to play ?
             if (p.NoSeat != Table.NoSeatCurrentPlayer)
             {
-                LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} just played but it wasn't his turn", p.Name);
+                Logger.LogWarning("{0} just played but it wasn't his turn", p.Name);
                 return false;
             }
 
             //The Player is Folding
             if (amnt == -1)
             {
-                LogManager.Log(LogLevel.MessageLow, "PokerGame.PlayMoney", "{0} FOLDED", p.Name);
+                Logger.LogDebugInformation("{0} FOLDED", p.Name);
                 FoldPlayer(p);
                 ContinueBettingRound();
                 return true;
@@ -166,7 +164,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 //Validation: Can the player bet more ? If yes, this is not fair.
                 if (p.CanBet(amnt + 1))
                 {
-                    LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} needed to play at least {1} and tried {2}", p.Name, amntNeeded, amnt);
+                    Logger.LogWarning("{0} needed to play at least {1} and tried {2}", p.Name, amntNeeded, amnt);
                     return false;
                 }
 
@@ -176,14 +174,14 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             if (amnt > amntNeeded && amnt < Table.MinRaiseAmnt(p))
             {
-                LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} needed to play at least {1} to raise (CallAmount + MinRaiseAmount) and tried {2}", p.Name, Table.MinRaiseAmnt(p), amnt);
+                Logger.LogWarning("{0} needed to play at least {1} to raise (CallAmount + MinRaiseAmount) and tried {2}", p.Name, Table.MinRaiseAmnt(p), amnt);
                 return false;
             }
 
             //Let's hope the player has enough money ! Time to Bet!
             if (!p.TryBet(amnt))
             {
-                LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} just put more money than he actually have ({1} > {2})", p.Name, amnt, p.MoneySafeAmnt);
+                Logger.LogWarning("{0} just put more money than he actually have ({1} > {2})", p.Name, amnt, p.MoneySafeAmnt);
                 return false;
             }
 
@@ -193,7 +191,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             //Is the player All-In?
             if (p.MoneySafeAmnt == 0)
             {
-                LogManager.Log(LogLevel.MessageVeryLow, "PokerGame.PlayMoney", "Player now All-In !");
+                Logger.LogDebugInformation("Player now All-In !");
                 p.State = PlayerStateEnum.AllIn;
                 Table.NbAllIn++;
                 Table.AddAllInCap(p.MoneyBetAmnt);
@@ -205,12 +203,12 @@ namespace BluffinMuffin.Server.Logic.GameModules
             //Was it a CALL or a RAISE ?
             if (amnt == amntNeeded)
             {
-                LogManager.Log(LogLevel.MessageLow, "PokerGame.PlayMoney", "{0} CALLED WITH ${1}", p.Name, amnt);
+                Logger.LogDebugInformation("{0} CALLED WITH ${1}", p.Name, amnt);
                 CallPlayer(p, amnt);
             }
             else
             {
-                LogManager.Log(LogLevel.MessageLow, "PokerGame.PlayMoney", "{0} RAISED WITH ${1}", p.Name, amnt);
+                Logger.LogDebugInformation("{0} RAISED WITH ${1}", p.Name, amnt);
                 RaisePlayer(p, amnt);
             }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -9,7 +10,9 @@ using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Protocol.Game;
 using BluffinMuffin.Protocol.Lobby;
 using BluffinMuffin.Protocol.Lobby.QuickMode;
-using Com.Ericmas001.Util;
+using BluffinMuffin.Server.DataTypes;
+using BluffinMuffin.Server.DataTypes.EventHandling;
+using Com.Ericmas001.Net.Protocol;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BluffinMuffin.Server.Protocol.Test
@@ -21,7 +24,10 @@ namespace BluffinMuffin.Server.Protocol.Test
         [TestMethod]
         public void BigUglyTest()
         {
-            LogManager.MessageLogged += LogManager_MessageLogged;
+            Logger.CommandSent += OnLogCommandSent;
+            Logger.CommandReceived += OnLogCommandReceived;
+            Logger.MessageLogged += OnMessageLogged;
+
             var server = new BluffinServer(42084);
             var tokenServer = new CancellationTokenSource();
             Task.Factory.StartNew(server.Start, tokenServer.Token);
@@ -96,9 +102,29 @@ namespace BluffinMuffin.Server.Protocol.Test
             tokenServer.Cancel();
         }
 
-        void LogManager_MessageLogged(string from, string message, int level)
+
+        private string GetCaller(object sender)
         {
-            m_Sw.WriteLine("[{0}] {1}", from, message);
+            var sf = sender as StackFrame;
+            if (sf == null)
+                return sender?.ToString() ?? string.Empty;
+            return $"{sf.GetMethod().DeclaringType?.FullName}.{sf.GetMethod().Name}";
+        }
+
+        private void OnLogCommandReceived(object sender, LogCommandEventArg e)
+        {
+            OnMessageLogged(sender, new StringEventArgs($"Server RECV from {e.Client.PlayerName} [{e.CommandData}]"));
+            OnMessageLogged(sender, new StringEventArgs("-------------------------------------------"));
+        }
+
+        private void OnLogCommandSent(object sender, LogCommandEventArg e)
+        {
+            OnMessageLogged(sender, new StringEventArgs($"Server SEND to {e.Client.PlayerName} [{e.CommandData}]"));
+            OnMessageLogged(sender, new StringEventArgs("-------------------------------------------"));
+        }
+        private void OnMessageLogged(object sender, StringEventArgs e)
+        {
+            m_Sw.WriteLine("[{0}] {1}", GetCaller(sender), e.Str);
         }
 
         private void BeAwareOfWhoItIsToPlay(RemoteTcpServer serverEntity, int tableId, int noSeat)
@@ -129,10 +155,6 @@ namespace BluffinMuffin.Server.Protocol.Test
 
         private void BeAwareOfMoneyPlayed(RemoteTcpServer serverEntity, int tableId, int seat)
         {
-            //var responseMoneyChanged = serverEntity.WaitForNextCommand<PlayerMoneyChangedCommand>();
-            //Assert.AreEqual(tableId, responseMoneyChanged.TableId);
-            //Assert.AreEqual(seat, responseMoneyChanged.PlayerPos);
-
             var responseTurnEnded = serverEntity.WaitForNextCommand<PlayerTurnEndedCommand>();
             Assert.AreEqual(tableId, responseTurnEnded.TableId);
             Assert.AreEqual(seat, responseTurnEnded.NoSeat);

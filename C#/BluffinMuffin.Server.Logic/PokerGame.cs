@@ -7,7 +7,6 @@ using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.Logic.GameModules;
-using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic
 {
@@ -71,7 +70,7 @@ namespace BluffinMuffin.Server.Logic
         {
             if (IsInitializing || !IsRunning)
             {
-                LogManager.Log(LogLevel.Error, "PokerGame.JoinGame", "Can't join, bad timing: {0}", State);
+                Logger.LogError("Can't join, bad timing: {0}", State);
                 return false;
             }
 
@@ -145,12 +144,12 @@ namespace BluffinMuffin.Server.Logic
             lock (Table)
             {
                 var amnt = Math.Min(amount, p.MoneySafeAmnt);
-                LogManager.Log(LogLevel.MessageLow, "PokerGame.PlayMoney", "{0} is playing {1} money on state: {2}", p.Name, amnt, State);
+                Logger.LogDebugInformation("{0} is playing {1} money on state: {2}", p.Name, amnt, State);
 
                 if (m_CurrentModule != null)
                     return m_CurrentModule.OnMoneyPlayed(p, amount);
 
-                LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} played money but the game is not in the right state", p.Name);
+                Logger.LogDebugInformation("{0} played money but the game is not in the right state", p.Name);
 
                 return false;
             }
@@ -163,12 +162,12 @@ namespace BluffinMuffin.Server.Logic
         {
             lock (Table)
             {
-                LogManager.Log(LogLevel.MessageLow, "PokerGame.Discard", "{0} is discarding [{1}] on state: {2}", p.Name, string.Join(", ",cards), State);
+                Logger.LogDebugInformation("{0} is discarding [{1}] on state: {2}", p.Name, string.Join(", ",cards), State);
 
                 if (m_CurrentModule != null)
                     return m_CurrentModule.OnCardDiscarded(p, cards);
 
-                LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} tried discarding but the game is not in the right state", p.Name);
+                Logger.LogWarning("{0} tried discarding but the game is not in the right state", p.Name);
 
                 return false;
             }

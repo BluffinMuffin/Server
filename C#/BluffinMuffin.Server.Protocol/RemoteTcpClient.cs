@@ -5,7 +5,6 @@ using BluffinMuffin.Protocol.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Protocol;
 using Com.Ericmas001.Net.Protocol;
-using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Protocol
 {
@@ -21,7 +20,7 @@ namespace BluffinMuffin.Server.Protocol
             : base(remoteEntity)
         {
             m_BluffinServer = bluffinServer;
-            Logger.LogClientCreated(this, remoteEntity, this);
+            Logger.LogClientCreated(remoteEntity, this);
         }
 
         protected override void OnDataReceived(string data)
@@ -29,7 +28,7 @@ namespace BluffinMuffin.Server.Protocol
             if (!string.IsNullOrEmpty(data))
             {
                 var command = BluffinMuffin.Protocol.AbstractCommand.DeserializeCommand(data);
-                Logger.LogCommandReceived(this, command, this, data);
+                Logger.LogCommandReceived(command, this, data);
                 switch (command.CommandType)
                 {
                     case BluffinCommandEnum.General:
@@ -67,9 +66,7 @@ namespace BluffinMuffin.Server.Protocol
         public void SendCommand(BluffinMuffin.Protocol.AbstractCommand command)
         {
             var line = command.Encode();
-            Logger.LogCommandSent(this, command, this, line);
-            LogManager.Log(LogLevel.MessageVeryLow, "ServerClientLobby.Send", "Server SEND to {0} [{1}]", PlayerName, line);
-            LogManager.Log(LogLevel.MessageVeryLow, "ServerClientLobby.Send", "-------------------------------------------");
+            Logger.LogCommandSent(command, this, line);
             Send(line);
         }
 

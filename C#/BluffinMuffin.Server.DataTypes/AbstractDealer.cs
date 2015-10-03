@@ -2,7 +2,7 @@
 using System.Linq;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.HandEvaluator.Enums;
-using Com.Ericmas001.Util;
+using Com.Ericmas001.Portable.Util;
 using static BluffinMuffin.HandEvaluator.Enums.NominalValueEnum;
 using static BluffinMuffin.HandEvaluator.Enums.SuitEnum;
 

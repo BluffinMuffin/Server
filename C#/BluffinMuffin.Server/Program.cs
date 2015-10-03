@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using BluffinMuffin.Server.Protocol;
-using Com.Ericmas001.Util;
 using System.IO;
 using System.Reflection;
 using BluffinMuffin.Logger.DBAccess;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.Enums;
 using BluffinMuffin.Server.DataTypes.Protocol;
+using Com.Ericmas001.Portable.Util;
 
 namespace BluffinMuffin.Server
 {
@@ -24,18 +25,21 @@ namespace BluffinMuffin.Server
         private static readonly Dictionary<IBluffinClient, Client> m_LogClients = new Dictionary<IBluffinClient, Client>();
         static void Main(string[] args)
         {
-
-            Database.InitDatabase("turnsol.arvixe.com", "BluffinMuffin_Logger_Test", "1ti3gre2", "BluffinMuffin_Logs_Test");
-
-            m_LogServer = new Logger.DBAccess.Server($"{Assembly.GetEntryAssembly().GetName().Name} {Assembly.GetEntryAssembly().GetName().Version.ToString(3)}", Assembly.GetAssembly(typeof(AbstractCommand)).GetName().Version);
-            m_LogServer.RegisterServer();
-
             DataTypes.Logger.CommandSent += OnLogCommandSent;
             DataTypes.Logger.CommandReceived += OnLogCommandReceived;
             DataTypes.Logger.TableCreated += OnLogTableCreated;
             DataTypes.Logger.GameCreated += OnLogGameCreated;
             DataTypes.Logger.GameEnded += OnLogGameEnded;
             DataTypes.Logger.ClientCreated += OnLogClientCreated;
+            DataTypes.Logger.DebugInformationLogged += OnDebugInformationLogged;
+            DataTypes.Logger.InformationLogged += OnInformationLogged;
+            DataTypes.Logger.WarningLogged += OnWarningLogged;
+            DataTypes.Logger.ErrorLogged += OnErrorLogged;
+
+            Database.InitDatabase("turnsol.arvixe.com", "BluffinMuffin_Logger_Test", "1ti3gre2", "BluffinMuffin_Logs_Test");
+
+            m_LogServer = new Logger.DBAccess.Server($"{Assembly.GetEntryAssembly().GetName().Name} {Assembly.GetEntryAssembly().GetName().Version.ToString(3)}", Assembly.GetAssembly(typeof(AbstractCommand)).GetName().Version);
+            m_LogServer.RegisterServer();
 
             LogManager.MessageLogged += LogManager_MessageLogged;
             if ((args.Length % 2) == 0)
@@ -79,15 +83,40 @@ namespace BluffinMuffin.Server
                     }
                     m_Server = new BluffinServer(port);
                     m_Server.Start();
-                    LogManager.Log(LogLevel.Message, "BluffinMuffin.Server", "Server started on port {0}", port);
+                    DataTypes.Logger.LogInformation("Server started on port {0}", port);
                 }
                 catch
                 {
-                    LogManager.Log(LogLevel.Error, "Program.Main", "Can't start server !!");
+                    DataTypes.Logger.LogError("Can't start server !!");
                 }
             }
             else
-                LogManager.Log(LogLevel.Error, "Program.Main", "Incorrect number of application arguments");
+                DataTypes.Logger.LogError("Incorrect number of application arguments");
+        }
+
+        private static string GetCaller(object sender)
+        {
+            var sf = sender as StackFrame;
+            if (sf == null)
+                return sender?.ToString() ?? string.Empty;
+            return $"{sf.GetMethod().DeclaringType?.FullName}.{sf.GetMethod().Name}";
+        }
+
+        private static void OnDebugInformationLogged(object sender, Com.Ericmas001.Net.Protocol.StringEventArgs e)
+        {
+            LogManager.Log(LogLevel.MessageLow, GetCaller(sender), e.Str);
+        }
+        private static void OnInformationLogged(object sender, Com.Ericmas001.Net.Protocol.StringEventArgs e)
+        {
+            LogManager.Log(LogLevel.Message, GetCaller(sender), e.Str);
+        }
+        private static void OnWarningLogged(object sender, Com.Ericmas001.Net.Protocol.StringEventArgs e)
+        {
+            LogManager.Log(LogLevel.Warning, GetCaller(sender), e.Str);
+        }
+        private static void OnErrorLogged(object sender, Com.Ericmas001.Net.Protocol.StringEventArgs e)
+        {
+            LogManager.Log(LogLevel.Error, GetCaller(sender), e.Str);
         }
 
         private static void OnLogClientCreated(object sender, DataTypes.EventHandling.LogClientCreationEventArg e)
@@ -121,6 +150,8 @@ namespace BluffinMuffin.Server
 
         private static void OnLogCommandSent(object sender, DataTypes.EventHandling.LogCommandEventArg e)
         {
+            LogManager.Log(LogLevel.MessageVeryLow, GetCaller(sender), "Server SEND to {0} [{1}]", m_LogClients[e.Client].DisplayName, e.CommandData);
+            LogManager.Log(LogLevel.MessageVeryLow, GetCaller(sender), "-------------------------------------------");
             switch (e.Command.CommandType)
             {
                 case BluffinCommandEnum.General:
@@ -139,6 +170,8 @@ namespace BluffinMuffin.Server
 
         private static void OnLogCommandReceived(object sender, DataTypes.EventHandling.LogCommandEventArg e)
         {
+            LogManager.Log(LogLevel.MessageVeryLow, GetCaller(sender), "Server RECV from {0} [{1}]", m_LogClients[e.Client].DisplayName, e.CommandData);
+            LogManager.Log(LogLevel.MessageVeryLow, GetCaller(sender), "-------------------------------------------");
             switch (e.Command.CommandType)
             {
                 case BluffinCommandEnum.General:
@@ -160,7 +193,7 @@ namespace BluffinMuffin.Server
             // ATTENTION: This must contain "LogLevel.Message" for RELEASE
             //                              "LogLevel.MessageLow" for DEBUGGING
             //                              "LogLevel.MessageVeryLow" for XTREM DEBUGGING
-            LogManager.LogInConsole(from, message, level, LogLevel.MessageVeryLow);
+            LogInConsole(from, message, level, LogLevel.MessageVeryLow);
         }
 
         private static void LogManager_MessageLoggedToFileNormal(string from, string message, int level)
@@ -176,6 +209,71 @@ namespace BluffinMuffin.Server
         private static void LogManager_MessageLoggedToFileVerbose(string from, string message, int level)
         {
             LogManager.LogInFile(m_SwVerbose, from, message, level, LogLevel.MessageVeryLow);
+        }
+        public static void LogInConsole(string from, string message, int level, LogLevel minLevelToLog)
+        {
+            var fc = Console.ForegroundColor;
+            var bc = Console.BackgroundColor;
+
+
+            //Errors
+            if (level >= (int)LogLevel.ErrorHigh)
+            {
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.White;
+                message = "ERROR: " + message;
+            }
+            if (level >= (int)LogLevel.Error)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                message = "ERROR: " + message;
+            }
+            else if (level >= (int)LogLevel.ErrorLow)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+            }
+
+
+            //Warnings
+            else if (level >= (int)LogLevel.Warning)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                message = "WARNING: " + message;
+            }
+            else if (level >= (int)LogLevel.WarningLow)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+            }
+
+
+            //Messages
+            else if (level >= (int)LogLevel.MessageVeryHigh)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                message = "IMPORTANT: " + message;
+            }
+            else if (level >= (int)LogLevel.Message)
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            else if (level >= (int)LogLevel.MessageLow)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                message = "DEBUG: " + message;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                message = "DEBUG: " + message;
+            }
+
+
+            //Let's Log!
+            if (level >= (int)minLevelToLog)
+                Console.WriteLine(message);
+
+            Console.ForegroundColor = fc;
+            Console.BackgroundColor = bc;
         }
     }
 }

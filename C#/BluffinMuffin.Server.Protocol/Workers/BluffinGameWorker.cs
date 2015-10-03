@@ -9,7 +9,6 @@ using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.Enums;
 using BluffinMuffin.Protocol.Game;
 using BluffinMuffin.Server.DataTypes.Protocol;
-using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Protocol.Workers
 {
@@ -24,7 +23,6 @@ namespace BluffinMuffin.Server.Protocol.Workers
             m_Methods = new[]
             {
                 //General
-                new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient, RemotePlayer>>(typeof(AbstractCommand), OnCommandReceived), 
                 new KeyValuePair<Type, Action<AbstractCommand, IBluffinClient, RemotePlayer>>(typeof(DisconnectCommand), OnDisconnectCommandReceived), 
                 
                 //Game
@@ -46,12 +44,6 @@ namespace BluffinMuffin.Server.Protocol.Workers
             }
         }
 
-        private void OnCommandReceived(AbstractCommand command, IBluffinClient client, RemotePlayer p)
-        {
-            LogManager.Log(LogLevel.MessageVeryLow, "BluffinGameWorker.OnCommandReceived", "GameWorker RECV from {0} [{1}]", client.PlayerName, command.Encode());
-            LogManager.Log(LogLevel.MessageVeryLow, "BluffinGameWorker.OnCommandReceived", "-------------------------------------------");
-        }
-
         void OnDisconnectCommandReceived(AbstractCommand command, IBluffinClient client, RemotePlayer p)
         {
             if (p.Game.Table.Params.Lobby.OptionType == LobbyTypeEnum.RegisteredMode)
@@ -62,7 +54,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             p.Player.State = PlayerStateEnum.Zombie;
 
             var t = p.Game.Table;
-            LogManager.Log(LogLevel.Message, "BluffinGameWorker.OnDisconnectCommandReceived", "> Client '{0}' left table: {2}:{1}", p.Player.Name, t.Params.TableName, p.TableId);
+            Logger.LogInformation("> Client '{0}' left table: {2}:{1}", p.Player.Name, t.Params.TableName, p.TableId);
 
             p.Game.LeaveGame(p.Player);
             

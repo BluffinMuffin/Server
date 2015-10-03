@@ -6,7 +6,6 @@ using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.Logic.GameVariants;
-using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
@@ -43,7 +42,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             if (Variant.NeedsBringIn)
             {
-                LogManager.Log(LogLevel.MessageVeryLow, "StudGame.PlayMoney", "Currently, we need {0}, the bring in !!", Table.CallAmnt(p));
+                Logger.LogDebugInformation("Currently, we need {0}, the bring in !!", Table.CallAmnt(p));
                 if (amnt == -1)
                     return false;
             }

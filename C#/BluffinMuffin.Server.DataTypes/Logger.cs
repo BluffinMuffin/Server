@@ -1,18 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.DataTypes.Protocol;
+using Com.Ericmas001.Net.Protocol;
+using AbstractCommand = BluffinMuffin.Protocol.AbstractCommand;
 
 namespace BluffinMuffin.Server.DataTypes
 {
     public class Logger
     {
+        public static event EventHandler<StringEventArgs> DebugInformationLogged = delegate { };
+        public static event EventHandler<StringEventArgs> InformationLogged = delegate { };
+        public static event EventHandler<StringEventArgs> WarningLogged = delegate { };
+        public static event EventHandler<StringEventArgs> ErrorLogged = delegate { };
+
+        public static event EventHandler<StringEventArgs> MessageLogged = delegate { };
+
         public static event EventHandler<LogCommandEventArg> CommandSent = delegate { };
         public static event EventHandler<LogCommandEventArg> CommandReceived = delegate { };
         public static event EventHandler<LogTableCreationEventArg> TableCreated = delegate { };
@@ -21,33 +26,54 @@ namespace BluffinMuffin.Server.DataTypes
         public static event EventHandler<LogClientCreationEventArg> ClientCreated = delegate { };
         public static event EventHandler<LogClientEventArg> ClientIdentified = delegate { };
 
-        public static void LogCommandSent(object sender, AbstractCommand cmd, IBluffinClient cli, string commandData)
+        public static void LogDebugInformation(string message, params object[] args)
         {
-            CommandSent(sender, new LogCommandEventArg(cmd, commandData, cli));
+            MessageLogged(new StackFrame(1), new StringEventArgs(string.Format(message, args)));
+            DebugInformationLogged(new StackFrame(1), new StringEventArgs(string.Format(message, args)));
         }
-        public static void LogCommandReceived(object sender, AbstractCommand cmd, IBluffinClient cli, string commandData)
+        public static void LogInformation(string message, params object[] args)
         {
-            CommandReceived(sender, new LogCommandEventArg(cmd, commandData, cli ));
+            MessageLogged(new StackFrame(1), new StringEventArgs(string.Format(message, args)));
+            InformationLogged(new StackFrame(1), new StringEventArgs(string.Format(message, args)));
         }
-        public static void LogTableCreated(object sender, int id, TableParams p)
+        public static void LogWarning(string message, params object[] args)
         {
-            TableCreated(sender, new LogTableCreationEventArg(id, p));
+            MessageLogged(new StackFrame(1), new StringEventArgs(string.Format(message, args)));
+            WarningLogged(new StackFrame(1), new StringEventArgs(string.Format(message, args)));
         }
-        public static void LogGameCreated(object sender, int id)
+        public static void LogError(string message, params object[] args)
         {
-            GameCreated(sender, new LogGameEventArg(id));
+            MessageLogged(new StackFrame(1), new StringEventArgs(string.Format(message, args)));
+            ErrorLogged(new StackFrame(1), new StringEventArgs(string.Format(message,args)));
         }
-        public static void LogGameEnded(object sender, int id)
+
+        public static void LogCommandSent(AbstractCommand cmd, IBluffinClient cli, string commandData)
         {
-            GameEnded(sender, new LogGameEventArg(id));
+            CommandSent(new StackFrame(1), new LogCommandEventArg(cmd, commandData, cli));
         }
-        public static void LogClientCreated(object sender, TcpClient endpoint, IBluffinClient client)
+        public static void LogCommandReceived(AbstractCommand cmd, IBluffinClient cli, string commandData)
         {
-            ClientCreated(sender, new LogClientCreationEventArg(endpoint, client));
+            CommandReceived(new StackFrame(1), new LogCommandEventArg(cmd, commandData, cli ));
         }
-        public static void LogClientIdentified(object sender, IBluffinClient client)
+        public static void LogTableCreated(int id, TableParams p)
         {
-            ClientIdentified(sender, new LogClientEventArg(client));
+            TableCreated(new StackFrame(1), new LogTableCreationEventArg(id, p));
+        }
+        public static void LogGameCreated(int id)
+        {
+            GameCreated(new StackFrame(1), new LogGameEventArg(id));
+        }
+        public static void LogGameEnded(int id)
+        {
+            GameEnded(new StackFrame(1), new LogGameEventArg(id));
+        }
+        public static void LogClientCreated(TcpClient endpoint, IBluffinClient client)
+        {
+            ClientCreated(new StackFrame(1), new LogClientCreationEventArg(endpoint, client));
+        }
+        public static void LogClientIdentified(IBluffinClient client)
+        {
+            ClientIdentified(new StackFrame(1), new LogClientEventArg(client));
         }
     }
 }

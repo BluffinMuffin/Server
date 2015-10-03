@@ -7,7 +7,7 @@ using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Attributes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
-using Com.Ericmas001.Util;
+using Com.Ericmas001.Portable.Util;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
 {

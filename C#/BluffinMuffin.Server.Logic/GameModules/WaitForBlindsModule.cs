@@ -1,8 +1,8 @@
 ﻿using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
-using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
@@ -23,8 +23,8 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override bool OnMoneyPlayed(PlayerInfo p, int amnt)
         {
-            LogManager.Log(LogLevel.MessageVeryLow, "PokerGame.PlayMoney", "Total blinds needed is {0}", Table.TotalBlindNeeded);
-            LogManager.Log(LogLevel.MessageVeryLow, "PokerGame.PlayMoney", "{0} is putting blind of {1}", p.Name, amnt);
+            Logger.LogDebugInformation("Total blinds needed is {0}", Table.TotalBlindNeeded);
+            Logger.LogDebugInformation("{0} is putting blind of {1}", p.Name, amnt);
 
             //What is the need Blind from the player ?
             var needed = Table.GetBlindNeeded(p);
@@ -35,14 +35,14 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 //If the player isn't playing enough but it's all he got, time to go All-In
                 if (amnt < needed && !p.CanBet(amnt + 1))
                 {
-                    LogManager.Log(LogLevel.MessageVeryLow, "PokerGame.PlayMoney", "Player now All-In !");
+                    Logger.LogDebugInformation("Player now All-In !");
                     p.State = PlayerStateEnum.AllIn;
                     Table.NbAllIn++;
                     Table.AddAllInCap(p.MoneyBetAmnt + amnt);
                 }
                 else //well, it's just not fair to play that
                 {
-                    LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} needed to put a blind of {1} and tried {2}", p.Name, needed, amnt);
+                    Logger.LogWarning("{0} needed to put a blind of {1} and tried {2}", p.Name, needed, amnt);
                     return false;
                 }
             }
@@ -50,7 +50,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             //Let's hope the player has enough money ! Time to put the blinds !
             if (!p.TryBet(amnt))
             {
-                LogManager.Log(LogLevel.Warning, "PokerGame.PlayMoney", "{0} just put more money than he actually have ({1} > {2})", p.Name, amnt, p.MoneySafeAmnt);
+                Logger.LogWarning("{0} just put more money than he actually have ({1} > {2})", p.Name, amnt, p.MoneySafeAmnt);
                 return false;
             }
 
@@ -66,14 +66,14 @@ namespace BluffinMuffin.Server.Logic.GameModules
             {
                 whatAmIDoing = (needed == Table.Params.GameSize ? GameActionEnum.PostBigBlind : GameActionEnum.PostSmallBlind);
             }
-            LogManager.Log(LogLevel.MessageLow, "PokerGame.PlayMoney", "{0} POSTED BLIND ({1})", p.Name, whatAmIDoing);
+            Logger.LogDebugInformation("{0} POSTED BLIND ({1})", p.Name, whatAmIDoing);
             Observer.RaisePlayerActionTaken(p, whatAmIDoing, amnt);
 
             //Let's set the HigherBet
             if (amnt > Table.HigherBet)
                 Table.HigherBet = amnt;
 
-            LogManager.Log(LogLevel.MessageVeryLow, "PokerGame.PlayMoney", "Total blinds still needed is {0}", Table.TotalBlindNeeded);
+            Logger.LogDebugInformation("Total blinds still needed is {0}", Table.TotalBlindNeeded);
 
             DidWeGetAllWeNeeded();
             return true;

@@ -6,7 +6,6 @@ using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.Lobby;
 using BluffinMuffin.Server.Protocol.Workers;
-using Com.Ericmas001.Util;
 using System.Linq;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Protocol;
@@ -55,7 +54,7 @@ namespace BluffinMuffin.Server.Protocol
 
         public void Start()
         {
-            LogManager.Log(LogLevel.Message, "BluffinServerLobby", "Server started on port {0} !", m_TcpServer.Port);
+            Logger.LogInformation("BluffinServerLobby", "Server started on port {0} !", m_TcpServer.Port);
             Task.Factory.StartNew(new BluffinLobbyWorker(this, this).Start);
             Task.Factory.StartNew(new BluffinGameWorker(this).Start);
             m_TcpServer.Run().Wait();
@@ -74,8 +73,8 @@ namespace BluffinMuffin.Server.Protocol
             m_Games.Add(m_LastUsedId, game);
 
             var p = game.Table.Params;
-            Logger.LogTableCreated(this, m_LastUsedId, p);
-            Logger.LogGameCreated(this, m_LastUsedId);
+            Logger.LogTableCreated(m_LastUsedId, p);
+            Logger.LogGameCreated(m_LastUsedId);
             game.Start();
 
             return m_LastUsedId;

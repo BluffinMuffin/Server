@@ -44,8 +44,8 @@
     <Reference Include="Com.Ericmas001.Net.Protocol">
       <HintPath>..\References\Com.Ericmas001.Net.Protocol.dll</HintPath>
     </Reference>
-    <Reference Include="Com.Ericmas001.Util">
-      <HintPath>..\References\Com.Ericmas001.Util.dll</HintPath>
+    <Reference Include="Com.Ericmas001.Portable.Util">
+      <HintPath>..\References\Com.Ericmas001.Portable.Util.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

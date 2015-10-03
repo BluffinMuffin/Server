@@ -6,7 +6,6 @@ using BluffinMuffin.Protocol.DataTypes.Enums;
 using System.Linq;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.Logic.GameVariants;
-using Com.Ericmas001.Util;
 
 namespace BluffinMuffin.Server.Logic
 {
@@ -241,7 +240,7 @@ namespace BluffinMuffin.Server.Logic
         {
             if (PeopleContainsPlayer(p))
             {
-                LogManager.Log(LogLevel.Error, "TableInfo.JoinTable", "Already someone with the same name!");
+                Logger.LogError("Already someone with the same name!");
                 return false;
             }
             People.Add(p);
@@ -387,19 +386,19 @@ namespace BluffinMuffin.Server.Logic
         {
             if (!RemainingSeats.Any())
             {
-                LogManager.Log(LogLevel.Error, "TableInfo.JoinTable", "Not enough seats to join!");
+                Logger.LogError("Not enough seats to join!");
                 return null;
             }
 
             if (p.MoneyAmnt < Params.MinimumBuyInAmount || p.MoneyAmnt > Params.MaximumBuyInAmount)
             {
-                LogManager.Log(LogLevel.Error, "TableInfo.JoinTable", "Player Money ({0}) is not between Minimum ({1}) and Maximum ({2})", p.MoneyAmnt, Params.MinimumBuyInAmount, Params.MaximumBuyInAmount);
+                Logger.LogError("Player Money ({0}) is not between Minimum ({1}) and Maximum ({2})", p.MoneyAmnt, Params.MinimumBuyInAmount, Params.MaximumBuyInAmount);
                 return null;
             }
 
             if (SeatsContainsPlayer(p))
             {
-                LogManager.Log(LogLevel.Error, "TableInfo.JoinTable", "Already someone seated with the same name! Is this you ?");
+                Logger.LogError("Already someone seated with the same name! Is this you ?");
                 return null;
             }
 

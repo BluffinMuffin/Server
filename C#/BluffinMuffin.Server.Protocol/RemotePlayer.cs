@@ -86,7 +86,7 @@ namespace BluffinMuffin.Server.Protocol
         void OnGameEnded(object sender, EventArgs e)
         {
             Send(new GameEndedCommand());
-            Logger.LogGameEnded(this, TableId);
+            Logger.LogGameEnded(TableId);
         }
 
         void OnPlayerWonPot(object sender, PotWonEventArgs e)
@@ -139,7 +139,7 @@ namespace BluffinMuffin.Server.Protocol
 
         void OnGameBlindNeeded(object sender, EventArgs e)
         {
-            Logger.LogGameCreated(this, TableId);
+            Logger.LogGameCreated(TableId);
             Send(new GameStartedCommand()
             {
                 NeededBlindAmount = Game.Table.GetBlindNeeded(Player),
