@@ -1,12 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.HandEvaluator.HandRankers;
 using BluffinMuffin.HandEvaluator.Selectors;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Attributes;
-using BluffinMuffin.Server.Logic.GameModules;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
 {

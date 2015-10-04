@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.HandEvaluator.Selectors;
 using BluffinMuffin.Protocol.DataTypes.Enums;

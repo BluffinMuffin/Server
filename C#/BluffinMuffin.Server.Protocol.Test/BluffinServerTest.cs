@@ -11,7 +11,6 @@ using BluffinMuffin.Protocol.Game;
 using BluffinMuffin.Protocol.Lobby;
 using BluffinMuffin.Protocol.Lobby.QuickMode;
 using BluffinMuffin.Server.DataTypes;
-using BluffinMuffin.Server.DataTypes.EventHandling;
 using Com.Ericmas001.Net.Protocol;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -24,8 +23,6 @@ namespace BluffinMuffin.Server.Protocol.Test
         [TestMethod]
         public void BigUglyTest()
         {
-            Logger.CommandSent += OnLogCommandSent;
-            Logger.CommandReceived += OnLogCommandReceived;
             Logger.MessageLogged += OnMessageLogged;
 
             var server = new BluffinServer(42084);
@@ -111,17 +108,6 @@ namespace BluffinMuffin.Server.Protocol.Test
             return $"{sf.GetMethod().DeclaringType?.FullName}.{sf.GetMethod().Name}";
         }
 
-        private void OnLogCommandReceived(object sender, LogCommandEventArg e)
-        {
-            OnMessageLogged(sender, new StringEventArgs($"Server RECV from {e.Client.PlayerName} [{e.CommandData}]"));
-            OnMessageLogged(sender, new StringEventArgs("-------------------------------------------"));
-        }
-
-        private void OnLogCommandSent(object sender, LogCommandEventArg e)
-        {
-            OnMessageLogged(sender, new StringEventArgs($"Server SEND to {e.Client.PlayerName} [{e.CommandData}]"));
-            OnMessageLogged(sender, new StringEventArgs("-------------------------------------------"));
-        }
         private void OnMessageLogged(object sender, StringEventArgs e)
         {
             m_Sw.WriteLine("[{0}] {1}", GetCaller(sender), e.Str);

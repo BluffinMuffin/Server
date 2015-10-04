@@ -11,6 +11,7 @@ namespace BluffinMuffin.Server.DataTypes
 {
     public class Logger
     {
+        public static event EventHandler<StringEventArgs> VerboseInformationLogged = delegate { };
         public static event EventHandler<StringEventArgs> DebugInformationLogged = delegate { };
         public static event EventHandler<StringEventArgs> InformationLogged = delegate { };
         public static event EventHandler<StringEventArgs> WarningLogged = delegate { };
@@ -26,6 +27,11 @@ namespace BluffinMuffin.Server.DataTypes
         public static event EventHandler<LogClientCreationEventArg> ClientCreated = delegate { };
         public static event EventHandler<LogClientEventArg> ClientIdentified = delegate { };
 
+        public static void LogVerboseInformation(string message, params object[] args)
+        {
+            MessageLogged(new StackFrame(1), new StringEventArgs(string.Format(message, args)));
+            VerboseInformationLogged(new StackFrame(1), new StringEventArgs(string.Format(message, args)));
+        }
         public static void LogDebugInformation(string message, params object[] args)
         {
             MessageLogged(new StackFrame(1), new StringEventArgs(string.Format(message, args)));
@@ -50,10 +56,14 @@ namespace BluffinMuffin.Server.DataTypes
         public static void LogCommandSent(AbstractCommand cmd, IBluffinClient cli, string commandData)
         {
             CommandSent(new StackFrame(1), new LogCommandEventArg(cmd, commandData, cli));
+            VerboseInformationLogged(new StackFrame(1), new StringEventArgs($"Server SEND to {cli.PlayerName} [{commandData}]"));
+            VerboseInformationLogged(new StackFrame(1), new StringEventArgs("-------------------------------------------"));
         }
         public static void LogCommandReceived(AbstractCommand cmd, IBluffinClient cli, string commandData)
         {
             CommandReceived(new StackFrame(1), new LogCommandEventArg(cmd, commandData, cli ));
+            VerboseInformationLogged(new StackFrame(1), new StringEventArgs($"Server RECV from {cli.PlayerName} [{commandData}]"));
+            VerboseInformationLogged(new StackFrame(1), new StringEventArgs("-------------------------------------------"));
         }
         public static void LogTableCreated(int id, TableParams p)
         {

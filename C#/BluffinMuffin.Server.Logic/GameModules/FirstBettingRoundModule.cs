@@ -1,10 +1,6 @@
-﻿using System.Linq;
-using BluffinMuffin.HandEvaluator;
-using BluffinMuffin.Protocol.DataTypes;
+﻿using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
-using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
-using BluffinMuffin.Server.Logic.GameVariants;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {

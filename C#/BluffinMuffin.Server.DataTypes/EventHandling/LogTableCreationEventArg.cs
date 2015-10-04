@@ -1,7 +1,4 @@
-﻿using System;
-using BluffinMuffin.Protocol;
-using BluffinMuffin.Protocol.DataTypes;
-using BluffinMuffin.Server.DataTypes.Protocol;
+﻿using BluffinMuffin.Protocol.DataTypes;
 
 namespace BluffinMuffin.Server.DataTypes.EventHandling
 {

@@ -1,5 +1,4 @@
-﻿using System;
-using BluffinMuffin.HandEvaluator;
+﻿using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.HandEvaluator.Selectors;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
