@@ -1,4 +1,6 @@
-﻿using BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks;
+﻿using BluffinMuffin.Protocol.DataTypes;
+using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
+using BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
@@ -10,203 +12,292 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void EnterGameThatRequiresMoreMoney()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.EmptyWithBuyInsSetted();
             nfo.Game.Start();
-            nfo.P1 = PlayerMock.GenerateP1ReallyPoor();
+            nfo.P1 = new ModularPlayerMock(nfo,PlayerNames.P1,new MoneyModule(100)).Player;
 
-            Assert.AreEqual(true, nfo.Game.JoinGame(nfo.P1), "You should be able to join a game without enough money");
+            //Act
+            var res = nfo.Game.JoinGame(nfo.P1);
+
+            //Assert
+            Assert.AreEqual(true, res, "You should be able to join a game without enough money");
         }
 
         [TestMethod]
         public void ObtainASeatInGameThatRequiresMoreMoney()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.EmptyWithBuyInsSetted();
             nfo.Game.Start();
-            nfo.P1 = PlayerMock.GenerateP1ReallyPoor();
-            nfo.Game.JoinGame(nfo.P1);
+            nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new MoneyModule(100), new JoinGameModule()).Player;
 
-            Assert.AreEqual(null, nfo.Game.Table.SitIn(nfo.P1, -1), "You should not be able to obtain a seat without enough money");
+            //Act
+            var res = nfo.Game.Table.SitIn(nfo.P1, -1);
+
+            //Assert
+            Assert.AreEqual(null, res, "You should not be able to obtain a seat without enough money");
         }
 
         [TestMethod]
-        public void EnterGameThatIAmToRichToPlay()
+        public void EnterGameThatIAmRichEnoughToPlay()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.EmptyWithBuyInsSetted();
             nfo.Game.Start();
-            nfo.P1 = PlayerMock.GenerateP1();
+            nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new MoneyModule(5000)).Player;
 
-            Assert.AreEqual(true, nfo.Game.JoinGame(nfo.P1), "You should be able to join a game with too much money");
+            //Act
+            var res = nfo.Game.JoinGame(nfo.P1);
+
+            //Assert
+            Assert.AreEqual(true, res, "You should be able to join a game with too much money");
         }
 
         [TestMethod]
-        public void ObtainASeatInGameThatIAmToRichToPlay()
+        public void ObtainASeatInGameThatIAmRichEnoughToPlay()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.EmptyWithBuyInsSetted();
             nfo.Game.Start();
-            nfo.P1 = PlayerMock.GenerateP1();
-            nfo.Game.JoinGame(nfo.P1);
+            nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new MoneyModule(5000), new JoinGameModule()).Player;
 
-            Assert.AreEqual(null, nfo.Game.Table.SitIn(nfo.P1, -1), "You should not be able to obtain a seat with too much money");
+            //Act
+            var res = nfo.Game.Table.SitIn(nfo.P1, -1);
+
+            //Assert
+            Assert.AreEqual(null, res, "You should not be able to obtain a seat with too much money");
         }
 
         [TestMethod]
         public void EnterNonStartedGame()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.Empty();
-            nfo.P1 = PlayerMock.GenerateP1();
+            nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1).Player;
 
-            Assert.AreEqual(false, nfo.Game.JoinGame(nfo.P1), "You should not enter a non-started game");
+            //Act
+            var res = nfo.Game.JoinGame(nfo.P1);
+
+            //Assert
+            Assert.AreEqual(false, res, "You should not enter a non-started game");
         }
 
         [TestMethod]
         public void EnterStartedGame()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.EmptyButStarted();
-            nfo.P1 = PlayerMock.GenerateP1();
+            nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1).Player;
 
-            Assert.AreEqual(true, nfo.Game.JoinGame(nfo.P1), "You should be able to enter a started game with no players");
+            //Act
+            var res = nfo.Game.JoinGame(nfo.P1);
+
+            //Assert
+            Assert.AreEqual(true, res, "You should be able to enter a started game with no players");
         }
 
         [TestMethod]
         public void EnterStartedGameTwice()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.EmptyButStarted();
-            nfo.P1 = PlayerMock.GenerateP1();
-            nfo.Game.JoinGame(nfo.P1);
+            nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new JoinGameModule()).Player;
 
-            Assert.AreEqual(false, nfo.Game.JoinGame(nfo.P1), "You should not be able to enter a game while you are in it");
+            //Act
+            var res = nfo.Game.JoinGame(nfo.P1);
+
+            //Assert
+            Assert.AreEqual(false, res, "You should not be able to enter a game while you are in it");
         }
 
         [TestMethod]
         public void EnterStartedGameWithPlayerThatHaveMyNameAlreadyInIt()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.EmptyButStarted();
-            nfo.P1 = PlayerMock.GenerateP1();
-            nfo.Game.JoinGame(nfo.P1);
-            nfo.P2 = PlayerMock.GenerateP1();
+            nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new JoinGameModule()).Player;
+            nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P1).Player;
 
-            Assert.AreEqual(false, nfo.Game.JoinGame(nfo.P2), "You should not be able to enter a game while you are in it");
+            //Act
+            var res = nfo.Game.JoinGame(nfo.P2);
+
+            //Assert
+            Assert.AreEqual(false, res, "You should not be able to enter a game while you are in it");
         }
 
         [TestMethod]
         public void ObtainSeatWhenFirst()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.EmptyButStarted();
-            nfo.P1 = PlayerMock.GenerateP1();
-            nfo.Game.JoinGame(nfo.P1);
+            nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new JoinGameModule()).Player;
 
-            Assert.AreNotEqual(null, nfo.Game.Table.SitIn(nfo.P1, -1), "You should be able to obtain a seat in a game with all the seats available");
+            //Act
+            var res = nfo.Game.Table.SitIn(nfo.P1, -1);
+
+            //Assert
+            Assert.AreNotEqual(null, res, "You should be able to obtain a seat in a game with all the seats available");
         }
 
         [TestMethod]
         public void SitWhenFirst()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.EmptyButStarted();
-            nfo.P1 = PlayerMock.GenerateP1();
-            nfo.Game.JoinGame(nfo.P1);
+            nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new JoinGameModule()).Player;
             nfo.Game.Table.SitIn(nfo.P1, -1);
 
-            Assert.AreNotEqual(-1, nfo.Game.AfterPlayerSat(nfo.P1), "You should be able to sit in a game with all the seats available");
+            //Act
+            var res = nfo.Game.AfterPlayerSat(nfo.P1);
+
+            //Assert
+            Assert.AreNotEqual(-1, res, "You should be able to sit in a game with all the seats available");
         }
 
         [TestMethod]
         public void ObtainSeatWhenAlreadySeated()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.WithOnlyP1Seated();
 
-            Assert.AreEqual(null, nfo.Game.Table.SitIn(nfo.P1, -1), "You should not be able to obtain a seat in twice");
+            //Act
+            var res = nfo.Game.Table.SitIn(nfo.P1, -1);
+
+            //Assert
+            Assert.AreEqual(null, res, "You should not be able to obtain a seat in twice");
         }
 
         [TestMethod]
         public void EnterStartedGameWith1PSat()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.WithOnlyP1Seated();
-            nfo.P2 = PlayerMock.GenerateP2();
+            nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2).Player;
 
-            Assert.AreEqual(true, nfo.Game.JoinGame(nfo.P2), "You should be able to enter a started game with only 1 player");
+            //Act
+            var res = nfo.Game.JoinGame(nfo.P2);
+
+            //Assert
+            Assert.AreEqual(true, res, "You should be able to enter a started game with only 1 player");
         }
 
         [TestMethod]
         public void ObtainSeatWhenOnly1P()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.WithOnlyP1Seated();
-            nfo.P2 = PlayerMock.GenerateP2();
-            nfo.Game.JoinGame(nfo.P2);
+            nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2, new JoinGameModule()).Player;
 
-            Assert.AreNotEqual(null, nfo.Game.Table.SitIn(nfo.P2, -1), "You should be able to obtain a seat in a game with only 1 seated player");
+            //Act
+            var res = nfo.Game.Table.SitIn(nfo.P2, -1);
+
+            //Assert
+            Assert.AreNotEqual(null, res, "You should be able to obtain a seat in a game with only 1 seated player");
         }
 
         [TestMethod]
         public void SitWhenOnly1P()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.WithOnlyP1Seated();
-            nfo.P2 = PlayerMock.GenerateP2();
-            nfo.Game.JoinGame(nfo.P2);
+            nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2, new JoinGameModule()).Player;
             nfo.Game.Table.SitIn(nfo.P2, -1);
 
-            Assert.AreNotEqual(-1, nfo.Game.AfterPlayerSat(nfo.P2), "You should be able to sit in a game with only 1 seated player");
+            //Act
+            var res = nfo.Game.AfterPlayerSat(nfo.P2);
+
+            //Assert
+            Assert.AreNotEqual(-1, res, "You should be able to sit in a game with only 1 seated player");
         }
 
         [TestMethod]
         public void EnterStartedGameWith2PSatWithMaxSeat2()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
-            nfo.P3 = PlayerMock.GenerateP3();
+            nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3).Player;
 
-            Assert.AreEqual(true, nfo.Game.JoinGame(nfo.P3), "You should always be able to enter a started game even if full (MaxSeats=2)");
+            //Act
+            var res = nfo.Game.JoinGame(nfo.P3);
+
+            //Assert
+            Assert.AreEqual(true, res, "You should always be able to enter a started game even if full (MaxSeats=2)");
         }
 
         [TestMethod]
         public void ObtainSeatWhen2PSatWithMaxSeat2()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
-            nfo.P3 = PlayerMock.GenerateP3();
-            nfo.Game.JoinGame(nfo.P3);
+            nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3, new JoinGameModule()).Player;
 
-            Assert.AreEqual(null, nfo.Game.Table.SitIn(nfo.P3, -1), "You should not be able to obtain a seat in a game that is full (MaxSeats=2)");
+            //Act
+            var res = nfo.Game.Table.SitIn(nfo.P3, -1);
+
+            //Assert
+            Assert.AreEqual(null, res, "You should not be able to obtain a seat in a game that is full (MaxSeats=2)");
         }
 
         [TestMethod]
         public void SitWhen2PSatWithMaxSeat2()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
-            nfo.P3 = PlayerMock.GenerateP3();
-            nfo.Game.JoinGame(nfo.P3);
+            nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3, new JoinGameModule()).Player;
             nfo.Game.Table.SitIn(nfo.P3, -1);
 
-            Assert.AreEqual(-1, nfo.Game.AfterPlayerSat(nfo.P3), "You should not be able to sit in a game that is full (MaxSeats=2)");
+            //Act
+            var res = nfo.Game.AfterPlayerSat(nfo.P3);
+
+            //Assert
+            Assert.AreEqual(-1, res, "You should not be able to sit in a game that is full (MaxSeats=2)");
         }
 
         [TestMethod]
         public void ObtainSeatWhen2PSatWithMaxSeat2But1PLeft()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
-            nfo.P3 = PlayerMock.GenerateP3();
-            nfo.Game.JoinGame(nfo.P3);
+            nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3, new JoinGameModule()).Player;
             nfo.Game.LeaveGame(nfo.P1);
 
-            Assert.AreNotEqual(null, nfo.Game.Table.SitIn(nfo.P3, -1), "You should be able to obtain a seat a game that is now with only 1 seated player");
+            //Act
+            var res = nfo.Game.Table.SitIn(nfo.P3, -1);
+
+            //Assert
+            Assert.AreNotEqual(null, res, "You should be able to obtain a seat a game that is now with only 1 seated player");
         }
 
         [TestMethod]
         public void ObtainSeatWhen2PSatWithMaxSeat2But1PSatOut()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
-            nfo.P3 = PlayerMock.GenerateP3();
-            nfo.Game.JoinGame(nfo.P3);
+            nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3, new JoinGameModule()).Player;
             nfo.Game.SitOut(nfo.P1);
 
-            Assert.AreNotEqual(null, nfo.Game.Table.SitIn(nfo.P3, -1), "You should be able to obtain a seat a game that is now with only 1 seated player");
+            //Act
+            var res = nfo.Game.Table.SitIn(nfo.P3, -1);
+
+            //Assert
+            Assert.AreNotEqual(null, res, "You should be able to obtain a seat a game that is now with only 1 seated player");
         }
 
         [TestMethod]
         public void EnterStartedGameThatEverybodyLeft()
         {
+            //Arrange
             var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
-            nfo.P3 = PlayerMock.GenerateP3();
+            nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3).Player;
             nfo.Game.LeaveGame(nfo.P1);
             nfo.Game.LeaveGame(nfo.P2);
-            Assert.AreEqual(false, nfo.Game.JoinGame(nfo.P3), "You should not enter an ended game");
+
+            //Act
+            var res = nfo.Game.JoinGame(nfo.P3);
+
+            //Assert
+            Assert.AreEqual(false, res, "You should not enter an ended game");
         }
     }
 }

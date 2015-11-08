@@ -34,14 +34,14 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks
         public static GameMockInfo WithOnlyP1Seated()
         {
             var nfo = EmptyButStarted();
-            nfo.P1 = PlayerMock.GenerateP1Seated(nfo);
+            nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new JoinGameModule(), new SitInGameModule()).Player;
 
             return nfo;
         }
         public static GameMockInfo WithBothPlayersSeated()
         {
             var nfo = WithOnlyP1Seated();
-            nfo.P2 = PlayerMock.GenerateP2Seated(nfo);
+            nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2, new JoinGameModule(), new SitInGameModule()).Player;
 
             return nfo;
         }

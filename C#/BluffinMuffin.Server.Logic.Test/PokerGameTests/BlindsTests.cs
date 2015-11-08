@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
 using BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -47,8 +48,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void StartGameAndTryPutBlindLessThanNeededWithPoorPlayer()
         {
             var nfo = Simple2PlayersBlindsGameMock.WithOnlyP1Seated();
-            nfo.P2 = PlayerMock.GenerateP2PoorSeated(nfo);
-            nfo.P2.MoneySafeAmnt = 2; // Make it poorer than ever
+            nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2, new JoinGameModule(), new SitInGameModule(), new MoneyModule(2)).Player;
 
             Assert.AreEqual(true, nfo.Game.PlayMoney(nfo.P2, nfo.P2.MoneySafeAmnt), "The game should accept a blind that is under what is needed if that is all the player got");
         }
