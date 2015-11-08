@@ -12,94 +12,152 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AntesGameAllPlayerNeedsToPutTheSameBlind()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Antes), new NbPlayersModule(4)).WithAllPlayersSeated();
-            Assert.AreEqual(true, nfo.Players.All(x => nfo.BlindNeeded(x) == Math.Max(nfo.Game.Table.Params.GameSize/10,1)), "The game should need the same blind for everybody (Antes)");
+            
+            //Act
+            var res = nfo.Players.All(x => nfo.BlindNeeded(x) == Math.Max(nfo.Game.Table.Params.GameSize/10,1));
+
+            //Assert
+            Assert.AreEqual(true, res, "The game should need the same blind for everybody (Antes)");
         }
 
         [TestMethod]
         public void StartGameAndCheckNeededBlindP1()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
-            Assert.AreNotEqual(0, nfo.BlindNeeded(nfo.P1), "The game should need a blind from p1");
+
+            //Act
+            var res = nfo.BlindNeeded(nfo.P1);
+
+            //Assert
+            Assert.AreNotEqual(0, res, "The game should need a blind from p1");
         }
 
         [TestMethod]
         public void StartGameAndCheckNeededBlindP2()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
-            Assert.AreNotEqual(0, nfo.BlindNeeded(nfo.P2), "The game should need a blind from p2");
+
+            //Act
+            var res = nfo.BlindNeeded(nfo.P2);
+
+            //Assert
+            Assert.AreNotEqual(0, res, "The game should need a blind from p2");
         }
 
         [TestMethod]
         public void StartGameAndTryPutBlindMoreThanNeeded()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
-            Assert.AreEqual(false, nfo.Game.PlayMoney(nfo.P1, nfo.BlindNeeded(nfo.P1) + 1), "The game should not accept any blind that is over what is needed");
+
+            //Act
+            var res = nfo.Game.PlayMoney(nfo.P1, nfo.BlindNeeded(nfo.P1) + 1);
+
+            //Assert
+            Assert.AreEqual(false, res, "The game should not accept any blind that is over what is needed");
         }
 
         [TestMethod]
         public void StartGameAndTryPutBlindLessThanNeeded()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
-            Assert.AreEqual(false, nfo.Game.PlayMoney(nfo.P1, nfo.BlindNeeded(nfo.P1) - 1), "The game should not accept any blind that is under what is needed unless that is all the player got");
+
+            //Act
+            var res = nfo.Game.PlayMoney(nfo.P1, nfo.BlindNeeded(nfo.P1) - 1);
+
+            //Assert
+            Assert.AreEqual(false, res, "The game should not accept any blind that is under what is needed unless that is all the player got");
         }
 
         [TestMethod]
         public void StartGameAndTryPutBlindLessThanNeededWithPoorPlayer()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithP1Seated();
             nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2, new JoinGameModule(), new SitInGameModule(), new MoneyModule(2)).Player;
 
-            Assert.AreEqual(true, nfo.Game.PlayMoney(nfo.P2, nfo.P2.MoneySafeAmnt), "The game should accept a blind that is under what is needed if that is all the player got");
+            //Act
+            var res = nfo.Game.PlayMoney(nfo.P2, nfo.P2.MoneySafeAmnt);
+
+            //Assert
+            Assert.AreEqual(true, res, "The game should accept a blind that is under what is needed if that is all the player got");
         }
 
         [TestMethod]
         public void StartGameAndTryPutBlind()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
 
-            Assert.AreEqual(true, nfo.Game.PlayMoney(nfo.P1, nfo.BlindNeeded(nfo.P1)), "The game should accept a perfect blind");
+            //Act
+            var res = nfo.Game.PlayMoney(nfo.P1, nfo.BlindNeeded(nfo.P1));
+
+            //Assert
+            Assert.AreEqual(true, res, "The game should accept a perfect blind");
         }
 
         [TestMethod]
         public void StartGameAndCheckNeededBlindP1AfterP1PutHis()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
-
             nfo.PutBlinds(nfo.P1);
 
-            Assert.AreEqual(0, nfo.BlindNeeded(nfo.P1), "The game should not need a blind from p1 anymore");
+            //Act
+            var res = nfo.BlindNeeded(nfo.P1);
+
+            //Assert
+            Assert.AreEqual(0, res, "The game should not need a blind from p1 anymore");
         }
 
         [TestMethod]
         public void StartGameAndCheckNeededBlindP2AfterP1PutHis()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
-
             nfo.PutBlinds(nfo.P1);
 
-            Assert.AreNotEqual(0, nfo.BlindNeeded(nfo.P2), "The game should still need a blind from p2");
+            //Act
+            var res = nfo.BlindNeeded(nfo.P2);
+
+            //Assert
+            Assert.AreNotEqual(0, res, "The game should still need a blind from p2");
         }
 
         [TestMethod]
         public void LeaveGameBeforePuttingBlindShouldStillSubstractTheAmountFromMoney()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
             var safeMoneyBefore = nfo.P1.MoneySafeAmnt;
+
+            //Act
             nfo.Game.LeaveGame(nfo.P1);
-            Assert.AreEqual(true, nfo.P1.MoneySafeAmnt < safeMoneyBefore, "The player should have less money then before, since blinds were posted automatically before he left");
+            var res = nfo.P1.MoneySafeAmnt < safeMoneyBefore;
+
+            //Assert
+            Assert.AreEqual(true, res, "The player should have less money then before, since blinds were posted automatically before he left");
         }
 
         [TestMethod]
         public void StartSecondGameAndCheckNeededBlindOfBothPlayers()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
-
             nfo.PutBlinds(nfo.P1);
             nfo.PutBlinds(nfo.P2);
             nfo.CurrentPlayerFolds();
 
-            Assert.AreNotEqual(nfo.BlindNeeded(nfo.P1), nfo.BlindNeeded(nfo.P2), "The game should need a big blind and a small blind, not two big blinds");
+            //Act
+            var res = nfo.BlindNeeded(nfo.P1) != nfo.BlindNeeded(nfo.P2);
+
+            //Assert
+            Assert.AreEqual(true, res, "The game should need a big blind and a small blind, not two big blinds");
         }
     }
 }

@@ -11,73 +11,112 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AfterBlindsFirstPlayerCanCall()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).BlindsPosted();
 
-            Assert.AreEqual(true, nfo.CurrentPlayerCalls(), "The first player should be allowed to call");
+            //Act
+            var res = nfo.CurrentPlayerCalls();
+
+            //Assert
+            Assert.AreEqual(true, res, "The first player should be allowed to call");
         }
 
         [TestMethod]
         public void AfterFirstPlayerCallSecondPlayerCanCall()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).BlindsPosted();
             nfo.CurrentPlayerCalls();
 
-            Assert.AreEqual(true, nfo.CurrentPlayerCalls(), "The second player should be allowed to call");  
+            //Act
+            var res = nfo.CurrentPlayerCalls();
+
+            //Assert
+            Assert.AreEqual(true, res, "The second player should be allowed to call");  
         }
 
         [TestMethod]
         public void AtStartOfBettingFirstPlayerChecks()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
 
-            Assert.AreEqual(true, nfo.CurrentPlayerChecks(), "The first player should be allowed to call");
+            //Act
+            var res = nfo.CurrentPlayerChecks();
+
+            //Assert
+            Assert.AreEqual(true, res, "The first player should be allowed to call");
         }
 
         [TestMethod]
         public void AtStartOfBettingFirstPlayerBetsUnderMinimum()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
 
-            Assert.AreEqual(false, nfo.CurrentPlayerPlays(nfo.Game.Table.MinRaiseAmnt(nfo.CurrentPlayer) - 1), "The player should not be able to raise under the minimum");
+            //Act
+            var res = nfo.CurrentPlayerPlays(nfo.Game.Table.MinRaiseAmnt(nfo.CurrentPlayer) - 1);
+
+            //Assert
+            Assert.AreEqual(false, res, "The player should not be able to raise under the minimum");
         }
 
         [TestMethod]
         public void AtStartOfBettingFirstPlayerBetsMinimum()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
             nfo.CurrentPlayerChecks();
 
-            Assert.AreEqual(true, nfo.CurrentPlayerRaisesMinimum(), "The player should be able to raise with the minimum");
+            //Act
+            var res = nfo.CurrentPlayerRaisesMinimum();
+
+            //Assert
+            Assert.AreEqual(true, res, "The player should be able to raise with the minimum");
         }
 
         [TestMethod]
         public void AtStartOfBettingFirstPlayerBetsOverMinimum()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
             nfo.CurrentPlayerChecks();
 
-            Assert.AreEqual(true, nfo.CurrentPlayerPlays(nfo.Game.Table.MinRaiseAmnt(nfo.CurrentPlayer) + 1), "The player should be able to raise with more than the minimum");
+            //Act
+            var res = nfo.CurrentPlayerPlays(nfo.Game.Table.MinRaiseAmnt(nfo.CurrentPlayer) + 1);
+
+            //Assert
+            Assert.AreEqual(true, res, "The player should be able to raise with more than the minimum");
         }
 
         [TestMethod]
         public void AfterPlayerBetShouldNotBeAbleToCheck()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
             nfo.CurrentPlayerRaisesMinimum();
 
-            Assert.AreEqual(false, nfo.CurrentPlayerChecks(), "The player should not be able to check after a bet");
+            //Act
+            var res = nfo.CurrentPlayerChecks();
+
+            //Assert
+            Assert.AreEqual(false, res, "The player should not be able to check after a bet");
         }
 
         [TestMethod]
         public void AllIn()
         {
+            //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
             if (nfo.CurrentPlayer == nfo.PoorestPlayer)
                 nfo.CurrentPlayerChecks();
-
             nfo.CurrentPlayerPlays(nfo.PoorestPlayer.MoneySafeAmnt + 10);
 
-            Assert.AreEqual(true, nfo.CurrentPlayerCalls(), "The first player should be allowed to go all-in");
+            //Act
+            var res = nfo.CurrentPlayerCalls();
+
+            //Assert
+            Assert.AreEqual(true, res, "The first player should be allowed to go all-in");
         }
     }
 }
