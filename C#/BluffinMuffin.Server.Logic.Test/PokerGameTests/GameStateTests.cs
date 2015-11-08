@@ -153,9 +153,9 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         {
             //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
+            nfo.Game.LeaveGame(nfo.P1);
 
             //Act
-            nfo.Game.LeaveGame(nfo.P1);
             nfo.PutBlinds(nfo.P2);
 
             //Assert
@@ -166,36 +166,35 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         {
             //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).BlindsPosted();
-            var cp = nfo.CurrentPlayer;
 
             //Act
-            nfo.Game.LeaveGame(cp);
+            nfo.Game.LeaveGame(nfo.CurrentPlayer);
 
             //Assert
             Assert.AreEqual(GameStateEnum.WaitForPlayers, nfo.Game.State, "The game should now be waiting for players: cp left (folded), other player wins the pot, and the game goes back to waiting for players");
         }
         [TestMethod]
-        public void IfNotPlayingPlayerLeftStateIsStillPlaying()
+        public void IfOtherLeftStateIsStillPlaying()
         {
             //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).BlindsPosted();
-            var np = nfo.Game.Table.GetSeatOfPlayingPlayerNextTo(nfo.Game.Table.Seats[nfo.CurrentPlayer.NoSeat]).Player;
+            var otherPlayer = nfo.Game.Table.GetSeatOfPlayingPlayerNextTo(nfo.Game.Table.Seats[nfo.CurrentPlayer.NoSeat]).Player;
 
             //Act
-            nfo.Game.LeaveGame(np);
+            nfo.Game.LeaveGame(otherPlayer);
 
             //Assert
             Assert.AreEqual(GameStateEnum.Playing, nfo.Game.State, "The game should be still in playing mode since it wasn't the playing player.");
         }
         [TestMethod]
-        public void IfNotPlayingPlayerLeftThenOtherPlaysStateIsNowWaitingForPlayers()
+        public void IfOtherLeftThenCurrentPlaysStateIsNowWaitingForPlayers()
         {
             //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).BlindsPosted();
-            var np = nfo.Game.Table.GetSeatOfPlayingPlayerNextTo(nfo.Game.Table.Seats[nfo.CurrentPlayer.NoSeat]).Player;
-            
+            var otherPlayer = nfo.Game.Table.GetSeatOfPlayingPlayerNextTo(nfo.Game.Table.Seats[nfo.CurrentPlayer.NoSeat]).Player;
+            nfo.Game.LeaveGame(otherPlayer);
+
             //Act
-            nfo.Game.LeaveGame(np);
             nfo.CurrentPlayerCalls();
 
             //Assert

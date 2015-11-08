@@ -78,8 +78,8 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void StartGameAndTryPutBlindLessThanNeededWithPoorPlayer()
         {
             //Arrange
-            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithP1Seated();
-            nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2, new JoinGameModule(), new SitInGameModule(), new MoneyModule(2)).Player;
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
+            nfo.P2.MoneySafeAmnt = 2;
 
             //Act
             var res = nfo.Game.PlayMoney(nfo.P2, nfo.P2.MoneySafeAmnt);
@@ -134,9 +134,9 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         {
             //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
-            var safeMoneyBefore = nfo.P1.MoneySafeAmnt;
 
             //Act
+            var safeMoneyBefore = nfo.P1.MoneySafeAmnt;
             nfo.Game.LeaveGame(nfo.P1);
             var res = nfo.P1.MoneySafeAmnt < safeMoneyBefore;
 
@@ -148,16 +148,14 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void StartSecondGameAndCheckNeededBlindOfBothPlayers()
         {
             //Arrange
-            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).WithAllPlayersSeated();
-            nfo.PutBlinds(nfo.P1);
-            nfo.PutBlinds(nfo.P2);
-            nfo.CurrentPlayerFolds();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).BlindsPosted();
 
             //Act
+            nfo.CurrentPlayerFolds(); // This will start a new game !
             var res = nfo.BlindNeeded(nfo.P1) != nfo.BlindNeeded(nfo.P2);
 
             //Assert
-            Assert.AreEqual(true, res, "The game should need a big blind and a small blind, not two big blinds");
+            Assert.AreEqual(true, res, "The second game should need a big blind and a small blind, not two big blinds");
         }
     }
 }
