@@ -56,6 +56,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\SeatInfoExtensions.cs" />
+    <Compile Include="Extensions\PlayerInfoExtensions.cs" />
     <Compile Include="GameModules\AbstractGameModule.cs" />
     <Compile Include="GameModules\StudFirstBettingRoundModule.cs" />
     <Compile Include="GameModules\DealCardsToPlayersModule.cs" />

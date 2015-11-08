@@ -3,6 +3,7 @@ using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
+using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
@@ -36,9 +37,9 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             foreach (var p in Table.Players)
             {
-                if (p.IsZombie && SitOut(p))
+                if (p.State==PlayerStateEnum.Zombie && SitOut(p))
                     Table.LeaveTable(p);
-                else if (p.CanPlay)
+                else if (p.CanPlay())
                     p.State = PlayerStateEnum.Playing;
                 else
                     p.State = PlayerStateEnum.SitIn;

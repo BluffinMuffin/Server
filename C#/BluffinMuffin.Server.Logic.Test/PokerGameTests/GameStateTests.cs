@@ -131,6 +131,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
 
             //Act
             nfo.Game.LeaveGame(curPlayer);
+            nfo.Game.JoinGame(curPlayer);
             nfo.SitInGame(curPlayer);
 
             //Assert

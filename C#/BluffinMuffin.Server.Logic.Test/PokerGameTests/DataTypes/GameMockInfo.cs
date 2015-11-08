@@ -44,7 +44,6 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
         }
         public PlayerInfo SitInGame(PlayerInfo p)
         {
-            Game.JoinGame(p);
             Game.Table.SitIn(p, -1);
             Game.AfterPlayerSat(p);
             return p;

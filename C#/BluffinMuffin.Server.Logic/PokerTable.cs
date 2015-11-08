@@ -5,6 +5,7 @@ using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using System.Linq;
 using BluffinMuffin.Server.DataTypes;
+using BluffinMuffin.Server.Logic.Extensions;
 using BluffinMuffin.Server.Logic.GameVariants;
 
 namespace BluffinMuffin.Server.Logic
@@ -216,7 +217,7 @@ namespace BluffinMuffin.Server.Logic
             for (var i = 0; i < Params.MaxPlayers; ++i)
             {
                 var si = m_Seats[(noSeat + 1 + i) % Params.MaxPlayers];
-                if (!si.IsEmpty && si.Player.IsPlaying)
+                if (si.HasPlayerPlaying())
                     return si;
             }
             return seat;
@@ -230,7 +231,7 @@ namespace BluffinMuffin.Server.Logic
                 if (id < 0)
                     id = Params.MaxPlayers + id;
                 var si = m_Seats[id];
-                if (!si.IsEmpty && si.Player.IsPlaying)
+                if (si.HasPlayerPlaying())
                     return si;
             }
             return seat;
@@ -246,17 +247,6 @@ namespace BluffinMuffin.Server.Logic
             People.Add(p);
             p.State = PlayerStateEnum.Joined;
             return true;
-        }
-
-        /// <summary>
-        /// Sit a player without the validations. This is used here after validation, or on the client side when the game is telling the client where a player is seated
-        /// </summary>
-        public SeatInfo SitInToTable(PlayerInfo p, int seat)
-        {
-            p.State = PlayerStateEnum.SitIn;
-            p.NoSeat = seat;
-            m_Seats[seat].Player = p;
-            return m_Seats[seat];
         }
 
         /// <summary>
@@ -382,7 +372,7 @@ namespace BluffinMuffin.Server.Logic
             return 0;
         }
 
-        public SeatInfo SitIn(PlayerInfo p, int preferedSeat)
+        public SeatInfo SitIn(PlayerInfo p, int preferedSeat = -1)
         {
             if (!RemainingSeats.Any())
             {
@@ -406,8 +396,13 @@ namespace BluffinMuffin.Server.Logic
 
             if (preferedSeat < 0 || preferedSeat >= Seats.Count || !Seats[preferedSeat].IsEmpty)
                 seat = RemainingSeats.First();
+
             HadPlayers = true;
-            return SitInToTable(p, seat);
+
+            p.State = PlayerStateEnum.SitIn;
+            p.NoSeat = seat;
+            m_Seats[seat].Player = p;
+            return m_Seats[seat];
         }
 
 
@@ -501,12 +496,12 @@ namespace BluffinMuffin.Server.Logic
 
         private List<PlayerInfo> PlayingPlayersFrom()
         {
-            return m_Seats.Where(s => (!s.IsEmpty && s.Player.IsPlaying)).Select(s => s.Player).ToList();
+            return m_Seats.Where(SeatInfoExtensions.HasPlayerPlaying).Select(s => s.Player).ToList();
         }
 
         private IEnumerable<PlayerInfo> PlayingAndAllInPlayersFrom()
         {
-            return m_Seats.Where(s => (!s.IsEmpty && (s.Player.IsPlaying || s.Player.IsAllIn))).Select(s => s.Player);
+            return m_Seats.Where(SeatInfoExtensions.HasPlayerPlayingOrAllIn).Select(s => s.Player);
         }
         private bool PeopleContainsPlayer(PlayerInfo p)
         {
@@ -527,7 +522,7 @@ namespace BluffinMuffin.Server.Logic
             p.MoneyBetAmnt -= bet;
             pot.AddAmount(bet);
 
-            if (bet >= 0 && (p.IsPlaying || p.IsAllIn))
+            if (bet >= 0 && p.IsPlayingOrAllIn())
                 pot.AttachPlayer(p);
         }
         private void InitPokerTable()

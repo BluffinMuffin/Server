@@ -6,6 +6,7 @@ using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
+using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
@@ -99,7 +100,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             // Since every raise "restart" the round, 
             // the number of players who played is the number of AllIn players plus the raising player
             Table.NbPlayed = Table.NbAllIn;
-            if (!p.IsAllIn)
+            if (p.State != PlayerStateEnum.AllIn)
                 Table.NbPlayed++;
 
             Table.HigherBet = p.MoneyBetAmnt;
@@ -127,7 +128,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             Observer.RaisePlayerActionNeeded(next.Player, Table.CallAmnt(next.Player), CanFold(), Table.MinimumRaiseAmount, int.MaxValue);
 
-            if (next.Player.IsZombie)
+            if (next.Player.State==PlayerStateEnum.Zombie)
             {
                 if (Table.CanCheck(next.Player))
                     OnMoneyPlayed(next.Player, 0);
