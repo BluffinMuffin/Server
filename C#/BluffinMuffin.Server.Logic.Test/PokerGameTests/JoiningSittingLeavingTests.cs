@@ -1,6 +1,4 @@
-﻿using BluffinMuffin.Protocol.DataTypes;
-using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
-using BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks;
+﻿using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
@@ -13,8 +11,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void EnterGameThatRequiresMoreMoney()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.EmptyWithBuyInsSetted();
-            nfo.Game.Start();
+            var nfo = new ModularGameMock(new LimitedBuyInModule(true)).EmptyButStarted();
             nfo.P1 = new ModularPlayerMock(nfo,PlayerNames.P1,new MoneyModule(100)).Player;
 
             //Act
@@ -28,8 +25,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void ObtainASeatInGameThatRequiresMoreMoney()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.EmptyWithBuyInsSetted();
-            nfo.Game.Start();
+            var nfo = new ModularGameMock(new LimitedBuyInModule(true)).EmptyButStarted();
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new MoneyModule(100), new JoinGameModule()).Player;
 
             //Act
@@ -43,8 +39,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void EnterGameThatIAmRichEnoughToPlay()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.EmptyWithBuyInsSetted();
-            nfo.Game.Start();
+            var nfo = new ModularGameMock(new LimitedBuyInModule(true)).EmptyButStarted();
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new MoneyModule(5000)).Player;
 
             //Act
@@ -58,8 +53,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void ObtainASeatInGameThatIAmRichEnoughToPlay()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.EmptyWithBuyInsSetted();
-            nfo.Game.Start();
+            var nfo = new ModularGameMock(new LimitedBuyInModule(true)).EmptyButStarted();
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new MoneyModule(5000), new JoinGameModule()).Player;
 
             //Act
@@ -73,7 +67,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void EnterNonStartedGame()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.Empty();
+            var nfo = new ModularGameMock().Empty();
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1).Player;
 
             //Act
@@ -87,7 +81,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void EnterStartedGame()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.EmptyButStarted();
+            var nfo = new ModularGameMock().EmptyButStarted();
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1).Player;
 
             //Act
@@ -101,7 +95,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void EnterStartedGameTwice()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.EmptyButStarted();
+            var nfo = new ModularGameMock().EmptyButStarted();
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new JoinGameModule()).Player;
 
             //Act
@@ -115,7 +109,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void EnterStartedGameWithPlayerThatHaveMyNameAlreadyInIt()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.EmptyButStarted();
+            var nfo = new ModularGameMock().EmptyButStarted();
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new JoinGameModule()).Player;
             nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P1).Player;
 
@@ -130,7 +124,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void ObtainSeatWhenFirst()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.EmptyButStarted();
+            var nfo = new ModularGameMock().EmptyButStarted();
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new JoinGameModule()).Player;
 
             //Act
@@ -144,7 +138,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void SitWhenFirst()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.EmptyButStarted();
+            var nfo = new ModularGameMock().EmptyButStarted();
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new JoinGameModule()).Player;
             nfo.Game.Table.SitIn(nfo.P1, -1);
 
@@ -159,7 +153,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void ObtainSeatWhenAlreadySeated()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.WithOnlyP1Seated();
+            var nfo = new ModularGameMock().WithP1Seated();
 
             //Act
             var res = nfo.Game.Table.SitIn(nfo.P1, -1);
@@ -172,7 +166,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void EnterStartedGameWith1PSat()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.WithOnlyP1Seated();
+            var nfo = new ModularGameMock().WithP1Seated();
             nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2).Player;
 
             //Act
@@ -186,7 +180,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void ObtainSeatWhenOnly1P()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.WithOnlyP1Seated();
+            var nfo = new ModularGameMock().WithP1Seated();
             nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2, new JoinGameModule()).Player;
 
             //Act
@@ -200,7 +194,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void SitWhenOnly1P()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.WithOnlyP1Seated();
+            var nfo = new ModularGameMock().WithP1Seated();
             nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2, new JoinGameModule()).Player;
             nfo.Game.Table.SitIn(nfo.P2, -1);
 
@@ -215,7 +209,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void EnterStartedGameWith2PSatWithMaxSeat2()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
+            var nfo = new ModularGameMock().WithAllPlayersSeated();
             nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3).Player;
 
             //Act
@@ -229,7 +223,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void ObtainSeatWhen2PSatWithMaxSeat2()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
+            var nfo = new ModularGameMock().WithAllPlayersSeated();
             nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3, new JoinGameModule()).Player;
 
             //Act
@@ -243,7 +237,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void SitWhen2PSatWithMaxSeat2()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
+            var nfo = new ModularGameMock().WithAllPlayersSeated();
             nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3, new JoinGameModule()).Player;
             nfo.Game.Table.SitIn(nfo.P3, -1);
 
@@ -258,7 +252,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void ObtainSeatWhen2PSatWithMaxSeat2But1PLeft()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
+            var nfo = new ModularGameMock().WithAllPlayersSeated();
             nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3, new JoinGameModule()).Player;
             nfo.Game.LeaveGame(nfo.P1);
 
@@ -273,7 +267,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void ObtainSeatWhen2PSatWithMaxSeat2But1PSatOut()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
+            var nfo = new ModularGameMock().WithAllPlayersSeated();
             nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3, new JoinGameModule()).Player;
             nfo.Game.SitOut(nfo.P1);
 
@@ -288,7 +282,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         public void EnterStartedGameThatEverybodyLeft()
         {
             //Arrange
-            var nfo = Simple2PlayersBlindsGameMock.WithBothPlayersSeated();
+            var nfo = new ModularGameMock().WithAllPlayersSeated();
             nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3).Player;
             nfo.Game.LeaveGame(nfo.P1);
             nfo.Game.LeaveGame(nfo.P2);

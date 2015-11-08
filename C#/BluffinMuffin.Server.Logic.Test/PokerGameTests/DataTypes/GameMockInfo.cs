@@ -56,7 +56,8 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
         }
         public void PutBlinds(PlayerInfo p)
         {
-            Game.PlayMoney(p, BlindNeeded(p));
+            if(BlindNeeded(p) > 0)
+                Game.PlayMoney(p, BlindNeeded(p));
         }
 
         public PlayerInfo PlayerNextTo(PlayerInfo p)

@@ -61,19 +61,11 @@
     <Compile Include="PokerGameTests\BettingRoundsTests.cs" />
     <Compile Include="PokerGameTests\BlindsTests.cs" />
     <Compile Include="PokerGameTests\DataTypes\GameMockInfo.cs" />
+    <Compile Include="PokerGameTests\DataTypes\ModularGameMock.cs" />
     <Compile Include="PokerGameTests\GameStateTests.cs" />
     <Compile Include="PokerGameTests\BettingTests.cs" />
     <Compile Include="PokerGameTests\JoiningSittingLeavingTests.cs" />
     <Compile Include="PokerGameTests\DataTypes\ModularPlayerMock.cs" />
-    <Compile Include="PokerGameTests\Mocks\Simple2PlayersAntesGameMock.cs" />
-    <Compile Include="PokerGameTests\Mocks\Simple2PlayersNoBlindsGameMock.cs" />
-    <Compile Include="PokerGameTests\Mocks\Simple3PlayersAntesGameMock.cs" />
-    <Compile Include="PokerGameTests\Mocks\Simple3PlayersNoBlindsGameMock.cs" />
-    <Compile Include="PokerGameTests\Mocks\Simple4PlayersAntesGameMock.cs" />
-    <Compile Include="PokerGameTests\Mocks\Simple4PlayersNoBlindsGameMock.cs" />
-    <Compile Include="PokerGameTests\Mocks\Simple4PlayersBlindsGameMock.cs" />
-    <Compile Include="PokerGameTests\Mocks\Simple3PlayersBlindsGameMock.cs" />
-    <Compile Include="PokerGameTests\Mocks\Simple2PlayersBlindsGameMock.cs" />
     <Compile Include="PokerGameTests\WhoAreTheBlindsTests.cs">
       <SubType>Code</SubType>
     </Compile>

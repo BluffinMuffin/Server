@@ -1,4 +1,5 @@
-﻿using BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks;
+﻿using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
@@ -9,7 +10,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AfterSeatedInNoBlindsRoundIsPreflop()
         {
-            var nfo = Simple2PlayersNoBlindsGameMock.WithBothPlayersSeated();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.None)).WithAllPlayersSeated();
 
             Assert.AreEqual(1, nfo.Game.Table.BettingRoundId, "The game should now be in the preflop round");
         }
@@ -17,7 +18,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AfterBlindsRoundIsPreflop()
         {
-            var nfo = Simple2PlayersBlindsGameMock.BlindsPosted();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).BlindsPosted();
 
             Assert.AreEqual(1, nfo.Game.Table.BettingRoundId, "The game should now be in the preflop round");
         }
@@ -25,28 +26,28 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AfterAntesRoundIsPreflop()
         {
-            var nfo = Simple2PlayersAntesGameMock.BlindsPosted();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Antes)).BlindsPosted();
 
             Assert.AreEqual(1, nfo.Game.Table.BettingRoundId, "The game should now be in the preflop round");
         }
         [TestMethod]
         public void AfterPreflopRoundIsFlop()
         {
-            var nfo = Simple2PlayersBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
 
             Assert.AreEqual(2, nfo.Game.Table.BettingRoundId, "The game should now be in the flop round");
         }
         [TestMethod]
         public void AfterFlopRoundIsTurn()
         {
-            var nfo = Simple2PlayersBlindsGameMock.AfterFlop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterFlop();
 
             Assert.AreEqual(3, nfo.Game.Table.BettingRoundId, "The game should now be in the turn round");
         }
         [TestMethod]
         public void AfterTurnRoundIsRiver()
         {
-            var nfo = Simple2PlayersBlindsGameMock.AfterTurn();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterTurn();
 
             Assert.AreEqual(4, nfo.Game.Table.BettingRoundId, "The game should now be in the river round");
         }
@@ -54,7 +55,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AfterFirstPlayerCallRoundStillPreflop()
         {
-            var nfo = Simple2PlayersBlindsGameMock.BlindsPosted();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).BlindsPosted();
 
             nfo.CurrentPlayerCalls();
 
@@ -64,7 +65,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AfterBothPlayerCallOnPreflopRoundNowFlop()
         {
-            var nfo = Simple2PlayersBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
 
             Assert.AreEqual(2, nfo.Game.Table.BettingRoundId, "The game should now be in the flop round");
         }
@@ -72,7 +73,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AfterFirstPlayerCheckOnFlopRoundStillFlop()
         {
-            var nfo = Simple2PlayersBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
 
             nfo.CurrentPlayerChecks();
 
@@ -82,7 +83,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AfterSecondPlayerBetOnFlopRoundStillFlop()
         {
-            var nfo = Simple2PlayersBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
 
             nfo.CurrentPlayerChecks();
             nfo.CurrentPlayerRaisesMinimum();
@@ -93,7 +94,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AfterSecondPlayerChecksNowTurn()
         {
-            var nfo = Simple2PlayersBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
 
             nfo.CurrentPlayerChecks();
             nfo.CurrentPlayerChecks();
@@ -104,7 +105,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AfterSecondPlayerCallsNowTurn()
         {
-            var nfo = Simple2PlayersBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
 
             nfo.CurrentPlayerRaisesMinimum();
             nfo.CurrentPlayerCalls();
@@ -115,7 +116,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AfterOnlyRaiseShouldStayFlop()
         {
-            var nfo = Simple2PlayersBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
 
             nfo.CurrentPlayerRaisesMinimum();
             nfo.CurrentPlayerRaisesMinimum();
@@ -129,7 +130,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void AfterRaisesThenCallShouldNowTurn()
         {
-            var nfo = Simple2PlayersBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
 
             nfo.CurrentPlayerRaisesMinimum();
             nfo.CurrentPlayerRaisesMinimum();

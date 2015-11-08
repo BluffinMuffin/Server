@@ -1,4 +1,5 @@
-﻿using BluffinMuffin.Server.Logic.Test.PokerGameTests.Mocks;
+﻿using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
@@ -9,28 +10,28 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void Game2PNoBlindsUtgIsNextToDealerOnPreflop()
         {
-            var nfo = Simple2PlayersNoBlindsGameMock.WithBothPlayersSeated();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.None)).WithAllPlayersSeated();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on preflop");
         }
         [TestMethod]
         public void Game2PNoBlindsUtgIsNextToDealerOnFlop()
         {
-            var nfo = Simple2PlayersNoBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.None)).AfterPreflop();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on flop");
         }
         [TestMethod]
         public void Game2PUtgIsDealerOnPreflop()
         {
-            var nfo = Simple2PlayersBlindsGameMock.BlindsPosted();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).BlindsPosted();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.Dealer, "Dealer should be under the gun on preflop");
         }
         [TestMethod]
         public void Game2PUtgIsNextToDealerOnFlop()
         {
-            var nfo = Simple2PlayersBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on flop");
         }
@@ -38,98 +39,98 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         [TestMethod]
         public void Game2PAntesUtgIsNextDealerOnPreflop()
         {
-            var nfo = Simple2PlayersAntesGameMock.BlindsPosted();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Antes)).BlindsPosted();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on preflop");
         }
         [TestMethod]
         public void Game2PAntesUtgIsNextToDealerOnFlop()
         {
-            var nfo = Simple2PlayersAntesGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Antes)).AfterPreflop();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on flop");
         }
         [TestMethod]
         public void Game3PNoBlindsUtgIsNextToDealerOnPreflop()
         {
-            var nfo = Simple3PlayersNoBlindsGameMock.WithAllPlayersSeated();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.None), new NbPlayersModule(3)).WithAllPlayersSeated();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on preflop");
         }
         [TestMethod]
         public void Game3PNoBlindsUtgIsNextToDealerOnFlop()
         {
-            var nfo = Simple3PlayersNoBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.None), new NbPlayersModule(3)).AfterPreflop();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on flop");
         }
         [TestMethod]
         public void Game3PUtgIsNextToBigBlindOnPreflop()
         {
-            var nfo = Simple3PlayersBlindsGameMock.BlindsPosted();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds), new NbPlayersModule(3)).BlindsPosted();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.PlayerNextTo(nfo.PlayerNextTo(nfo.Dealer))), "Player next to the big blind should be under the gun on preflop");
         }
         [TestMethod]
         public void Game3PUtgIsNextToDealerOnFlop()
         {
-            var nfo = Simple3PlayersBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds), new NbPlayersModule(3)).AfterPreflop();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on flop");
         }
         [TestMethod]
         public void Game3PAntesUtgIsNextToDealerOnPreflop()
         {
-            var nfo = Simple3PlayersAntesGameMock.BlindsPosted();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Antes), new NbPlayersModule(3)).BlindsPosted();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on preflop");
         }
         [TestMethod]
         public void Game3PAntesUtgIsNextToDealerOnFlop()
         {
-            var nfo = Simple3PlayersAntesGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Antes), new NbPlayersModule(3)).AfterPreflop();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on flop");
         }
         [TestMethod]
         public void Game4PNoBlindsUtgIsNextToDealerOnPreflop()
         {
-            var nfo = Simple4PlayersNoBlindsGameMock.WithAllPlayersSeated();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.None), new NbPlayersModule(4)).WithAllPlayersSeated();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on preflop");
         }
         [TestMethod]
         public void Game4PNoBlindsUtgIsNextToDealerOnFlop()
         {
-            var nfo = Simple4PlayersNoBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.None), new NbPlayersModule(4)).AfterPreflop();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on flop");
         }
         [TestMethod]
         public void Game4PUtgIsNextToBigBlindOnPreflop()
         {
-            var nfo = Simple4PlayersBlindsGameMock.BlindsPosted();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds), new NbPlayersModule(4)).BlindsPosted();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.PlayerNextTo(nfo.PlayerNextTo(nfo.Dealer))), "Player next to big blind should be under the gun on preflop");
         }
         [TestMethod]
         public void Game4PUtgIsNextToDealerOnFlop()
         {
-            var nfo = Simple4PlayersBlindsGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds), new NbPlayersModule(4)).AfterPreflop();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on flop");
         }
         [TestMethod]
         public void Game4PAntesUtgIsNextToDealerOnPreflop()
         {
-            var nfo = Simple4PlayersAntesGameMock.BlindsPosted();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Antes), new NbPlayersModule(4)).BlindsPosted();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on preflop");
         }
         [TestMethod]
         public void Game4PAntesUtgIsNextToDealerOnFlop()
         {
-            var nfo = Simple4PlayersAntesGameMock.AfterPreflop();
+            var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Antes), new NbPlayersModule(4)).AfterPreflop();
 
             Assert.AreEqual(nfo.CurrentPlayer, nfo.PlayerNextTo(nfo.Dealer), "Player next to dealer should be under the gun on flop");
         }
