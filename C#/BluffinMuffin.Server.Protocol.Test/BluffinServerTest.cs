@@ -85,7 +85,7 @@ namespace BluffinMuffin.Server.Protocol.Test
 
             //SitOut(c2, idTable, s2);
 
-            Thread.Sleep(500);
+            Thread.Sleep(250);
 
             c1.ReceivedCommands.CompleteAdding();
             c2.ReceivedCommands.CompleteAdding();

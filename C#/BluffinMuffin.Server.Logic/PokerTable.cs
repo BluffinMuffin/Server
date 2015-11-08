@@ -380,7 +380,7 @@ namespace BluffinMuffin.Server.Logic
                 return null;
             }
 
-            if (p.MoneyAmnt < Params.MinimumBuyInAmount || p.MoneyAmnt > Params.MaximumBuyInAmount)
+            if (!Params.IsValidBuyIn(p.MoneyAmnt))
             {
                 Logger.LogError("Player Money ({0}) is not between Minimum ({1}) and Maximum ({2})", p.MoneyAmnt, Params.MinimumBuyInAmount, Params.MaximumBuyInAmount);
                 return null;

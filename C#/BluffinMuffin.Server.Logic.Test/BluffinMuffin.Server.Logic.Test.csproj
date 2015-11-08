@@ -43,6 +43,10 @@
     <Reference Include="Com.Ericmas001.Net.Protocol">
       <HintPath>..\References\Com.Ericmas001.Net.Protocol.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -58,6 +62,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="BettingTests.cs" />
     <Compile Include="PokerGameTests\BettingRoundsTests.cs" />
     <Compile Include="PokerGameTests\BlindsTests.cs" />
     <Compile Include="PokerGameTests\DataTypes\GameMockInfo.cs" />
@@ -84,7 +89,10 @@
       <Name>BluffinMuffin.Server.Logic</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

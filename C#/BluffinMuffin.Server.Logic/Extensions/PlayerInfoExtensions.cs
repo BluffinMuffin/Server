@@ -24,15 +24,13 @@ namespace BluffinMuffin.Server.Logic.Extensions
         public static bool TryBet(this PlayerInfo p, int amnt)
         {
             if (!p.CanBet(amnt))
-            {
                 return false;
-            }
 
             p.MoneySafeAmnt -= amnt;
             p.MoneyBetAmnt += amnt;
             return true;
         }
 
-        public static bool CanPlay(this PlayerInfo p) => p.NoSeat >= 0 && p.MoneySafeAmnt > 0;
+        public static bool IsReadyToPlay(this PlayerInfo p) => p.NoSeat >= 0 && p.MoneySafeAmnt > 0;
     }
 }

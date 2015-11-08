@@ -39,7 +39,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             {
                 if (p.State==PlayerStateEnum.Zombie && SitOut(p))
                     Table.LeaveTable(p);
-                else if (p.CanPlay())
+                else if (p.IsReadyToPlay())
                     p.State = PlayerStateEnum.Playing;
                 else
                     p.State = PlayerStateEnum.SitIn;
