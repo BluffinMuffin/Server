@@ -76,41 +76,12 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public int MinimumRaiseAmount { get; set; }
 
-        /// <summary>
-        /// Where is the Dealer
-        /// </summary>
-        public SeatInfo DealerSeat
-        {
-            get
-            {
-                return m_Seats.FirstOrDefault(s => s.SeatAttributes.Contains(SeatAttributeEnum.Dealer));
-            }
-        }
-
-        /// <summary>
-        /// Where is the FirstTalker
-        /// </summary>
-        public SeatInfo FirstTalkerSeat
-        {
-            get
-            {
-                return m_Seats.FirstOrDefault(s => s.SeatAttributes.Contains(SeatAttributeEnum.FirstTalker));
-            }
-        }
-
-        public SeatInfo CurrentPlayerSeat
-        {
-            get
-            {
-                return m_Seats.FirstOrDefault(s => s.SeatAttributes.Contains(SeatAttributeEnum.CurrentPlayer));
-            }
-        }
-        public int NoSeatCurrentPlayer => CurrentPlayerSeat?.NoSeat ?? -1;
+        public int NoSeatCurrentPlayer => m_Seats.CurrentPlayer()?.NoSeat ?? -1;
 
         /// <summary>
         /// Who is the current player
         /// </summary>
-        public PlayerInfo CurrentPlayer => CurrentPlayerSeat?.Player;
+        public PlayerInfo CurrentPlayer => m_Seats.CurrentPlayer()?.Player;
 
         /// <summary>
         /// How many player have played this round and are ready to play the next one
@@ -312,11 +283,8 @@ namespace BluffinMuffin.Server.Logic
 
         public void ChangeCurrentPlayerTo(SeatInfo seat)
         {
-            var oldPlayerSeat = CurrentPlayerSeat;
-            if (oldPlayerSeat != null)
-                oldPlayerSeat.SeatAttributes = oldPlayerSeat.SeatAttributes.Except(new[] { SeatAttributeEnum.CurrentPlayer }).ToArray();
-            if (seat != null)
-                seat.SeatAttributes = seat.SeatAttributes.Union(new[] { SeatAttributeEnum.CurrentPlayer }).ToArray();
+            m_Seats.CurrentPlayer()?.RemoveAttribute(SeatAttributeEnum.CurrentPlayer);
+            seat?.AddAttribute(SeatAttributeEnum.CurrentPlayer);
         }
 
 
@@ -382,7 +350,7 @@ namespace BluffinMuffin.Server.Logic
 
             if (!Params.IsValidBuyIn(p.MoneyAmnt))
             {
-                Logger.LogError("Player Money ({0}) is not between Minimum ({1}) and Maximum ({2})", p.MoneyAmnt, Params.MinimumBuyInAmount, Params.MaximumBuyInAmount);
+                Logger.LogError("Player Money ({0}) is not between Minimum ({1}) and Maximum ({2})", p.MoneyAmnt, Params.Lobby.MinimumBuyInAmount(Params.GameSize), Params.Lobby.MaximumBuyInAmount(Params.GameSize));
                 return null;
             }
 
@@ -527,35 +495,32 @@ namespace BluffinMuffin.Server.Logic
         }
         private void InitPokerTable()
         {
-            var previousDealer = DealerSeat;
+            var previousDealer = m_Seats.Dealer();
             
             Seats.ForEach(s => s.SeatAttributes = new SeatAttributeEnum[0]);
 
             if (Params.Options.OptionType != GameTypeEnum.StudPoker)
-            {
-                var nextDealerSeat = GetSeatOfPlayingPlayerNextTo(previousDealer);
-                nextDealerSeat.SeatAttributes = nextDealerSeat.SeatAttributes.Union(new[] {SeatAttributeEnum.Dealer}).ToArray();
-            }
+                GetSeatOfPlayingPlayerNextTo(previousDealer).AddAttribute(SeatAttributeEnum.Dealer);
 
             m_BlindNeeded.Clear();
 
             switch(Params.Blind)
             {
                 case BlindTypeEnum.Blinds:
-                    var smallSeat = NbPlaying == 2 ? DealerSeat : GetSeatOfPlayingPlayerNextTo(DealerSeat);
+                    var smallSeat = NbPlaying == 2 ? m_Seats.Dealer() : GetSeatOfPlayingPlayerNextTo(m_Seats.Dealer());
                     if (NewArrivals.All(x => x.NoSeat != smallSeat.NoSeat))
                     {
-                        smallSeat.SeatAttributes = smallSeat.SeatAttributes.Union(new[] { SeatAttributeEnum.SmallBlind }).ToArray();
+                        smallSeat.AddAttribute(SeatAttributeEnum.SmallBlind);
                         m_BlindNeeded.Add(smallSeat.Player, Params.GameSize / 2);
                     }
 
                     var bigSeat = GetSeatOfPlayingPlayerNextTo(smallSeat);
-                    bigSeat.SeatAttributes = bigSeat.SeatAttributes.Union(new[] { SeatAttributeEnum.BigBlind }).ToArray();
+                    bigSeat.AddAttribute(SeatAttributeEnum.BigBlind);
 
-                    NewArrivals.ForEach(x => Seats[x.NoSeat].SeatAttributes = Seats[x.NoSeat].SeatAttributes.Union(new[] { SeatAttributeEnum.BigBlind }).ToArray());
+                    NewArrivals.ForEach(x => Seats[x.NoSeat].AddAttribute(SeatAttributeEnum.BigBlind));
                     NewArrivals.Clear();
 
-                    Seats.Where(x => x.SeatAttributes.Contains(SeatAttributeEnum.BigBlind)).ToList().ForEach(x => { m_BlindNeeded.Add(x.Player, Params.GameSize); });
+                    Seats.WithAttribute(SeatAttributeEnum.BigBlind).ToList().ForEach(x => { m_BlindNeeded.Add(x.Player, Params.GameSize); });
                     break;
                 case BlindTypeEnum.Antes:
                     PlayingPlayers.ForEach(x => { m_BlindNeeded.Add(x, Math.Max(1, Params.GameSize / 10)); });

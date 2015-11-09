@@ -152,5 +152,90 @@ namespace BluffinMuffin.Server.Logic.Test
             //Assert
             Assert.AreEqual(true, res);
         }
+
+        [TestMethod]
+        public void SeatContainingAttribute()
+        {
+            //Arrange
+            var s = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
+
+            //Act
+
+            //Assert
+            Assert.IsTrue(s.HasAttribute(SeatAttributeEnum.Dealer));
+        }
+
+        [TestMethod]
+        public void SeatNotContainingAttribute()
+        {
+            //Arrange
+            var s = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
+
+            //Act
+
+            //Assert
+            Assert.IsFalse(s.HasAttribute(SeatAttributeEnum.FirstTalker));
+        }
+
+
+        [TestMethod]
+        public void AddAttributeThatWasNotThereShouldAdd()
+        {
+            //Arrange
+            var s = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
+
+            //Act
+            s.AddAttribute(SeatAttributeEnum.FirstTalker);
+
+            //Assert
+            Assert.AreEqual(2, s.SeatAttributes.Length);
+            Assert.IsTrue(s.HasAttribute(SeatAttributeEnum.Dealer));
+            Assert.IsTrue(s.HasAttribute(SeatAttributeEnum.FirstTalker));
+        }
+
+        [TestMethod]
+        public void AddAttributeThatWasAlreadyThereShouldDoNothing()
+        {
+            //Arrange
+            var s = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
+
+            //Act
+            s.AddAttribute(SeatAttributeEnum.Dealer);
+
+            //Assert
+            Assert.AreEqual(1, s.SeatAttributes.Length);
+            Assert.IsTrue(s.HasAttribute(SeatAttributeEnum.Dealer));
+        }
+
+
+        [TestMethod]
+        public void RemoveAttributeThatWasNotThereShouldDoNothing()
+        {
+            //Arrange
+            var s = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
+
+            //Act
+            s.RemoveAttribute(SeatAttributeEnum.FirstTalker);
+
+            //Assert
+            Assert.AreEqual(1, s.SeatAttributes.Length);
+            Assert.IsFalse(s.HasAttribute(SeatAttributeEnum.FirstTalker));
+            Assert.IsTrue(s.HasAttribute(SeatAttributeEnum.Dealer));
+        }
+
+        [TestMethod]
+        public void RemoveAttributeThatWasAlreadyThereShouldRemove()
+        {
+            //Arrange
+            var s = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
+
+            //Act
+            s.RemoveAttribute(SeatAttributeEnum.Dealer);
+
+            //Assert
+            Assert.AreEqual(0, s.SeatAttributes.Length);
+            Assert.IsFalse(s.HasAttribute(SeatAttributeEnum.Dealer));
+        }
+
     }
 }

@@ -33,17 +33,13 @@ namespace BluffinMuffin.Server.Logic.GameModules
             }
             Table.BettingRoundId++;
 
-            if (Table.FirstTalkerSeat != null)
-                Table.FirstTalkerSeat.SeatAttributes = Table.FirstTalkerSeat.SeatAttributes.Except(new[] { SeatAttributeEnum.FirstTalker }).ToArray();
-
-            if (Table.FirstTalkerSeat != null)
-                Table.FirstTalkerSeat.SeatAttributes = Table.FirstTalkerSeat.SeatAttributes.Except(new[] { SeatAttributeEnum.FirstTalker }).ToArray();
-
+            Table.Seats.FirstTalker()?.RemoveAttribute(SeatAttributeEnum.FirstTalker);
+            
             var firstPlayer = GetSeatOfTheFirstPlayer();
 
             if (Table.Params.Options.OptionType == GameTypeEnum.StudPoker)
-                firstPlayer.SeatAttributes = firstPlayer.SeatAttributes.Union(new[] { SeatAttributeEnum.FirstTalker }).ToArray();
-
+                firstPlayer.AddAttribute(SeatAttributeEnum.FirstTalker);
+            
             Table.ChangeCurrentPlayerTo(null);
             Observer.RaiseGameBettingRoundStarted();
 
@@ -75,7 +71,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 return Table.Seats[HandEvaluators.Evaluate(Table.PlayingPlayers.Select(p => new CardHolder(p, p.FaceUpCards, new string[0])).Cast<IStringCardsHolder>().ToArray(), new EvaluationParams {UseSuitRanking = true}).First().Select(x => x.CardsHolder).Cast<CardHolder>().First().Player.NoSeat];
             }
 
-            return Table.GetSeatOfPlayingPlayerNextTo(Table.DealerSeat);
+            return Table.GetSeatOfPlayingPlayerNextTo(Table.Seats.Dealer());
         }
 
         private void FoldPlayer(PlayerInfo p)
@@ -122,7 +118,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         }
         protected virtual void ChooseNextPlayer()
         {
-            var next = Table.GetSeatOfPlayingPlayerNextTo(Table.CurrentPlayerSeat);
+            var next = Table.GetSeatOfPlayingPlayerNextTo(Table.Seats.CurrentPlayer());
 
             Table.ChangeCurrentPlayerTo(next);
 

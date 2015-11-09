@@ -10,6 +10,7 @@ namespace BluffinMuffin.Server.Logic.Extensions
 {
     public static class TableParamExtensions
     {
-        public static bool IsValidBuyIn(this TableParams t, int money) => t.MinimumBuyInAmount <= money && money <= t.MaximumBuyInAmount;
+        public static bool IsValidBuyIn(this TableParams t, int money) => t.Lobby.MinimumBuyInAmount(t.GameSize) <= money && money <= t.Lobby.MaximumBuyInAmount(t.GameSize);
+ 
     }
 }

@@ -12,5 +12,18 @@ namespace BluffinMuffin.Server.Logic.Extensions
     {
         public static bool HasPlayerPlaying(this SeatInfo si) => !si.IsEmpty && si.Player.State == PlayerStateEnum.Playing;
         public static bool HasPlayerPlayingOrAllIn(this SeatInfo si) => !si.IsEmpty && si.Player.IsPlayingOrAllIn();
+
+        public static bool HasAttribute(this SeatInfo si, SeatAttributeEnum att)
+        {
+            return si.SeatAttributes.Contains(att);
+        }
+        public static void AddAttribute(this SeatInfo si, SeatAttributeEnum att)
+        {
+            si.SeatAttributes = si.SeatAttributes.Union(new[] { att }).ToArray();
+        }
+        public static void RemoveAttribute(this SeatInfo si, SeatAttributeEnum att)
+        {
+            si.SeatAttributes = si.SeatAttributes.Except(new[] { att }).ToArray();
+        }
     }
 }

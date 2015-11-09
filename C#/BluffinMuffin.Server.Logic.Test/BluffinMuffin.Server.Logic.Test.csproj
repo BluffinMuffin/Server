@@ -62,6 +62,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="LobbyOptionTest.cs" />
+    <Compile Include="EnumerableOfSeatInfoTest.cs" />
     <Compile Include="TableParamTests.cs" />
     <Compile Include="SeatInfoTests.cs" />
     <Compile Include="PlayerInfoTests.cs" />

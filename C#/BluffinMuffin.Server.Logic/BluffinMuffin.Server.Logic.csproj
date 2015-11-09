@@ -60,6 +60,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\LobbyOptionExtensions.cs" />
+    <Compile Include="Extensions\EnumerableOfSeatInfoExtensions.cs" />
     <Compile Include="Extensions\TableParamExtensions.cs" />
     <Compile Include="Extensions\SeatInfoExtensions.cs" />
     <Compile Include="Extensions\PlayerInfoExtensions.cs" />

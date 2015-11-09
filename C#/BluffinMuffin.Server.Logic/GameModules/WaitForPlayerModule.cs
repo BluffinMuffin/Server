@@ -56,8 +56,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             }
             else
             {
-                if (Table.DealerSeat != null)
-                    Table.DealerSeat.SeatAttributes = Table.DealerSeat.SeatAttributes.Except(new[] { SeatAttributeEnum.Dealer }).ToArray();
+                Table.Seats.Dealer()?.RemoveAttribute(SeatAttributeEnum.Dealer);
                 Table.PlayingPlayers.ForEach(x => x.State = PlayerStateEnum.SitIn);
             }
         }

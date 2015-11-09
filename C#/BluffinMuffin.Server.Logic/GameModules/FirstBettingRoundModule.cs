@@ -1,6 +1,7 @@
 ﻿using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
+using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
@@ -18,7 +19,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 //Ad B : A      A
                 //Ad B C: A     A->B->C->A
                 //Ad B C D: D   A->B->C->D
-                return Table.NbPlayingAndAllIn < 3 ? Table.DealerSeat : Table.GetSeatOfPlayingPlayerNextTo(Table.GetSeatOfPlayingPlayerNextTo(Table.GetSeatOfPlayingPlayerNextTo(Table.DealerSeat)));
+                return Table.NbPlayingAndAllIn < 3 ? Table.Seats.Dealer() : Table.GetSeatOfPlayingPlayerNextTo(Table.GetSeatOfPlayingPlayerNextTo(Table.GetSeatOfPlayingPlayerNextTo(Table.Seats.Dealer())));
             }
 
             return base.GetSeatOfTheFirstPlayer();

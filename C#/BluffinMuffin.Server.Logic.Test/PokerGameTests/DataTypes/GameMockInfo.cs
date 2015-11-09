@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BluffinMuffin.Protocol.DataTypes;
+using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
 {
@@ -19,7 +20,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
 
         public PlayerInfo CalculatedSmallBlind { get { return Players.Where(x => BlindNeeded(x) > 0).OrderBy(BlindNeeded).First(); } }
         public PlayerInfo CalculatedBigBlind { get { return Players.Where(x => BlindNeeded(x) > 0).OrderBy(BlindNeeded).Last(); } }
-        public PlayerInfo Dealer => Game.Table.DealerSeat.Player;
+        public PlayerInfo Dealer => Game.Table.Seats.Dealer().Player;
 
 
         public bool CurrentPlayerPlays(int amount)
