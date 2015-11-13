@@ -1,6 +1,7 @@
 ﻿using BluffinMuffin.Protocol.DataTypes.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BluffinMuffin.Server.DataTypes.Enums;
+using BluffinMuffin.Server.Logic.Extensions;
 using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
@@ -179,7 +180,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         {
             //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).BlindsPosted();
-            var otherPlayer = nfo.Game.Table.GetSeatOfPlayingPlayerNextTo(nfo.Game.Table.Seats[nfo.CurrentPlayer.NoSeat]).Player;
+            var otherPlayer = nfo.Game.Table.Seats.SeatOfPlayingPlayerNextTo(nfo.Game.Table.Seats[nfo.CurrentPlayer.NoSeat]).Player;
 
             //Act
             nfo.Game.LeaveGame(otherPlayer);
@@ -192,7 +193,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
         {
             //Arrange
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).BlindsPosted();
-            var otherPlayer = nfo.Game.Table.GetSeatOfPlayingPlayerNextTo(nfo.Game.Table.Seats[nfo.CurrentPlayer.NoSeat]).Player;
+            var otherPlayer = nfo.Game.Table.Seats.SeatOfPlayingPlayerNextTo(nfo.Game.Table.Seats[nfo.CurrentPlayer.NoSeat]).Player;
             nfo.Game.LeaveGame(otherPlayer);
 
             //Act

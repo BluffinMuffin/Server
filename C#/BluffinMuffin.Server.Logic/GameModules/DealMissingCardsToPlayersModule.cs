@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
+using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
@@ -19,7 +20,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override void InitModule()
         {
-            foreach (var p in Table.PlayingAndAllInPlayers)
+            foreach (var p in Table.Seats.PlayingAndAllInPlayers())
             {
                 string[] downCards = p.FaceDownCards?.Where(x => !string.IsNullOrEmpty(x)).ToArray() ?? new string[0];
                 p.FaceDownCards = downCards.Union(Table.Variant.Dealer.DealCards(NbCardsFaceDown - downCards.Length).Select(x => x.ToString())).ToArray();

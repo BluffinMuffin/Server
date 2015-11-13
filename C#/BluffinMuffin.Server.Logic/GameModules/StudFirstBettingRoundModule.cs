@@ -5,6 +5,7 @@ using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
+using BluffinMuffin.Server.Logic.Extensions;
 using BluffinMuffin.Server.Logic.GameVariants;
 
 namespace BluffinMuffin.Server.Logic.GameModules
@@ -27,7 +28,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         protected override SeatInfo GetSeatOfTheFirstPlayer()
         {
-            return Table.Seats[HandEvaluators.Evaluate(Table.PlayingPlayers.Select(p => new CardHolder(p, p.FaceUpCards, new string[0])).Cast<IStringCardsHolder>().ToArray(), new EvaluationParams { UseSuitRanking = true }).Last().Select(x => x.CardsHolder).Cast<CardHolder>().First().Player.NoSeat];
+            return Table.Seats[HandEvaluators.Evaluate(Table.Seats.PlayingPlayers().Select(p => new CardHolder(p, p.FaceUpCards, new string[0])).Cast<IStringCardsHolder>().ToArray(), new EvaluationParams { UseSuitRanking = true }).Last().Select(x => x.CardsHolder).Cast<CardHolder>().First().Player.NoSeat];
         }
 
         protected override void InitModuleSpecific()

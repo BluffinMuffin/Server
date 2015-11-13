@@ -33,7 +33,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             }
             Table.BettingRoundId++;
 
-            Table.Seats.FirstTalker()?.RemoveAttribute(SeatAttributeEnum.FirstTalker);
+            Table.Seats.SeatOfFirstTalker()?.RemoveAttribute(SeatAttributeEnum.FirstTalker);
             
             var firstPlayer = GetSeatOfTheFirstPlayer();
 
@@ -44,7 +44,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             Observer.RaiseGameBettingRoundStarted();
 
             //We Put the current player just before the starting player, then we will take the next player and he will be the first
-            Table.ChangeCurrentPlayerTo(Table.GetSeatOfPlayingPlayerJustBefore(firstPlayer));
+            Table.ChangeCurrentPlayerTo(Table.Seats.SeatOfPlayingPlayerJustBefore(firstPlayer));
 
 
             Table.NbPlayed = 0;
@@ -68,10 +68,10 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             if (Table.Params.Options.OptionType == GameTypeEnum.StudPoker)
             {
-                return Table.Seats[HandEvaluators.Evaluate(Table.PlayingPlayers.Select(p => new CardHolder(p, p.FaceUpCards, new string[0])).Cast<IStringCardsHolder>().ToArray(), new EvaluationParams {UseSuitRanking = true}).First().Select(x => x.CardsHolder).Cast<CardHolder>().First().Player.NoSeat];
+                return Table.Seats[HandEvaluators.Evaluate(Table.Seats.PlayingPlayers().Select(p => new CardHolder(p, p.FaceUpCards, new string[0])).Cast<IStringCardsHolder>().ToArray(), new EvaluationParams {UseSuitRanking = true}).First().Select(x => x.CardsHolder).Cast<CardHolder>().First().Player.NoSeat];
             }
 
-            return Table.GetSeatOfPlayingPlayerNextTo(Table.Seats.Dealer());
+            return Table.Seats.SeatOfPlayingPlayerNextTo(Table.Seats.SeatOfDealer());
         }
 
         private void FoldPlayer(PlayerInfo p)
@@ -118,7 +118,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         }
         protected virtual void ChooseNextPlayer()
         {
-            var next = Table.GetSeatOfPlayingPlayerNextTo(Table.Seats.CurrentPlayer());
+            var next = Table.Seats.SeatOfPlayingPlayerNextTo(Table.Seats.SeatOfCurrentPlayer());
 
             Table.ChangeCurrentPlayerTo(next);
 

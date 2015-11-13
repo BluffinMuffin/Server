@@ -3,6 +3,7 @@ using System.Linq;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
+using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
@@ -22,7 +23,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override void InitModule()
         {
-            foreach(var p in Table.PlayingPlayers)
+            foreach(var p in Table.Seats.PlayingPlayers())
                 m_Players.Add(p,null);
             Observer.RaiseDiscardActionNeeded(m_Minimum, m_Maximum);
         }

@@ -19,7 +19,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             var res = nfo.Players.Count(x => nfo.BlindNeeded(x) > 0);
 
             //Assert
-            Assert.AreEqual(2, res, "Dealer should be the small blind");
+            Assert.AreEqual(2, res, "SeatOfDealer should be the small blind");
         }
         [TestMethod]
         public void AnteGame3PEverybodyIsBlind()
@@ -31,7 +31,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             var res = nfo.Players.Count(x => nfo.BlindNeeded(x) > 0);
 
             //Assert
-            Assert.AreEqual(3, res, "Dealer should be the small blind");
+            Assert.AreEqual(3, res, "SeatOfDealer should be the small blind");
         }
         [TestMethod]
         public void AnteGame4PEverybodyIsBlind()
@@ -43,7 +43,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             var res = nfo.Players.Count(x => nfo.BlindNeeded(x) > 0);
 
             //Assert
-            Assert.AreEqual(4, res, "Dealer should be the small blind");
+            Assert.AreEqual(4, res, "SeatOfDealer should be the small blind");
         }
         [TestMethod]
         public void Game2PSmallIsDealer()
@@ -55,7 +55,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             var res = nfo.Dealer;
 
             //Assert
-            Assert.AreEqual(nfo.CalculatedSmallBlind, res, "Dealer should be the small blind");
+            Assert.AreEqual(nfo.CalculatedSmallBlind, res, "SeatOfDealer should be the small blind");
         }
         [TestMethod]
         public void Game2PBigIsNextToDealer()
@@ -67,7 +67,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             var res = nfo.PlayerNextTo(nfo.Dealer);
 
             //Assert
-            Assert.AreEqual(nfo.CalculatedBigBlind, res, "Player Next To Dealer should be the big blind");
+            Assert.AreEqual(nfo.CalculatedBigBlind, res, "Player Next To SeatOfDealer should be the big blind");
         }
         [TestMethod]
         public void Game3PSmallIsNextToDealer()
@@ -79,7 +79,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             var res = nfo.PlayerNextTo(nfo.Dealer);
 
             //Assert
-            Assert.AreEqual(nfo.CalculatedSmallBlind, res, "Player Next To Dealer should be the small blind");
+            Assert.AreEqual(nfo.CalculatedSmallBlind, res, "Player Next To SeatOfDealer should be the small blind");
         }
         [TestMethod]
         public void Game3PBigIsNextToSmall()
@@ -103,7 +103,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             var res = nfo.PlayerNextTo(nfo.Dealer);
 
             //Assert
-            Assert.AreEqual(nfo.CalculatedSmallBlind, res, "Player Next To Dealer should be the small blind");
+            Assert.AreEqual(nfo.CalculatedSmallBlind, res, "Player Next To SeatOfDealer should be the small blind");
         }
         [TestMethod]
         public void Game4PBigIsNextToSmall()

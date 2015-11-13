@@ -13,10 +13,7 @@ namespace BluffinMuffin.Server.Logic
     public class PokerTable
     {
         #region Fields
-        private SeatInfo[] m_Seats;
         private readonly List<MoneyPot> m_Pots = new List<MoneyPot>();
-        private TableParams m_Params;
-        private AbstractGameVariant m_Variant;
 
         private readonly List<int> m_AllInCaps = new List<int>(); // All the distincts ALL_IN CAPS of the ROUND
         private readonly Dictionary<PlayerInfo, int> m_BlindNeeded = new Dictionary<PlayerInfo, int>();
@@ -28,25 +25,11 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// Contains all the rules of the current game
         /// </summary>
-        public TableParams Params
-        {
-            get
-            {
-                return m_Params;
-            }
-            set
-            {
-                m_Params = value;
-                m_Variant = RuleFactory.Variants[Params.Variant];
-                m_Seats = new SeatInfo[value.MaxPlayers];
-                for (var i = 0; i < value.MaxPlayers; ++i)
-                    m_Seats[i] = new SeatInfo() { NoSeat = i };
-            }
-        }
+        public TableParams Params { get; }
         /// <summary>
         /// Contains all the People that are watching anbd playing the game. Everybody in the room.
         /// </summary>
-        public List<PlayerInfo> People { get; } = new List<PlayerInfo>();
+        private List<PlayerInfo> People { get; } = new List<PlayerInfo>();
 
         /// <summary>
         /// Cards on the Board
@@ -76,12 +59,12 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public int MinimumRaiseAmount { get; set; }
 
-        public int NoSeatCurrentPlayer => m_Seats.CurrentPlayer()?.NoSeat ?? -1;
+        public int NoSeatCurrentPlayer => Seats.SeatOfCurrentPlayer()?.NoSeat ?? -1;
 
         /// <summary>
         /// Who is the current player
         /// </summary>
-        public PlayerInfo CurrentPlayer => m_Seats.CurrentPlayer()?.Player;
+        public PlayerInfo CurrentPlayer => Seats.SeatOfCurrentPlayer()?.Player;
 
         /// <summary>
         /// How many player have played this round and are ready to play the next one
@@ -96,7 +79,7 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// How many players are still in the Game (All-In not included)
         /// </summary>
-        public int NbPlaying => PlayingPlayers.Count;
+        public int NbPlaying => Seats.PlayingPlayers().Count();
 
         /// <summary>
         /// How many players are still in the Game (All-In included)
@@ -116,26 +99,16 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// List of the Players currently seated
         /// </summary>
-        public List<PlayerInfo> Players { get { return m_Seats.Where(s => !s.IsEmpty).Select(s => s.Player).ToList(); } }
+        public List<PlayerInfo> Players { get { return Seats.Where(s => !s.IsEmpty).Select(s => s.Player).ToList(); } }
 
         /// <summary>
         /// List of the Seats
         /// </summary>
-        public List<SeatInfo> Seats => m_Seats.ToList();
-
-        /// <summary>
-        /// List of the playing Players in order starting from the first seat
-        /// </summary>
-        public List<PlayerInfo> PlayingPlayers => PlayingPlayersFrom();
-
-        /// <summary>
-        /// List of the playing Players in order starting from the first seat
-        /// </summary>
-        public IEnumerable<PlayerInfo> PlayingAndAllInPlayers => PlayingAndAllInPlayersFrom();
+        public SeatInfo[] Seats { get; }
 
         public bool HadPlayers { get; private set; }
 
-        public AbstractGameVariant Variant => m_Variant;
+        public AbstractGameVariant Variant { get; }
 
         public bool NoMoreRoundsNeeded { get; set; }
         /// <summary>
@@ -161,6 +134,8 @@ namespace BluffinMuffin.Server.Logic
             Params = parms;
             NewArrivals = new List<PlayerInfo>();
             HadPlayers = false;
+            Variant = RuleFactory.Variants[Params.Variant];
+            Seats = Enumerable.Range(0, Params.MaxPlayers).Select(i => new SeatInfo() { NoSeat = i }).ToArray();
         }
 
         public void InitTable()
@@ -179,38 +154,9 @@ namespace BluffinMuffin.Server.Logic
 
         #region Public Methods
 
-        /// <summary>
-        /// Return the next playing player next to a seat number (All-In not included)
-        /// </summary>
-        public SeatInfo GetSeatOfPlayingPlayerNextTo(SeatInfo seat)
-        {
-            var noSeat = seat?.NoSeat ?? -1;
-            for (var i = 0; i < Params.MaxPlayers; ++i)
-            {
-                var si = m_Seats[(noSeat + 1 + i) % Params.MaxPlayers];
-                if (si.HasPlayerPlaying())
-                    return si;
-            }
-            return seat;
-        }
-        public SeatInfo GetSeatOfPlayingPlayerJustBefore(SeatInfo seat)
-        {
-            var noSeat = seat?.NoSeat ?? -1;
-            for (var i = 0; i < Params.MaxPlayers; ++i)
-            {
-                var id = (noSeat - 1 - i) % Params.MaxPlayers;
-                if (id < 0)
-                    id = Params.MaxPlayers + id;
-                var si = m_Seats[id];
-                if (si.HasPlayerPlaying())
-                    return si;
-            }
-            return seat;
-        }
-
         public bool JoinTable(PlayerInfo p)
         {
-            if (PeopleContainsPlayer(p))
+            if (People.ContainsPlayerWithSameName(p))
             {
                 Logger.LogError("Already someone with the same name!");
                 return false;
@@ -225,7 +171,7 @@ namespace BluffinMuffin.Server.Logic
         /// </summary>
         public bool LeaveTable(PlayerInfo p)
         {
-            if (!PeopleContainsPlayer(p))
+            if (!People.ContainsPlayerWithSameName(p))
                 return false;
 
             People.Remove(p);
@@ -237,13 +183,13 @@ namespace BluffinMuffin.Server.Logic
 
         public bool SitOut(PlayerInfo p)
         {
-            if (!SeatsContainsPlayer(p))
+            if (!Players.ContainsPlayerWithSameName(p))
                 return true;
 
             var seat = p.NoSeat;
             p.State = PlayerStateEnum.Zombie;
             p.NoSeat = -1;
-            m_Seats[seat].Player = null;
+            Seats[seat].Player = null;
             return true;
         }
 
@@ -283,7 +229,7 @@ namespace BluffinMuffin.Server.Logic
 
         public void ChangeCurrentPlayerTo(SeatInfo seat)
         {
-            m_Seats.CurrentPlayer()?.RemoveAttribute(SeatAttributeEnum.CurrentPlayer);
+            Seats.SeatOfCurrentPlayer()?.RemoveAttribute(SeatAttributeEnum.CurrentPlayer);
             seat?.AddAttribute(SeatAttributeEnum.CurrentPlayer);
         }
 
@@ -342,7 +288,7 @@ namespace BluffinMuffin.Server.Logic
 
         public SeatInfo SitIn(PlayerInfo p, int preferedSeat = -1)
         {
-            if (!RemainingSeats.Any())
+            if (!Seats.RemainingSeatIds().Any())
             {
                 Logger.LogError("Not enough seats to join!");
                 return null;
@@ -354,7 +300,7 @@ namespace BluffinMuffin.Server.Logic
                 return null;
             }
 
-            if (SeatsContainsPlayer(p))
+            if (Players.ContainsPlayerWithSameName(p))
             {
                 Logger.LogError("Already someone seated with the same name! Is this you ?");
                 return null;
@@ -362,15 +308,15 @@ namespace BluffinMuffin.Server.Logic
 
             var seat = preferedSeat;
 
-            if (preferedSeat < 0 || preferedSeat >= Seats.Count || !Seats[preferedSeat].IsEmpty)
-                seat = RemainingSeats.First();
+            if (preferedSeat < 0 || preferedSeat >= Seats.Length || !Seats[preferedSeat].IsEmpty)
+                seat = Seats.RemainingSeatIds().First();
 
             HadPlayers = true;
 
             p.State = PlayerStateEnum.SitIn;
             p.NoSeat = seat;
-            m_Seats[seat].Player = p;
-            return m_Seats[seat];
+            Seats[seat].Player = p;
+            return Seats[seat];
         }
 
 
@@ -453,38 +399,9 @@ namespace BluffinMuffin.Server.Logic
             }
         }
 
-        public bool SeatsContainsPlayer(PlayerInfo p)
-        {
-            return Players.Contains(p) || Players.Count(x => x.Name.ToLower() == p.Name.ToLower()) > 0;
-        }
-
         #endregion Public Methods
 
         #region Private Methods
-
-        private List<PlayerInfo> PlayingPlayersFrom()
-        {
-            return m_Seats.Where(SeatInfoExtensions.HasPlayerPlaying).Select(s => s.Player).ToList();
-        }
-
-        private IEnumerable<PlayerInfo> PlayingAndAllInPlayersFrom()
-        {
-            return m_Seats.Where(SeatInfoExtensions.HasPlayerPlayingOrAllIn).Select(s => s.Player);
-        }
-        private bool PeopleContainsPlayer(PlayerInfo p)
-        {
-            return People.Contains(p) || People.Count(x => x.Name.ToLower() == p.Name.ToLower()) > 0;
-        }
-
-        private IEnumerable<int> RemainingSeats
-        {
-            get
-            {
-                for (var i = 0; i < Seats.Count; ++i)
-                    if (Seats[i].IsEmpty)
-                        yield return i;
-            }
-        }
         private void AddBet(PlayerInfo p, MoneyPot pot, int bet)
         {
             p.MoneyBetAmnt -= bet;
@@ -495,26 +412,26 @@ namespace BluffinMuffin.Server.Logic
         }
         private void InitPokerTable()
         {
-            var previousDealer = m_Seats.Dealer();
+            var previousDealer = Seats.SeatOfDealer();
             
-            Seats.ForEach(s => s.SeatAttributes = new SeatAttributeEnum[0]);
+            Seats.ToList().ForEach(s => s.SeatAttributes = new SeatAttributeEnum[0]);
 
             if (Params.Options.OptionType != GameTypeEnum.StudPoker)
-                GetSeatOfPlayingPlayerNextTo(previousDealer).AddAttribute(SeatAttributeEnum.Dealer);
+                Seats.SeatOfPlayingPlayerNextTo(previousDealer).AddAttribute(SeatAttributeEnum.Dealer);
 
             m_BlindNeeded.Clear();
 
             switch(Params.Blind)
             {
                 case BlindTypeEnum.Blinds:
-                    var smallSeat = NbPlaying == 2 ? m_Seats.Dealer() : GetSeatOfPlayingPlayerNextTo(m_Seats.Dealer());
+                    var smallSeat = NbPlaying == 2 ? Seats.SeatOfDealer() : Seats.SeatOfPlayingPlayerNextTo(Seats.SeatOfDealer());
                     if (NewArrivals.All(x => x.NoSeat != smallSeat.NoSeat))
                     {
                         smallSeat.AddAttribute(SeatAttributeEnum.SmallBlind);
                         m_BlindNeeded.Add(smallSeat.Player, Params.GameSize / 2);
                     }
 
-                    var bigSeat = GetSeatOfPlayingPlayerNextTo(smallSeat);
+                    var bigSeat = Seats.SeatOfPlayingPlayerNextTo(smallSeat);
                     bigSeat.AddAttribute(SeatAttributeEnum.BigBlind);
 
                     NewArrivals.ForEach(x => Seats[x.NoSeat].AddAttribute(SeatAttributeEnum.BigBlind));
@@ -523,7 +440,7 @@ namespace BluffinMuffin.Server.Logic
                     Seats.WithAttribute(SeatAttributeEnum.BigBlind).ToList().ForEach(x => { m_BlindNeeded.Add(x.Player, Params.GameSize); });
                     break;
                 case BlindTypeEnum.Antes:
-                    PlayingPlayers.ForEach(x => { m_BlindNeeded.Add(x, Math.Max(1, Params.GameSize / 10)); });
+                    Seats.PlayingPlayers().ToList().ForEach(x => { m_BlindNeeded.Add(x, Math.Max(1, Params.GameSize / 10)); });
                     break;
             }
         }

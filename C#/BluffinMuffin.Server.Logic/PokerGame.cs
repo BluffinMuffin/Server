@@ -6,6 +6,7 @@ using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.Logic.Extensions;
 using BluffinMuffin.Server.Logic.GameModules;
 
 namespace BluffinMuffin.Server.Logic
@@ -108,7 +109,7 @@ namespace BluffinMuffin.Server.Logic
             else if (blindNeeded > 0)
                 PlayMoney(p, blindNeeded);
 
-            if (Table.SeatsContainsPlayer(p) && Table.SitOut(p))
+            if (Table.Players.ContainsPlayerWithSameName(p) && Table.SitOut(p))
             {
                 var seat = new SeatInfo()
                 {

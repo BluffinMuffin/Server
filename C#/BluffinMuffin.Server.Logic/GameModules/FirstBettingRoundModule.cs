@@ -19,7 +19,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 //Ad B : A      A
                 //Ad B C: A     A->B->C->A
                 //Ad B C D: D   A->B->C->D
-                return Table.NbPlayingAndAllIn < 3 ? Table.Seats.Dealer() : Table.GetSeatOfPlayingPlayerNextTo(Table.GetSeatOfPlayingPlayerNextTo(Table.GetSeatOfPlayingPlayerNextTo(Table.Seats.Dealer())));
+                return Table.NbPlayingAndAllIn < 3 ? Table.Seats.SeatOfDealer() : Table.Seats.SeatOfPlayingPlayerNextTo(Table.Seats.SeatOfPlayingPlayerNextTo(Table.Seats.SeatOfPlayingPlayerNextTo(Table.Seats.SeatOfDealer())));
             }
 
             return base.GetSeatOfTheFirstPlayer();

@@ -42,7 +42,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             var res = nfo.Dealer;
 
             //Assert
-            Assert.AreEqual(nfo.CurrentPlayer, res, "Dealer should be under the gun on preflop");
+            Assert.AreEqual(nfo.CurrentPlayer, res, "SeatOfDealer should be under the gun on preflop");
         }
         [TestMethod]
         public void Game2PUtgIsNextToDealerOnFlop()

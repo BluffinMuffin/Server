@@ -56,8 +56,8 @@ namespace BluffinMuffin.Server.Logic.GameModules
             }
             else
             {
-                Table.Seats.Dealer()?.RemoveAttribute(SeatAttributeEnum.Dealer);
-                Table.PlayingPlayers.ForEach(x => x.State = PlayerStateEnum.SitIn);
+                Table.Seats.SeatOfDealer()?.RemoveAttribute(SeatAttributeEnum.Dealer);
+                Table.Seats.PlayingPlayers().ToList().ForEach(x => x.State = PlayerStateEnum.SitIn);
             }
         }
 
@@ -68,7 +68,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 return true;
 
             p.State = PlayerStateEnum.Zombie;
-            if (Table.SeatsContainsPlayer(p) && Table.SitOut(p))
+            if (Table.Players.ContainsPlayerWithSameName(p) && Table.SitOut(p))
             {
                 var seat = new SeatInfo()
                 {
