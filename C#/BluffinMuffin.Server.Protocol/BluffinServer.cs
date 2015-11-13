@@ -10,6 +10,7 @@ using System.Linq;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Protocol;
 using BluffinMuffin.Server.Logic;
+using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Protocol
 {
@@ -93,7 +94,7 @@ namespace BluffinMuffin.Server.Protocol
                 {
                     IdTable = kvp.Key, 
                     Params = t.Params, 
-                    NbPlayers = t.Players.Count, 
+                    NbPlayers = t.Seats.Players().Count(), 
                     PossibleAction = LobbyActionEnum.None,
                 }).ToList();
         }

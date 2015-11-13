@@ -13,7 +13,6 @@ namespace BluffinMuffin.Server.Logic
     public class PokerTable
     {
         #region Fields
-        private readonly List<MoneyPot> m_Pots = new List<MoneyPot>();
 
         private readonly List<int> m_AllInCaps = new List<int>(); // All the distincts ALL_IN CAPS of the ROUND
         private readonly Dictionary<PlayerInfo, int> m_BlindNeeded = new Dictionary<PlayerInfo, int>();
@@ -34,20 +33,12 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// Cards on the Board
         /// </summary>
-        public string[] Cards { get; set; }
+        public string[] Cards { get; private set; }
 
         /// <summary>
         /// List of MoneyPots currently on the table. There should always have at least one MoneyPot
         /// </summary>
-        public List<MoneyPot> Pots => m_Pots;
-
-        public IEnumerable<int> PotAmountsPadded
-        {
-            get
-            {
-                return Pots.Select(pot => pot.Amount).Union(Enumerable.Repeat(0, Params.MaxPlayers - Pots.Count));
-            }
-        }
+        public List<MoneyPot> Pots { get; } = new List<MoneyPot>();
 
         /// <summary>
         /// Contains all the money currently on the table (All Pots + Money currently played in front of the players)
@@ -58,13 +49,6 @@ namespace BluffinMuffin.Server.Logic
         /// Minimum amount to Raise
         /// </summary>
         public int MinimumRaiseAmount { get; set; }
-
-        public int NoSeatCurrentPlayer => Seats.SeatOfCurrentPlayer()?.NoSeat ?? -1;
-
-        /// <summary>
-        /// Who is the current player
-        /// </summary>
-        public PlayerInfo CurrentPlayer => Seats.SeatOfCurrentPlayer()?.Player;
 
         /// <summary>
         /// How many player have played this round and are ready to play the next one
@@ -77,16 +61,6 @@ namespace BluffinMuffin.Server.Logic
         public int NbAllIn { get; set; }
 
         /// <summary>
-        /// How many players are still in the Game (All-In not included)
-        /// </summary>
-        public int NbPlaying => Seats.PlayingPlayers().Count();
-
-        /// <summary>
-        /// How many players are still in the Game (All-In included)
-        /// </summary>
-        public int NbPlayingAndAllIn => NbPlaying + NbAllIn;
-
-        /// <summary>
         /// What is the amount to equal to stay in the game ?
         /// </summary>
         public int HigherBet { get; set; }
@@ -95,11 +69,6 @@ namespace BluffinMuffin.Server.Logic
         /// What is the actual Round of the Game
         /// </summary>
         public int BettingRoundId { get; set; }
-
-        /// <summary>
-        /// List of the Players currently seated
-        /// </summary>
-        public List<PlayerInfo> Players { get { return Seats.Where(s => !s.IsEmpty).Select(s => s.Player).ToList(); } }
 
         /// <summary>
         /// List of the Seats
@@ -143,8 +112,8 @@ namespace BluffinMuffin.Server.Logic
             Cards = new string[0];
             NbPlayed = 0;
             TotalPotAmnt = 0;
-            m_Pots.Clear();
-            m_Pots.Add(new MoneyPot(0));
+            Pots.Clear();
+            Pots.Add(new MoneyPot(0));
             NbAllIn = 0;
             InitPokerTable();
             m_AllInCaps.Clear();
@@ -183,7 +152,7 @@ namespace BluffinMuffin.Server.Logic
 
         public bool SitOut(PlayerInfo p)
         {
-            if (!Players.ContainsPlayerWithSameName(p))
+            if (!Seats.Players().ContainsPlayerWithSameName(p))
                 return true;
 
             var seat = p.NoSeat;
@@ -227,20 +196,6 @@ namespace BluffinMuffin.Server.Logic
             return HigherBet - p.MoneyBetAmnt;
         }
 
-        public void ChangeCurrentPlayerTo(SeatInfo seat)
-        {
-            Seats.SeatOfCurrentPlayer()?.RemoveAttribute(SeatAttributeEnum.CurrentPlayer);
-            seat?.AddAttribute(SeatAttributeEnum.CurrentPlayer);
-        }
-
-
-        /// <summary>
-        /// Is there already a player of that name, seated at the table ?
-        /// </summary>
-        public bool ContainsPlayer(string name)
-        {
-            return Players.Any(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
-        }
         /// <summary>
         /// Add cards to the board
         /// </summary>
@@ -286,6 +241,14 @@ namespace BluffinMuffin.Server.Logic
             return 0;
         }
 
+
+        public IEnumerable<int> PotAmountsPadded
+        {
+            get
+            {
+                return Pots.Select(pot => pot.Amount).Union(Enumerable.Repeat(0, Params.MaxPlayers - Pots.Count));
+            }
+        }
         public SeatInfo SitIn(PlayerInfo p, int preferedSeat = -1)
         {
             if (!Seats.RemainingSeatIds().Any())
@@ -300,7 +263,7 @@ namespace BluffinMuffin.Server.Logic
                 return null;
             }
 
-            if (Players.ContainsPlayerWithSameName(p))
+            if (Seats.Players().ContainsPlayerWithSameName(p))
             {
                 Logger.LogError("Already someone seated with the same name! Is this you ?");
                 return null;
@@ -344,24 +307,24 @@ namespace BluffinMuffin.Server.Logic
 
             while (m_AllInCaps.Count > 0)
             {
-                var pot = m_Pots[m_CurrPotId];
+                var pot = Pots[m_CurrPotId];
                 pot.DetachAllPlayers();
 
                 var aicf = m_AllInCaps[0];
                 m_AllInCaps.RemoveAt(0);
 
                 var cap = aicf - currentTaken;
-                foreach (var p in Players)
+                foreach (var p in Seats.Players())
                     AddBet(p, pot, Math.Min(p.MoneyBetAmnt, cap));
 
                 currentTaken += cap;
                 m_CurrPotId++;
-                m_Pots.Add(new MoneyPot(m_CurrPotId));
+                Pots.Add(new MoneyPot(m_CurrPotId));
             }
 
-            var curPot = m_Pots[m_CurrPotId];
+            var curPot = Pots[m_CurrPotId];
             curPot.DetachAllPlayers();
-            foreach (var p in Players)
+            foreach (var p in Seats.Players())
                 AddBet(p, curPot, p.MoneyBetAmnt);
 
             HigherBet = 0;
@@ -374,7 +337,7 @@ namespace BluffinMuffin.Server.Logic
         {
             for (var i = 0; i <= m_CurrPotId; ++i)
             {
-                var pot = m_Pots[i];
+                var pot = Pots[i];
                 HandEvaluationResult bestHand = null;
                 var infos = pot.AttachedPlayers.Select(x => x.Player).ToArray();
 
@@ -424,7 +387,7 @@ namespace BluffinMuffin.Server.Logic
             switch(Params.Blind)
             {
                 case BlindTypeEnum.Blinds:
-                    var smallSeat = NbPlaying == 2 ? Seats.SeatOfDealer() : Seats.SeatOfPlayingPlayerNextTo(Seats.SeatOfDealer());
+                    var smallSeat = Seats.PlayingPlayers().Count() == 2 ? Seats.SeatOfDealer() : Seats.SeatOfPlayingPlayerNextTo(Seats.SeatOfDealer());
                     if (NewArrivals.All(x => x.NoSeat != smallSeat.NoSeat))
                     {
                         smallSeat.AddAttribute(SeatAttributeEnum.SmallBlind);

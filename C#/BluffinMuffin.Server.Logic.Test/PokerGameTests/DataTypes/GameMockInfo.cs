@@ -15,7 +15,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
         
 
         public IEnumerable<PlayerInfo> Players => Game.Table.Seats.PlayingPlayers();
-        public PlayerInfo CurrentPlayer => Game.Table.CurrentPlayer;
+        public PlayerInfo CurrentPlayer => Game.Table.Seats.CurrentPlayer();
         public PlayerInfo PoorestPlayer { get { return Players.OrderBy(x => x.MoneySafeAmnt).First(); } }
 
         public PlayerInfo CalculatedSmallBlind { get { return Players.Where(x => BlindNeeded(x) > 0).OrderBy(BlindNeeded).First(); } }

@@ -2,7 +2,6 @@
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.Logic.Extensions;
-using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BluffinMuffin.Server.Logic.Test
@@ -11,7 +10,7 @@ namespace BluffinMuffin.Server.Logic.Test
     public class EnumerableOfSeatInfoTest
     {
         [TestMethod]
-        public void CanFindDealer()
+        public void CanFindDealerSeat()
         {
             //Arrange
             var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
@@ -27,7 +26,7 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(sDealer, res);
         }
         [TestMethod]
-        public void CanFindFirstTalker()
+        public void CanFindFirstTalkerSeat()
         {
             //Arrange
             var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
@@ -43,7 +42,7 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(sFirstTalker, res);
         }
         [TestMethod]
-        public void CanFindCurrentPlayer()
+        public void CanFindCurrentPlayerSeat()
         {
             //Arrange
             var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
@@ -59,7 +58,7 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(sCurrentPlayer, res);
         }
         [TestMethod]
-        public void CanFindBigBlinds()
+        public void CanFindBigBlindSeats()
         {
             //Arrange
             var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
@@ -274,6 +273,144 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.IsTrue(res.Contains(s3.NoSeat));
             Assert.IsTrue(res.Contains(s5.NoSeat));
         }
+        [TestMethod]
+        public void CanListAllPlayers()
+        {
+            //Arrange
+            var s0 = new SeatInfo { Player = new PlayerInfo(), NoSeat = 0 };
+            var s1 = new SeatInfo { NoSeat = 1 };
+            var s2 = new SeatInfo { Player = new PlayerInfo(), NoSeat = 2 };
+            var s3 = new SeatInfo { NoSeat = 3 };
+            var s4 = new SeatInfo { Player = new PlayerInfo(), NoSeat = 4 };
+            var s5 = new SeatInfo { NoSeat = 5 };
+            var seats = new[] { s0, s1, s2, s3, s4, s5 };
 
+            //Act
+            var res = seats.Players().ToList();
+
+            //Assert
+            Assert.AreEqual(3, res.Count);
+            Assert.IsTrue(res.Contains(s0.Player));
+            Assert.IsTrue(res.Contains(s2.Player));
+            Assert.IsTrue(res.Contains(s4.Player));
+        }
+
+        [TestMethod]
+        public void CanFindCurrentPlayer()
+        {
+            //Arrange
+            var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer }, Player = new PlayerInfo() };
+            var sFirstTalker = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.FirstTalker }, Player = new PlayerInfo() };
+            var sCurrentPlayer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.CurrentPlayer, SeatAttributeEnum.BigBlind }, Player = new PlayerInfo() };
+            var sBigBlind = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.BigBlind }, Player = new PlayerInfo() };
+            var seats = new[] { sDealer, sFirstTalker, sCurrentPlayer, sBigBlind };
+
+            //Act
+            var res = seats.CurrentPlayer();
+
+            //Assert
+            Assert.AreEqual(sCurrentPlayer.Player, res);
+        }
+        [TestMethod]
+        public void CurrentPlayerIsNullIfTaggedSeatIsEmpty()
+        {
+            //Arrange
+            var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer }, Player = new PlayerInfo() };
+            var sFirstTalker = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.FirstTalker }, Player = new PlayerInfo() };
+            var sCurrentPlayer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.CurrentPlayer, SeatAttributeEnum.BigBlind } };
+            var sBigBlind = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.BigBlind }, Player = new PlayerInfo() };
+            var seats = new[] { sDealer, sFirstTalker, sCurrentPlayer, sBigBlind };
+
+            //Act
+            var res = seats.CurrentPlayer();
+
+            //Assert
+            Assert.IsNull(res);
+        }
+        [TestMethod]
+        public void CurrentPlayerIsNullIfNoTaggedSeat()
+        {
+            //Arrange
+            var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer }, Player = new PlayerInfo() };
+            var sFirstTalker = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.FirstTalker }, Player = new PlayerInfo() };
+            var sBigBlind = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.BigBlind }, Player = new PlayerInfo() };
+            var seats = new[] { sDealer, sFirstTalker, sBigBlind };
+
+            //Act
+            var res = seats.CurrentPlayer();
+
+            //Assert
+            Assert.IsNull(res);
+        }
+
+        [TestMethod]
+        public void CanFindNoSeatOfCurrentPlayer()
+        {
+            //Arrange
+            var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer }, NoSeat = 1};
+            var sFirstTalker = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.FirstTalker }, NoSeat = 2 };
+            var sCurrentPlayer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.CurrentPlayer, SeatAttributeEnum.BigBlind }, NoSeat = 3 };
+            var sBigBlind = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.BigBlind }, NoSeat = 4 };
+            var seats = new[] { sDealer, sFirstTalker, sCurrentPlayer, sBigBlind };
+
+            //Act
+            var res = seats.NoSeatOfCurrentPlayer();
+
+            //Assert
+            Assert.AreEqual(sCurrentPlayer.NoSeat, res);
+        }
+        [TestMethod]
+        public void NoSeatOfCurrentPlayerIsNullIfNoTaggedSeat()
+        {
+            //Arrange
+            var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer }, NoSeat = 1 };
+            var sFirstTalker = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.FirstTalker }, NoSeat = 2 };
+            var sBigBlind = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.BigBlind }, NoSeat = 4 };
+            var seats = new[] { sDealer, sFirstTalker, sBigBlind };
+
+            //Act
+            var res = seats.NoSeatOfCurrentPlayer();
+
+            //Assert
+            Assert.AreEqual(-1,res);
+        }
+
+
+        [TestMethod]
+        public void ClearingBigBlindsShouldLeaveNoBigBlinds()
+        {
+            //Arrange
+            var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
+            var sFirstTalker = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.FirstTalker } };
+            var sCurrentPlayer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.CurrentPlayer, SeatAttributeEnum.BigBlind } };
+            var sBigBlind = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.BigBlind } };
+            var seats = new[] { sDealer, sFirstTalker, sCurrentPlayer, sBigBlind };
+
+            //Act
+            seats.ClearAttribute(SeatAttributeEnum.BigBlind);
+            var res = seats.WithAttribute(SeatAttributeEnum.BigBlind);
+
+            //Assert
+            Assert.IsFalse(res.Any());
+        }
+
+
+        [TestMethod]
+        public void MovingDealerToFirstTalker()
+        {
+            //Arrange
+            var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
+            var sFirstTalker = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.FirstTalker } };
+            var sCurrentPlayer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.CurrentPlayer, SeatAttributeEnum.BigBlind } };
+            var sBigBlind = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.BigBlind } };
+            var seats = new[] { sDealer, sFirstTalker, sCurrentPlayer, sBigBlind };
+
+            //Act
+            seats.MoveAttributeTo(sFirstTalker, SeatAttributeEnum.Dealer);
+
+            //Assert
+            Assert.IsFalse(sDealer.HasAttribute(SeatAttributeEnum.Dealer));
+            Assert.IsTrue(sFirstTalker.HasAttribute(SeatAttributeEnum.Dealer));
+        }
     }
 }

@@ -35,7 +35,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         private void TryToBegin()
         {
-            foreach (var p in Table.Players)
+            foreach (var p in Table.Seats.Players())
             {
                 if (p.State==PlayerStateEnum.Zombie && SitOut(p))
                     Table.LeaveTable(p);
@@ -44,9 +44,9 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 else
                     p.State = PlayerStateEnum.SitIn;
             }
-            if (Table.HadPlayers && Table.NbPlaying == 0)
+            if (Table.HadPlayers && !Table.Seats.PlayingPlayers().Any())
                 RaiseAborted();
-            else if (Table.NbPlaying >= Table.Params.MinPlayersToStart)
+            else if (Table.Seats.PlayingPlayers().Count() >= Table.Params.MinPlayersToStart)
             {
                 Table.Params.MinPlayersToStart = 2;
                 Table.InitTable();
@@ -56,7 +56,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             }
             else
             {
-                Table.Seats.SeatOfDealer()?.RemoveAttribute(SeatAttributeEnum.Dealer);
+                Table.Seats.ClearAttribute(SeatAttributeEnum.Dealer);
                 Table.Seats.PlayingPlayers().ToList().ForEach(x => x.State = PlayerStateEnum.SitIn);
             }
         }
@@ -68,7 +68,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 return true;
 
             p.State = PlayerStateEnum.Zombie;
-            if (Table.Players.ContainsPlayerWithSameName(p) && Table.SitOut(p))
+            if (Table.Seats.Players().ContainsPlayerWithSameName(p) && Table.SitOut(p))
             {
                 var seat = new SeatInfo()
                 {

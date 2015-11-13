@@ -16,7 +16,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override void InitModule()
         {
-            foreach (var p in Table.Players.Where(p => p.IsPlayingOrAllIn()))
+            foreach (var p in Table.Seats.PlayingAndAllInPlayers())
             {
                 p.FaceUpCards = p.FaceUpCards.Concat(p.FaceDownCards).ToArray();
                 p.FaceDownCards = new string[0];

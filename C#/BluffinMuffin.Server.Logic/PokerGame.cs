@@ -104,12 +104,12 @@ namespace BluffinMuffin.Server.Logic
             var blindNeeded = Table.GetBlindNeeded(p);
 
             p.State = PlayerStateEnum.Zombie;
-            if (State == GameStateEnum.Playing && Table.CurrentPlayer == p)
+            if (State == GameStateEnum.Playing && Table.Seats.CurrentPlayer() == p)
                 PlayMoney(p, -1);
             else if (blindNeeded > 0)
                 PlayMoney(p, blindNeeded);
 
-            if (Table.Players.ContainsPlayerWithSameName(p) && Table.SitOut(p))
+            if (Table.Seats.Players().ContainsPlayerWithSameName(p) && Table.SitOut(p))
             {
                 var seat = new SeatInfo()
                 {
@@ -132,7 +132,7 @@ namespace BluffinMuffin.Server.Logic
 
             if (sitOutOk && Table.LeaveTable(p))
             {
-                if (Table.Players.Count == 0)
+                if (!Table.Seats.Players().Any())
                     SetModule(new EndGameModule(Observer,Table));
             }
         }

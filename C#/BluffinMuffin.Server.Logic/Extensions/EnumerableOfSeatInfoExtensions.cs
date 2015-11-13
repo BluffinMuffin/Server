@@ -11,6 +11,16 @@ namespace BluffinMuffin.Server.Logic.Extensions
         {
             return seats.Where(s => s.HasAttribute(att));
         }
+
+        public static void MoveAttributeTo(this IEnumerable<SeatInfo> seats, SeatInfo receiver, SeatAttributeEnum att)
+        {
+            seats.ClearAttribute(att);
+            receiver?.AddAttribute(att);
+        }
+        public static void ClearAttribute(this IEnumerable<SeatInfo> seats, SeatAttributeEnum att)
+        {
+            seats.WithAttribute(att).ToList().ForEach(x => x.RemoveAttribute(att));
+        }
         public static SeatInfo SeatOfDealer(this IEnumerable<SeatInfo> seats)
         {
             return seats.WithAttribute(SeatAttributeEnum.Dealer).SingleOrDefault();
@@ -18,6 +28,14 @@ namespace BluffinMuffin.Server.Logic.Extensions
         public static SeatInfo SeatOfFirstTalker(this IEnumerable<SeatInfo> seats)
         {
             return seats.WithAttribute(SeatAttributeEnum.FirstTalker).SingleOrDefault();
+        }
+        public static int NoSeatOfCurrentPlayer(this IEnumerable<SeatInfo> seats)
+        {
+            return seats.SeatOfCurrentPlayer()?.NoSeat ?? -1;
+        }
+        public static PlayerInfo CurrentPlayer(this IEnumerable<SeatInfo> seats)
+        {
+            return seats.SeatOfCurrentPlayer()?.Player;
         }
         public static SeatInfo SeatOfCurrentPlayer(this IEnumerable<SeatInfo> seats)
         {
@@ -57,10 +75,14 @@ namespace BluffinMuffin.Server.Logic.Extensions
         {
             return seats.Reverse().SeatOfPlayingPlayerNextTo(seat);
         }
+        public static IEnumerable<PlayerInfo> Players(this IEnumerable<SeatInfo> seats)
+        {
+            return seats.Where(s => !s.IsEmpty).Select(s => s.Player);
+        }
 
         public static IEnumerable<PlayerInfo> PlayingPlayers(this IEnumerable<SeatInfo> seats)
         {
-            return seats.Where(s => s.HasPlayerPlaying()).Select(s => s.Player).ToList();
+            return seats.Where(s => s.HasPlayerPlaying()).Select(s => s.Player);
         }
 
         public static IEnumerable<PlayerInfo> PlayingAndAllInPlayers(this IEnumerable<SeatInfo> seats)

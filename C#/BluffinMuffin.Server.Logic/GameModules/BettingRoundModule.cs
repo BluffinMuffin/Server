@@ -33,18 +33,18 @@ namespace BluffinMuffin.Server.Logic.GameModules
             }
             Table.BettingRoundId++;
 
-            Table.Seats.SeatOfFirstTalker()?.RemoveAttribute(SeatAttributeEnum.FirstTalker);
+            Table.Seats.ClearAttribute(SeatAttributeEnum.FirstTalker);
             
             var firstPlayer = GetSeatOfTheFirstPlayer();
 
             if (Table.Params.Options.OptionType == GameTypeEnum.StudPoker)
                 firstPlayer.AddAttribute(SeatAttributeEnum.FirstTalker);
-            
-            Table.ChangeCurrentPlayerTo(null);
+
+            Table.Seats.ClearAttribute(SeatAttributeEnum.CurrentPlayer);
             Observer.RaiseGameBettingRoundStarted();
 
             //We Put the current player just before the starting player, then we will take the next player and he will be the first
-            Table.ChangeCurrentPlayerTo(Table.Seats.SeatOfPlayingPlayerJustBefore(firstPlayer));
+            Table.Seats.SeatOfPlayingPlayerJustBefore(firstPlayer).AddAttribute(SeatAttributeEnum.CurrentPlayer);
 
 
             Table.NbPlayed = 0;
@@ -53,7 +53,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             WaitALittle(Table.Params.WaitingTimes.AfterBoardDealed);
 
-            if (Table.NbPlaying <= 1 || Table.NbPlayingAndAllIn == 1 || Table.NbPlayed >= Table.NbPlayingAndAllIn)
+            if (Table.Seats.PlayingPlayers().Count() <= 1 || Table.Seats.PlayingAndAllInPlayers().Count() == 1 || Table.NbPlayed >= Table.Seats.PlayingAndAllInPlayers().Count())
                 EndBettingRound();
             else
                 ChooseNextPlayer();
@@ -107,7 +107,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         }
         protected virtual void ContinueBettingRound()
         {
-            if (Table.NbPlayingAndAllIn == 1 || Table.NbPlayed >= Table.NbPlayingAndAllIn)
+            if (Table.Seats.PlayingAndAllInPlayers().Count() == 1 || Table.NbPlayed >= Table.Seats.PlayingAndAllInPlayers().Count())
                 EndBettingRound();
             else
                 ChooseNextPlayer();
@@ -116,11 +116,11 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             RaiseCompleted();
         }
-        protected virtual void ChooseNextPlayer()
+        private void ChooseNextPlayer()
         {
             var next = Table.Seats.SeatOfPlayingPlayerNextTo(Table.Seats.SeatOfCurrentPlayer());
 
-            Table.ChangeCurrentPlayerTo(next);
+            Table.Seats.MoveAttributeTo(next,SeatAttributeEnum.CurrentPlayer);
 
             Observer.RaisePlayerActionNeeded(next.Player, Table.CallAmnt(next.Player), CanFold(), Table.MinimumRaiseAmount, int.MaxValue);
 
@@ -138,7 +138,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             Logger.LogDebugInformation("Currently, we need {0} minimum money from this player", Table.CallAmnt(p));
 
             //Validation: Is it the player's turn to play ?
-            if (p.NoSeat != Table.NoSeatCurrentPlayer)
+            if (p.NoSeat != Table.Seats.NoSeatOfCurrentPlayer())
             {
                 Logger.LogWarning("{0} just played but it wasn't his turn", p.Name);
                 return false;

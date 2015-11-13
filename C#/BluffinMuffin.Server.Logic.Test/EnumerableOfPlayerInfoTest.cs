@@ -10,6 +10,46 @@ namespace BluffinMuffin.Server.Logic.Test
     public class EnumerableOfPlayerInfoTest
     {
         [TestMethod]
+        public void ContainsSomeoneNamedSpongeBob()
+        {
+            //Arrange
+            const string NAME = "Spongebob Squarepants";
+            PlayerInfo p = new PlayerInfo(NAME, 4242);
+            PlayerInfo[] players = { p };
+
+            //Act
+            var res = players.ContainsPlayerNamed(NAME);
+
+            //Assert
+            Assert.IsTrue(res);
+        }
+        [TestMethod]
+        public void ContainsSomeoneNamedSpongeBobCaseUnsensitive()
+        {
+            //Arrange
+            PlayerInfo p = new PlayerInfo("Spongebob Squarepants", 4242);
+            PlayerInfo[] players = { p };
+
+            //Act
+            var res = players.ContainsPlayerNamed("SpOnGeBoB SqUaRePaNtS");
+
+            //Assert
+            Assert.IsTrue(res);
+        }
+        [TestMethod]
+        public void DoesNotContainSomeoneNamedDora()
+        {
+            //Arrange
+            PlayerInfo p = new PlayerInfo("Spongebob Squarepants", 4242);
+            PlayerInfo[] players = { p };
+
+            //Act
+            var res = players.ContainsPlayerNamed("Dora the Explorer");
+
+            //Assert
+            Assert.IsFalse(res);
+        }
+        [TestMethod]
         public void AlreadyContainsThePlayer()
         {
             //Arrange

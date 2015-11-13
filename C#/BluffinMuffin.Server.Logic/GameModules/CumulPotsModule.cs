@@ -1,5 +1,7 @@
-﻿using BluffinMuffin.Server.DataTypes.Enums;
+﻿using System.Linq;
+using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
+using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
@@ -23,7 +25,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             Observer.RaiseGameBettingRoundEnded();
 
-            if (Table.NbPlayingAndAllIn <= 1)
+            if (Table.Seats.PlayingAndAllInPlayers().Count() <= 1)
                 Table.NoMoreRoundsNeeded = true;
 
             RaiseCompleted();

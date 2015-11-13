@@ -1,5 +1,7 @@
-﻿using BluffinMuffin.Server.DataTypes.Enums;
+﻿using System.Linq;
+using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
+using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Logic.GameModules
 {
@@ -15,8 +17,8 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             Table.NoMoreRoundsNeeded = false;
             Table.BettingRoundId = 0;
-            Table.Players.ForEach(x => x.FaceDownCards = new string[0]);
-            Table.Players.ForEach(x => x.FaceUpCards = new string[0]);
+            Table.Seats.Players().ToList().ForEach(x => x.FaceDownCards = new string[0]);
+            Table.Seats.Players().ToList().ForEach(x => x.FaceUpCards = new string[0]);
             Table.InitCards();
 
             AddModule(new WaitForPlayerModule(Observer, Table));

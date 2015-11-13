@@ -12,6 +12,7 @@ using BluffinMuffin.Protocol.Lobby;
 using BluffinMuffin.Protocol.Lobby.RegisteredMode;
 using BluffinMuffin.Protocol.Lobby.QuickMode;
 using BluffinMuffin.Server.DataTypes.Protocol;
+using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Protocol.Workers
 {
@@ -246,7 +247,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
                 client.SendCommand(c.ResponseFailure(BluffinMessageId.WrongTableState, "You can't join a game that isn't running !"));
                 return;
             }
-            if (table.ContainsPlayer(client.PlayerName))
+            if (table.Seats.Players().ContainsPlayerNamed(client.PlayerName))
             {
                 client.SendCommand(c.ResponseFailure(BluffinMessageId.NameAlreadyUsed, "Someone with your name is already in this game !"));
                 return;
@@ -279,7 +280,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
         {
             var c = (LeaveTableCommand)command;
             var game = (PokerGame)Lobby.GetGame(c.TableId);
-            game.LeaveGame(game.Table.Players.Single(x => x.Name == client.PlayerName));
+            game.LeaveGame(game.Table.Seats.Players().Single(x => x.Name == client.PlayerName));
         }
     }
 }
