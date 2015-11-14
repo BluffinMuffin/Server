@@ -15,6 +15,6 @@ namespace BluffinMuffin.Server.DataTypes
         void OnSitOut();
         void OnSitIn();
         bool OnMoneyPlayed(PlayerInfo p, int amount);
-        bool OnCardDiscarded(PlayerInfo p, string[] cards);
+        void OnCardDiscarded(PlayerInfo p, string[] cards);
     }
 }

@@ -14,11 +14,9 @@ namespace BluffinMuffin.Server.Logic
     {
 
         #region Properties
-
-        private List<int> AllInCaps { get; } = new List<int>();
-        private Dictionary<PlayerInfo, int> BlindNeeded { get; } = new Dictionary<PlayerInfo, int>();
-        private int CurrPotId { get; set; }
         
+        public MoneyBank Bank { get; } = new MoneyBank();
+
         /// <summary>
         /// Contains all the rules of the current game
         /// </summary>
@@ -32,17 +30,7 @@ namespace BluffinMuffin.Server.Logic
         /// Cards on the Board
         /// </summary>
         public string[] Cards { get; private set; }
-
-        /// <summary>
-        /// List of MoneyPots currently on the table. There should always have at least one MoneyPot
-        /// </summary>
-        public List<MoneyPot> Pots { get; } = new List<MoneyPot>();
-
-        /// <summary>
-        /// Contains all the money currently on the table (All Pots + Money currently played in front of the players)
-        /// </summary>
-        public int TotalPotAmnt { get; set; }
-
+        
         /// <summary>
         /// Minimum amount to Raise
         /// </summary>
@@ -73,10 +61,6 @@ namespace BluffinMuffin.Server.Logic
         public AbstractGameVariant Variant { get; }
 
         public bool NoMoreRoundsNeeded { get; set; }
-        /// <summary>
-        /// Total amount of money still needed as Blinds for the game to start
-        /// </summary>
-        public int TotalBlindNeeded => BlindNeeded.Values.Sum();
 
         public List<PlayerInfo> NewArrivals { get; }
 
@@ -102,12 +86,7 @@ namespace BluffinMuffin.Server.Logic
         {
             Cards = new string[0];
             NbPlayed = 0;
-            TotalPotAmnt = 0;
-            Pots.Clear();
-            Pots.Add(new MoneyPot(0));
             InitPokerTable();
-            AllInCaps.Clear();
-            CurrPotId = 0;
         }
         #endregion
 
@@ -204,42 +183,6 @@ namespace BluffinMuffin.Server.Logic
             Cards = Cards.Concat(c).ToArray();
         }
 
-        /// <summary>
-        /// Add an AllInCap that will be used when splitting the pot
-        /// </summary>
-        public void AddAllInCap(int val)
-        {
-            if (!AllInCaps.Contains(val))
-                AllInCaps.Add(val);
-        }
-
-        /// <summary>
-        /// Sets how much money is still needed from a specific player as Blind
-        /// </summary>
-        public void SetBlindNeeded(PlayerInfo p, int amnt)
-        {
-            if (BlindNeeded.ContainsKey(p))
-                BlindNeeded[p] = amnt;
-            else
-                BlindNeeded.Add(p, amnt);
-        }
-
-        /// <summary>
-        /// How much money a player needs to put as Blind
-        /// </summary>
-        public int GetBlindNeeded(PlayerInfo p)
-        {
-            return BlindNeeded.ContainsKey(p) ? BlindNeeded[p] : 0;
-        }
-
-
-        public IEnumerable<int> PotAmountsPadded
-        {
-            get
-            {
-                return Pots.Select(pot => pot.Amount).Union(Enumerable.Repeat(0, Params.MaxPlayers - Pots.Count));
-            }
-        }
         public SeatInfo SitIn(PlayerInfo p, int preferedSeat = -1)
         {
             if (!Seats.RemainingSeatIds().Any())
@@ -273,97 +216,19 @@ namespace BluffinMuffin.Server.Logic
             return Seats[seat];
         }
 
-
-        /// <summary>
-        /// Put a number on the current "Hand" of a player. The we will use that number to compare who is winning !
-        /// </summary>
-        /// <param name="playerCards">Player cards</param>
-        /// <returns>A unsigned int that we can use to compare with another hand</returns>
-        private HandEvaluationResult EvaluateCards(params string[] playerCards)
-        {
-            if (Cards == null || playerCards == null || Cards.Union(playerCards).Count(x => !string.IsNullOrEmpty(x)) < 5)
-                return null;
-
-            return HandEvaluators.Evaluate(playerCards.Where(x => !string.IsNullOrEmpty(x)), Cards.Where(x => !string.IsNullOrEmpty(x)));
-        }
-
         /// <summary>
         /// At the end of a Round, it's time to separate all the money into one or more pots of money (Depending on when a player wen All-In)
         /// For every cap, we take money from each player that still have money in front of them
         /// </summary>
         public void ManagePotsRoundEnd()
         {
-            var currentTaken = 0;
-            AllInCaps.Sort();
-
-            while (AllInCaps.Count > 0)
-            {
-                var pot = Pots[CurrPotId];
-                pot.DetachAllPlayers();
-
-                var aicf = AllInCaps[0];
-                AllInCaps.RemoveAt(0);
-
-                var cap = aicf - currentTaken;
-                foreach (var p in Seats.Players())
-                    AddBet(p, pot, Math.Min(p.MoneyBetAmnt, cap));
-
-                currentTaken += cap;
-                CurrPotId++;
-                Pots.Add(new MoneyPot(CurrPotId));
-            }
-
-            var curPot = Pots[CurrPotId];
-            curPot.DetachAllPlayers();
-            foreach (var p in Seats.Players())
-                AddBet(p, curPot, p.MoneyBetAmnt);
-
+            Bank.DepositMoneyInPlay();
             HigherBet = 0;
-        }
-
-        /// <summary>
-        /// Detach all the players that are not winning this pot
-        /// </summary>
-        public void CleanPotsForWinning()
-        {
-            for (var i = 0; i <= CurrPotId; ++i)
-            {
-                var pot = Pots[i];
-                HandEvaluationResult bestHand = null;
-                var infos = pot.AttachedPlayers.Select(x => x.Player).ToArray();
-
-                foreach (var p in infos)
-                {
-                    var handValue = EvaluateCards(p.Cards);
-                    if (handValue != null)
-                    {
-                        switch (handValue.CompareTo(bestHand))
-                        {
-                            case 1:
-                                pot.DetachAllPlayers();
-                                pot.AttachPlayer(p, handValue);
-                                bestHand = handValue;
-                                break;
-                            case 0:
-                                pot.AttachPlayer(p, handValue);
-                                break;
-                        }
-                    }
-                }
-            }
         }
 
         #endregion Public Methods
 
         #region Private Methods
-        private void AddBet(PlayerInfo p, MoneyPot pot, int bet)
-        {
-            p.MoneyBetAmnt -= bet;
-            pot.AddAmount(bet);
-
-            if (bet >= 0 && p.IsPlayingOrAllIn())
-                pot.AttachPlayer(p);
-        }
         private void InitPokerTable()
         {
             var previousDealer = Seats.SeatOfDealer();
@@ -372,9 +237,7 @@ namespace BluffinMuffin.Server.Logic
 
             if (Params.Options.OptionType != GameTypeEnum.StudPoker)
                 Seats.SeatOfPlayingPlayerNextTo(previousDealer).AddAttribute(SeatAttributeEnum.Dealer);
-
-            BlindNeeded.Clear();
-
+           
             switch(Params.Blind)
             {
                 case BlindTypeEnum.Blinds:
@@ -382,7 +245,7 @@ namespace BluffinMuffin.Server.Logic
                     if (NewArrivals.All(x => x.NoSeat != smallSeat.NoSeat))
                     {
                         smallSeat.AddAttribute(SeatAttributeEnum.SmallBlind);
-                        BlindNeeded.Add(smallSeat.Player, Params.GameSize / 2);
+                        Bank.AddDebt(smallSeat.Player, Params.GameSize / 2);
                     }
 
                     var bigSeat = Seats.SeatOfPlayingPlayerNextTo(smallSeat);
@@ -391,10 +254,10 @@ namespace BluffinMuffin.Server.Logic
                     NewArrivals.ForEach(x => Seats[x.NoSeat].AddAttribute(SeatAttributeEnum.BigBlind));
                     NewArrivals.Clear();
 
-                    Seats.WithAttribute(SeatAttributeEnum.BigBlind).ToList().ForEach(x => { BlindNeeded.Add(x.Player, Params.GameSize); });
+                    Seats.WithAttribute(SeatAttributeEnum.BigBlind).ToList().ForEach(x => { Bank.AddDebt(x.Player, Params.GameSize); });
                     break;
                 case BlindTypeEnum.Antes:
-                    Seats.PlayingPlayers().ToList().ForEach(x => { BlindNeeded.Add(x, Math.Max(1, Params.GameSize / 10)); });
+                    Seats.PlayingPlayers().ToList().ForEach(x => { Bank.AddDebt(x, Math.Max(1, Params.GameSize / 10)); });
                     break;
             }
         }

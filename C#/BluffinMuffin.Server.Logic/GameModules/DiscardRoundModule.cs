@@ -39,14 +39,13 @@ namespace BluffinMuffin.Server.Logic.GameModules
             base.EndModule();
         }
 
-        public override bool OnCardDiscarded(PlayerInfo p, string[] cards)
+        public override void OnCardDiscarded(PlayerInfo p, string[] cards)
         {
             if (!m_Players.ContainsKey(p) || m_Players[p] != null || cards.Length < m_Minimum || cards.Length > m_Maximum)
-                return false;
+                return;
             m_Players[p] = cards;
             if (m_Players.All(x => x.Value != null))
                 RaiseCompleted();
-            return true;
         }
     }
 }

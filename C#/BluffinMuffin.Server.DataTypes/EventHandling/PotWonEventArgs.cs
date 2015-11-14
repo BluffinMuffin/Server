@@ -4,15 +4,18 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
 {
     public class PotWonEventArgs : EventArgs
     {
-        public WinningPlayer Player { get; private set; }
-        public MoneyPot Pot { get; private set; }
-        public int AmountWon { get; private set; }
+        public WinningPlayer Player { get; }
+        public int AmountWon { get; }
 
-        public PotWonEventArgs(WinningPlayer player, MoneyPot pot, int amountwon)
+        public int PotId { get; }
+        public int TotalPotAmount { get; }
+
+        public PotWonEventArgs(WinningPlayer player, int amountwon, int potId, int totalPotAmount)
         {
             Player = player;
-            Pot = pot;
             AmountWon = amountwon;
+            PotId = potId;
+            TotalPotAmount = totalPotAmount;
         }
     }
 }

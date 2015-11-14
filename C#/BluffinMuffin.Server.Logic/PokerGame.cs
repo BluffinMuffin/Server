@@ -101,7 +101,7 @@ namespace BluffinMuffin.Server.Logic
             if (oldSeat == -1)
                 return true;
 
-            var blindNeeded = Table.GetBlindNeeded(p);
+            var blindNeeded = Table.Bank.DebtAmount(p);
 
             p.State = PlayerStateEnum.Zombie;
             if (State == GameStateEnum.Playing && Table.Seats.CurrentPlayer() == p)
@@ -160,18 +160,19 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// The player is discarding cards
         /// </summary>
-        public bool Discard(PlayerInfo p, string[] cards)
+        public void Discard(PlayerInfo p, string[] cards)
         {
             lock (Table)
             {
                 Logger.LogDebugInformation("{0} is discarding [{1}] on state: {2}", p.Name, string.Join(", ",cards), State);
 
-                if (m_CurrentModule != null)
-                    return m_CurrentModule.OnCardDiscarded(p, cards);
+                if (m_CurrentModule == null)
+                {
+                    Logger.LogWarning("{0} tried discarding but the game is not in the right state", p.Name);
+                    return;
+                }
 
-                Logger.LogWarning("{0} tried discarding but the game is not in the right state", p.Name);
-
-                return false;
+                m_CurrentModule.OnCardDiscarded(p, cards);
             }
         }
         #endregion

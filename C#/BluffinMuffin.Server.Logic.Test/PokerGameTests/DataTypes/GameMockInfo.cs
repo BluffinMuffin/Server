@@ -52,7 +52,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
 
         public int BlindNeeded(PlayerInfo p)
         {
-            return Game.Table.GetBlindNeeded(p);
+            return Game.Table.Bank.DebtAmount(p);
         }
         public void PutBlinds(PlayerInfo p)
         {

@@ -67,9 +67,9 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         {
             DiscardActionNeeded(m_Game, new MinMaxEventArgs(min,max));
         }
-        public void RaisePlayerWonPot(WinningPlayer player, MoneyPot pot, int amntWon)
+        public void RaisePlayerWonPot(WinningPlayer player, int amntWon, int potId, int potTotalAmount)
         {
-            PlayerWonPot(m_Game, new PotWonEventArgs(player, pot, amntWon));
+            PlayerWonPot(m_Game, new PotWonEventArgs(player, amntWon, potId, potTotalAmount));
         }
         public void RaisePlayerActionTaken(PlayerInfo p, GameActionEnum action, int amnt)
         {

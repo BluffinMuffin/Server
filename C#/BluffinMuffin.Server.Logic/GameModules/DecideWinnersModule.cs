@@ -14,7 +14,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override void InitModule()
         {
-            Table.CleanPotsForWinning();
+            //This seems to be a useless step now !
             RaiseCompleted();
         }
     }

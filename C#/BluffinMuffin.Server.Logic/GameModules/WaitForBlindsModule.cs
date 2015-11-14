@@ -24,11 +24,11 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override bool OnMoneyPlayed(PlayerInfo p, int amnt)
         {
-            Logger.LogDebugInformation("Total blinds needed is {0}", Table.TotalBlindNeeded);
+            Logger.LogDebugInformation("Total blinds needed is {0}", Table.Bank.TotalDebtAmount);
             Logger.LogDebugInformation("{0} is putting blind of {1}", p.Name, amnt);
 
             //What is the need Blind from the player ?
-            var needed = Table.GetBlindNeeded(p);
+            var needed = Table.Bank.DebtAmount(p);
 
             //If the player isn't giving what we expected from him
             if (amnt != needed)
@@ -38,7 +38,6 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 {
                     Logger.LogDebugInformation("Player now All-In !");
                     p.State = PlayerStateEnum.AllIn;
-                    Table.AddAllInCap(p.MoneyBetAmnt + amnt);
                 }
                 else //well, it's just not fair to play that
                 {
@@ -48,17 +47,11 @@ namespace BluffinMuffin.Server.Logic.GameModules
             }
 
             //Let's hope the player has enough money ! Time to put the blinds !
-            if (!p.TryBet(amnt))
+            if (!Table.Bank.CollectMoneyFromPlayer(p, amnt))
             {
                 Logger.LogWarning("{0} just put more money than he actually have ({1} > {2})", p.Name, amnt, p.MoneySafeAmnt);
                 return false;
             }
-
-            //Hmmm ... More Money !! 
-            Table.TotalPotAmnt += amnt;
-
-            //Take note of the given Blind Amount for the player.
-            Table.SetBlindNeeded(p, 0);
 
             //Take note of the action
             var whatAmIDoing = GameActionEnum.PostAnte;
@@ -73,7 +66,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             if (amnt > Table.HigherBet)
                 Table.HigherBet = amnt;
 
-            Logger.LogDebugInformation("Total blinds still needed is {0}", Table.TotalBlindNeeded);
+            Logger.LogDebugInformation("Total blinds still needed is {0}", Table.Bank.TotalDebtAmount);
 
             DidWeGetAllWeNeeded();
             return true;
@@ -81,7 +74,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         private void DidWeGetAllWeNeeded()
         {
-            if (Table.TotalBlindNeeded == 0)
+            if (Table.Bank.TotalDebtAmount == 0)
                 RaiseCompleted();
         }
     }

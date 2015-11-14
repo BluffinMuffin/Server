@@ -51,9 +51,8 @@ namespace BluffinMuffin.Server.Logic.GameModules
             return false;
         }
 
-        public virtual bool OnCardDiscarded(PlayerInfo p, string[] cards)
+        public virtual void OnCardDiscarded(PlayerInfo p, string[] cards)
         {
-            return false;
         }
 
         protected void RaiseCompleted()

@@ -9,7 +9,7 @@ using AbstractCommand = BluffinMuffin.Protocol.AbstractCommand;
 
 namespace BluffinMuffin.Server.DataTypes
 {
-    public class Logger
+    public static class Logger
     {
         public static event EventHandler<StringEventArgs> VerboseInformationLogged = delegate { };
         public static event EventHandler<StringEventArgs> DebugInformationLogged = delegate { };

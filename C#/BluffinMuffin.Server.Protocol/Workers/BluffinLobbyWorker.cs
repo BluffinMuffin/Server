@@ -270,8 +270,8 @@ namespace BluffinMuffin.Server.Protocol.Workers
             r.BoardCards = rp.Game.Table.Cards.Select(x => x.ToString()).ToArray();
             r.Seats = rp.AllSeats().ToList();
             r.Params = rp.Game.Table.Params;
-            r.TotalPotAmount = rp.Game.Table.TotalPotAmnt;
-            r.PotsAmount = rp.Game.Table.PotAmountsPadded.ToList();
+            r.TotalPotAmount = rp.Game.Table.Bank.MoneyAmount;
+            r.PotsAmount = rp.Game.Table.Bank.PotAmountsPadded(rp.Game.Table.Params.MaxPlayers).ToList();
 
             client.SendCommand(r);
         }

@@ -66,7 +66,7 @@ namespace BluffinMuffin.Server.Protocol
         {
             Send(new BetTurnEndedCommand()
             {
-                PotsAmounts = Game.Table.PotAmountsPadded.ToList(),
+                PotsAmounts = Game.Table.Bank.PotAmountsPadded(Game.Table.Params.MaxPlayers).ToList(),
             });
         }
 
@@ -92,14 +92,13 @@ namespace BluffinMuffin.Server.Protocol
         void OnPlayerWonPot(object sender, PotWonEventArgs e)
         {
             var playerInfo = e.Player;
-            var pot = e.Pot;
             Send(new PlayerWonPotCommand()
             {
                 NoSeat = playerInfo.Player.NoSeat,
-                PotId = pot.Id,
+                PotId = e.PotId,
                 WonAmount = e.AmountWon,
                 TotalPlayerMoney = playerInfo.Player.MoneySafeAmnt,
-                TotalPotAmount = pot.Amount,
+                TotalPotAmount = e.TotalPotAmount,
                 WinningCards = playerInfo.Hand?.Cards.SelectMany(x => x).Take(5).Select(x => x.ToString()).ToArray() ?? new string[0],
                 WinningHand = playerInfo.Hand == null ? PokerHandEnum.None : (PokerHandEnum)Enum.Parse(typeof(PokerHandEnum), playerInfo.Hand.Hand.ToString())
             });
@@ -113,7 +112,7 @@ namespace BluffinMuffin.Server.Protocol
                 NoSeat = p.NoSeat,
                 TotalPlayedMoneyAmount = p.MoneyBetAmnt,
                 TotalSafeMoneyAmount = p.MoneySafeAmnt,
-                TotalPot = Game.Table.TotalPotAmnt,
+                TotalPot = Game.Table.Bank.MoneyAmount,
                 ActionTakenType = e.Action,
                 ActionTakenAmount = e.AmountPlayed,
                 PlayerState = p.State,
@@ -142,7 +141,7 @@ namespace BluffinMuffin.Server.Protocol
             Logger.LogGameCreated(TableId);
             Send(new GameStartedCommand()
             {
-                NeededBlindAmount = Game.Table.GetBlindNeeded(Player),
+                NeededBlindAmount = Game.Table.Bank.DebtAmount(Player),
                 Seats = AllSeats().ToList()
             });
         }

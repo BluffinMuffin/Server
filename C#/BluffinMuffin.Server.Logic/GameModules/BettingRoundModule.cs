@@ -174,7 +174,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             }
 
             //Let's hope the player has enough money ! Time to Bet!
-            if (!p.TryBet(amnt))
+            if (!Table.Bank.CollectMoneyFromPlayer(p, amnt))
             {
                 Logger.LogWarning("{0} just put more money than he actually have ({1} > {2})", p.Name, amnt, p.MoneySafeAmnt);
                 return false;
@@ -188,11 +188,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             {
                 Logger.LogDebugInformation("Player now All-In !");
                 p.State = PlayerStateEnum.AllIn;
-                Table.AddAllInCap(p.MoneyBetAmnt);
             }
-
-            //Hmmm ... More Money !! 
-            Table.TotalPotAmnt += amnt;
 
             //Was it a CALL or a RAISE ?
             if (amnt == amntNeeded)

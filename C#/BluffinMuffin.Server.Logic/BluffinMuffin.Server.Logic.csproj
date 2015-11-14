@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MoneyPot.cs" />
     <Compile Include="Extensions\EnumerableOfPlayerInfoExtensions.cs" />
     <Compile Include="Extensions\LobbyOptionExtensions.cs" />
     <Compile Include="Extensions\EnumerableOfSeatInfoExtensions.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="GameVariants\SpanishPokerVariant.cs" />
     <Compile Include="GameVariants\ThreeCardsHoldemVariant.cs" />
     <Compile Include="GameVariants\TexasHoldemVariant.cs" />
+    <Compile Include="MoneyBank.cs" />
     <Compile Include="PokerGame.cs" />
     <Compile Include="PokerTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
