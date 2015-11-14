@@ -21,9 +21,23 @@ namespace BluffinMuffin.Server.Logic.Extensions
         {
             seats.WithAttribute(att).ToList().ForEach(x => x.RemoveAttribute(att));
         }
+        public static void ClearAllAttributes(this IEnumerable<SeatInfo> seats)
+        {
+            seats.ToList().ForEach(s => s.SeatAttributes = new SeatAttributeEnum[0]);
+        }
         public static SeatInfo SeatOfDealer(this IEnumerable<SeatInfo> seats)
         {
             return seats.WithAttribute(SeatAttributeEnum.Dealer).SingleOrDefault();
+        }
+        public static SeatInfo SeatOfShouldBeSmallBlind(this IEnumerable<SeatInfo> seats)
+        {
+            var ss = seats.ToArray();
+            return ss.PlayingPlayers().Count() == 2 ? ss.SeatOfDealer() : ss.SeatOfPlayingPlayerNextTo(ss.SeatOfDealer());
+        }
+        public static SeatInfo SeatOfShouldBeBigBlind(this IEnumerable<SeatInfo> seats)
+        {
+            var ss = seats.ToArray();
+            return ss.SeatOfPlayingPlayerNextTo(ss.SeatOfShouldBeSmallBlind());
         }
         public static SeatInfo SeatOfFirstTalker(this IEnumerable<SeatInfo> seats)
         {

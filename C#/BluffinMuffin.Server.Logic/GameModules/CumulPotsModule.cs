@@ -21,7 +21,9 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 RaiseCompleted();
                 return;
             }
-            Table.ManagePotsRoundEnd();
+
+            Table.Bank.DepositMoneyInPlay();
+            Table.HigherBet = 0;
 
             Observer.RaiseGameBettingRoundEnded();
 

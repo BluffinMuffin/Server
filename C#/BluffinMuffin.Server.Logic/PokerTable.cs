@@ -81,16 +81,39 @@ namespace BluffinMuffin.Server.Logic
             Variant = RuleFactory.Variants[Params.Variant];
             Seats = Enumerable.Range(0, Params.MaxPlayers).Select(i => new SeatInfo() { NoSeat = i }).ToArray();
         }
+        #endregion
+
+        #region Public Methods
 
         public void InitTable()
         {
             Cards = new string[0];
             NbPlayed = 0;
-            InitPokerTable();
-        }
-        #endregion
 
-        #region Public Methods
+            var previousDealer = Seats.SeatOfDealer();
+
+            Seats.ClearAllAttributes();
+
+            if (Params.Options.OptionType != GameTypeEnum.StudPoker)
+                Seats.SeatOfPlayingPlayerNextTo(previousDealer).AddAttribute(SeatAttributeEnum.Dealer);
+
+            foreach (var s in GetPlayersWhoNeedsToPutAntes())
+                Bank.AddDebt(s.Player, Math.Max(1, Params.GameSize / 10));
+
+            foreach (var s in GetPlayersWhoNeedsToPutSmallBlind())
+            {
+                s.AddAttribute(SeatAttributeEnum.SmallBlind);
+                Bank.AddDebt(s.Player, Params.GameSize / 2);
+            }
+
+            foreach (var s in GetPlayersWhoNeedsToPutBigBlind())
+            {
+                s.AddAttribute(SeatAttributeEnum.BigBlind);
+                Bank.AddDebt(s.Player, Params.GameSize);
+            }
+
+            NewArrivals.Clear();
+        }
 
         /// <summary>
         /// When a player joins the table
@@ -216,51 +239,23 @@ namespace BluffinMuffin.Server.Logic
             return Seats[seat];
         }
 
-        /// <summary>
-        /// At the end of a Round, it's time to separate all the money into one or more pots of money (Depending on when a player wen All-In)
-        /// For every cap, we take money from each player that still have money in front of them
-        /// </summary>
-        public void ManagePotsRoundEnd()
+        public IEnumerable<SeatInfo> GetPlayersWhoNeedsToPutAntes()
         {
-            Bank.DepositMoneyInPlay();
-            HigherBet = 0;
+            return Params.Blind == BlindTypeEnum.Antes ? Seats.PlayingPlayers().Select(x => Seats[x.NoSeat]) : new SeatInfo[0];
+        }
+        public IEnumerable<SeatInfo> GetPlayersWhoNeedsToPutSmallBlind()
+        {
+            if (Params.Blind != BlindTypeEnum.Blinds)
+                return new SeatInfo[0];
+
+            var smallSeat = Seats.SeatOfShouldBeSmallBlind();
+            return NewArrivals.Any(x => x.NoSeat == smallSeat.NoSeat) ? new SeatInfo[0] : new[] {smallSeat};
+        }
+        public IEnumerable<SeatInfo> GetPlayersWhoNeedsToPutBigBlind()
+        {
+            return Params.Blind == BlindTypeEnum.Blinds ? NewArrivals.Select(x => Seats[x.NoSeat]).Union(new[] {Seats.SeatOfShouldBeBigBlind()}) : new SeatInfo[0];
         }
 
         #endregion Public Methods
-
-        #region Private Methods
-        private void InitPokerTable()
-        {
-            var previousDealer = Seats.SeatOfDealer();
-            
-            Seats.ToList().ForEach(s => s.SeatAttributes = new SeatAttributeEnum[0]);
-
-            if (Params.Options.OptionType != GameTypeEnum.StudPoker)
-                Seats.SeatOfPlayingPlayerNextTo(previousDealer).AddAttribute(SeatAttributeEnum.Dealer);
-           
-            switch(Params.Blind)
-            {
-                case BlindTypeEnum.Blinds:
-                    var smallSeat = Seats.PlayingPlayers().Count() == 2 ? Seats.SeatOfDealer() : Seats.SeatOfPlayingPlayerNextTo(Seats.SeatOfDealer());
-                    if (NewArrivals.All(x => x.NoSeat != smallSeat.NoSeat))
-                    {
-                        smallSeat.AddAttribute(SeatAttributeEnum.SmallBlind);
-                        Bank.AddDebt(smallSeat.Player, Params.GameSize / 2);
-                    }
-
-                    var bigSeat = Seats.SeatOfPlayingPlayerNextTo(smallSeat);
-                    bigSeat.AddAttribute(SeatAttributeEnum.BigBlind);
-
-                    NewArrivals.ForEach(x => Seats[x.NoSeat].AddAttribute(SeatAttributeEnum.BigBlind));
-                    NewArrivals.Clear();
-
-                    Seats.WithAttribute(SeatAttributeEnum.BigBlind).ToList().ForEach(x => { Bank.AddDebt(x.Player, Params.GameSize); });
-                    break;
-                case BlindTypeEnum.Antes:
-                    Seats.PlayingPlayers().ToList().ForEach(x => { Bank.AddDebt(x, Math.Max(1, Params.GameSize / 10)); });
-                    break;
-            }
-        }
-        #endregion Private Methods
     }
 }
