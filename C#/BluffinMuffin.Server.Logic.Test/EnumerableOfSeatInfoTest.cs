@@ -330,6 +330,39 @@ namespace BluffinMuffin.Server.Logic.Test
             //Assert
             Assert.AreEqual(sCurrentPlayer.Player, res);
         }
+
+        [TestMethod]
+        public void CanFindFutureSmallBlind()
+        {
+            //Arrange
+            var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer }, Player = new PlayerInfo { State = PlayerStateEnum.Playing } };
+            var sFirstTalker = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.FirstTalker }, Player = new PlayerInfo { State = PlayerStateEnum.Playing } };
+            var sCurrentPlayer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.CurrentPlayer, SeatAttributeEnum.BigBlind }, Player = new PlayerInfo { State = PlayerStateEnum.Playing } };
+            var sBigBlind = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.BigBlind }, Player = new PlayerInfo { State = PlayerStateEnum.Playing } };
+            var seats = new[] { sDealer, sFirstTalker, sCurrentPlayer, sBigBlind };
+
+            //Act
+            var res = seats.SeatOfShouldBeSmallBlind();
+
+            //Assert
+            Assert.AreEqual(sFirstTalker, res);
+        }
+        [TestMethod]
+        public void CanFindFutureBigBlind()
+        {
+            //Arrange
+            var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer }, Player = new PlayerInfo { State = PlayerStateEnum.Playing } };
+            var sFirstTalker = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.FirstTalker }, Player = new PlayerInfo { State = PlayerStateEnum.Playing } };
+            var sCurrentPlayer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.CurrentPlayer, SeatAttributeEnum.BigBlind }, Player = new PlayerInfo { State = PlayerStateEnum.Playing } };
+            var sBigBlind = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.BigBlind }, Player = new PlayerInfo { State = PlayerStateEnum.Playing } };
+            var seats = new[] { sDealer, sFirstTalker, sCurrentPlayer, sBigBlind };
+
+            //Act
+            var res = seats.SeatOfShouldBeBigBlind();
+
+            //Assert
+            Assert.AreEqual(sCurrentPlayer, res);
+        }
         [TestMethod]
         public void CurrentPlayerIsNullIfTaggedSeatIsEmpty()
         {
@@ -430,6 +463,26 @@ namespace BluffinMuffin.Server.Logic.Test
             //Assert
             Assert.IsFalse(sDealer.HasAttribute(SeatAttributeEnum.Dealer));
             Assert.IsTrue(sFirstTalker.HasAttribute(SeatAttributeEnum.Dealer));
+        }
+
+        [TestMethod]
+        public void ClearingAttributes()
+        {
+            //Arrange
+            var sDealer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.Dealer } };
+            var sFirstTalker = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.FirstTalker } };
+            var sCurrentPlayer = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.CurrentPlayer, SeatAttributeEnum.BigBlind } };
+            var sBigBlind = new SeatInfo { SeatAttributes = new[] { SeatAttributeEnum.BigBlind } };
+            var seats = new[] { sDealer, sFirstTalker, sCurrentPlayer, sBigBlind };
+
+            //Act
+            seats.ClearAllAttributes();
+
+            //Assert
+            Assert.IsFalse(sDealer.SeatAttributes.Any());
+            Assert.IsFalse(sFirstTalker.SeatAttributes.Any());
+            Assert.IsFalse(sCurrentPlayer.SeatAttributes.Any());
+            Assert.IsFalse(sBigBlind.SeatAttributes.Any());
         }
     }
 }
