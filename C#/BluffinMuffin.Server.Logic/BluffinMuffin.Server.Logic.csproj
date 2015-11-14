@@ -74,7 +74,6 @@
     <Compile Include="GameModules\DiscardRoundModule.cs" />
     <Compile Include="GameModules\FirstBettingRoundModule.cs" />
     <Compile Include="GameModules\DistributeMoneyModule.cs" />
-    <Compile Include="GameModules\DecideWinnersModule.cs" />
     <Compile Include="GameModules\EndGameModule.cs" />
     <Compile Include="GameModules\DealCardsToBoardModule.cs" />
     <Compile Include="GameModules\BettingRoundModule.cs" />

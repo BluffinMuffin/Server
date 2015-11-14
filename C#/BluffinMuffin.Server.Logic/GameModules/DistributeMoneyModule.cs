@@ -27,8 +27,6 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             public PlayerCardHolder(PlayerInfo p, IEnumerable<string> communityCards)
             {
-                if (communityCards == null || p.Cards == null || communityCards.Union(p.Cards).Count(x => !string.IsNullOrEmpty(x)) < 5)
-                    throw new Exception("No evaluation possible !!!");
                 Player = p;
                 CommunityCards = communityCards;
             }

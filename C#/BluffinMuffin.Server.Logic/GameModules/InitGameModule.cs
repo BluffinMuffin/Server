@@ -28,7 +28,6 @@ namespace BluffinMuffin.Server.Logic.GameModules
         private void InitModuleEnding()
         {
             AddModule(new ShowDownModule(Observer, Table));
-            AddModule(new DecideWinnersModule(Observer, Table));
             AddModule(new DistributeMoneyModule(Observer, Table));
             RaiseCompleted();
         }

@@ -7,7 +7,6 @@
         WaitForBlinds,
         Playing,
         Showdown,
-        DecideWinners,
         DistributeMoney,
         End
     }
