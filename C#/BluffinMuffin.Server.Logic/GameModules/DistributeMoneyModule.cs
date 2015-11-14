@@ -37,9 +37,8 @@ namespace BluffinMuffin.Server.Logic.GameModules
             var rankedPlayers = HandEvaluators.Evaluate(Table.Seats.PlayingAndAllInPlayers().Select(x => new PlayerCardHolder(x, Table.Cards)).Cast<IStringCardsHolder>().ToArray(),Table.Variant.EvaluationParms).ToArray();
             var playerWithRanks = rankedPlayers.SelectMany(x => x.Select(p => new KeyValuePair<PlayerInfo, int>(((PlayerCardHolder)p.CardsHolder).Player, x.Key))).ToDictionary(x => x.Key, x => x.Value);
             var playerWithHands = rankedPlayers.SelectMany(x => x.Select(p => new KeyValuePair<PlayerInfo, HandEvaluationResult>(((PlayerCardHolder)p.CardsHolder).Player, p.Evaluation))).ToDictionary(x => x.Key, x => new WinningPlayer {Player=x.Key, Hand = x.Value});
-            while (Table.Bank.MoneyAmount > 0)
+            foreach (var pot in Table.Bank.DistributeMoney(playerWithRanks))
             {
-                var pot = Table.Bank.DistributeCurrentPot(playerWithRanks);
                 foreach (var winner in pot.Winners)
                 {
                     Observer.RaisePlayerWonPot(playerWithHands[winner.Key], winner.Value, pot.PotId, pot.TotalPotAmount);

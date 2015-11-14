@@ -46,11 +46,12 @@ namespace BluffinMuffin.Server.Logic
                 foreach (var cap in allInPlayers.Select(p => p.MoneyBetAmnt).OrderBy(a => a))
                 {
                     PlayersWithMoneyAmountInPlay.ForEach(p => Pots.Peek().Contribute(p, cap - given));
-                    given += cap;
+                    given += (cap-given);
                     Pots.Push(new MoneyPot());
                 }
             }
             PlayersWithMoneyAmountInPlay.ForEach(p => Pots.Peek().Contribute(p, p.MoneyBetAmnt));
+            PlayersWithMoneyAmountInPlay.Clear();
         }
 
         private void RepayDebt(PlayerInfo p, int amount)
@@ -72,19 +73,25 @@ namespace BluffinMuffin.Server.Logic
             return Debts.ContainsKey(p) ? Debts[p] : 0;
         }
 
-        public WonPot DistributeCurrentPot(Dictionary<PlayerInfo, int> playersWithRank )
+        public IEnumerable<WonPot> DistributeMoney(Dictionary<PlayerInfo, int> playersWithRank )
         {
-            var winners = Pots.Pop().Distribute(playersWithRank).ToArray();
-            var wonPot = new WonPot(Pots.Count, winners.Select(x => x.Value).DefaultIfEmpty(0).Sum(), winners.Where(x => x.Key != null));
-            MoneyAmount -= wonPot.TotalPotAmount;
-            if (!Pots.Any())
-                Pots.Push(new MoneyPot());
+            DepositMoneyInPlay();
+            List<WonPot> pots = new List<WonPot>();
+            while (Pots.Any())
+            {
+                var winners = Pots.Pop().Distribute(playersWithRank).ToArray();
+                var wonPot = new WonPot(Pots.Count, winners.Select(x => x.Value).DefaultIfEmpty(0).Sum(), winners.Where(x => x.Key != null));
+                MoneyAmount -= wonPot.TotalPotAmount;
 
-            return wonPot;
+                pots.Add(wonPot);
+            }
+            Pots.Push(new MoneyPot());
+            pots.Reverse();
+            return pots;
         }
 
         public int TotalDebtAmount => Debts.Values.Sum();
 
-        public IEnumerable<int> PotAmountsPadded(int nbTotal) => Pots.Select(pot => pot.MoneyAmount).Union(Enumerable.Repeat(0, nbTotal - Pots.Count));
+        public IEnumerable<int> PotAmountsPadded(int nbTotal) => Pots.Select(pot => pot.MoneyAmount).Reverse().Concat(Enumerable.Repeat(0, nbTotal - Pots.Count));
     }
 }

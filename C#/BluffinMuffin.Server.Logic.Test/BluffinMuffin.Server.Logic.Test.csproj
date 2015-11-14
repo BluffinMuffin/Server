@@ -65,6 +65,8 @@
     <Compile Include="EnumerableOfPlayerInfoTest.cs" />
     <Compile Include="LobbyOptionTest.cs" />
     <Compile Include="EnumerableOfSeatInfoTest.cs" />
+    <Compile Include="MoneyBankTest.cs" />
+    <Compile Include="MoneyPotTest.cs" />
     <Compile Include="TableParamTests.cs" />
     <Compile Include="SeatInfoTests.cs" />
     <Compile Include="PlayerInfoTests.cs" />

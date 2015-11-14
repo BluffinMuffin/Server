@@ -7,7 +7,7 @@ using BluffinMuffin.Protocol.DataTypes;
 
 namespace BluffinMuffin.Server.Logic
 {
-    class MoneyPot
+    public class MoneyPot
     {
         public int MoneyAmount { get; private set; } = 0;
         private List<PlayerInfo> ContributingPlayers { get; } = new List<PlayerInfo>();
@@ -40,6 +40,8 @@ namespace BluffinMuffin.Server.Logic
 
             if(MoneyAmount > 0)
                 winners.Add(new KeyValuePair<PlayerInfo, int>(null, MoneyAmount));
+
+            MoneyAmount = 0;
 
             return winners;
 
