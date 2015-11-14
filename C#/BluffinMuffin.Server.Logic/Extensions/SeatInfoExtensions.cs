@@ -11,6 +11,7 @@ namespace BluffinMuffin.Server.Logic.Extensions
     public static class SeatInfoExtensions
     {
         public static bool HasPlayerPlaying(this SeatInfo si) => !si.IsEmpty && si.Player.State == PlayerStateEnum.Playing;
+        public static bool HasPlayerAllIn(this SeatInfo si) => !si.IsEmpty && si.Player.State == PlayerStateEnum.AllIn;
         public static bool HasPlayerPlayingOrAllIn(this SeatInfo si) => !si.IsEmpty && si.Player.IsPlayingOrAllIn();
 
         public static bool HasAttribute(this SeatInfo si, SeatAttributeEnum att)

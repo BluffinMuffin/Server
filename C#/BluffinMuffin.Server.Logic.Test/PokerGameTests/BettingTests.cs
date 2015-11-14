@@ -55,7 +55,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Blinds)).AfterPreflop();
 
             //Act
-            var res = nfo.CurrentPlayerPlays(nfo.Game.Table.MinRaiseAmnt(nfo.CurrentPlayer) - 1);
+            var res = nfo.CurrentPlayerPlays(nfo.Game.Table.MinRaiseAmountForPlayer(nfo.CurrentPlayer) - 1);
 
             //Assert
             Assert.AreEqual(false, res, "The player should not be able to raise under the minimum");
@@ -83,7 +83,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.CurrentPlayerChecks();
 
             //Act
-            var res = nfo.CurrentPlayerPlays(nfo.Game.Table.MinRaiseAmnt(nfo.CurrentPlayer) + 1);
+            var res = nfo.CurrentPlayerPlays(nfo.Game.Table.MinRaiseAmountForPlayer(nfo.CurrentPlayer) + 1);
 
             //Assert
             Assert.AreEqual(true, res, "The player should be able to raise with more than the minimum");

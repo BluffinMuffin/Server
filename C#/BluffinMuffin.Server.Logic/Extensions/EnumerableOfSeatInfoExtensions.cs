@@ -85,6 +85,11 @@ namespace BluffinMuffin.Server.Logic.Extensions
             return seats.Where(s => s.HasPlayerPlaying()).Select(s => s.Player);
         }
 
+        public static IEnumerable<PlayerInfo> AllInPlayers(this IEnumerable<SeatInfo> seats)
+        {
+            return seats.Where(s => s.HasPlayerAllIn()).Select(s => s.Player);
+        }
+
         public static IEnumerable<PlayerInfo> PlayingAndAllInPlayers(this IEnumerable<SeatInfo> seats)
         {
             return seats.Where(s => s.HasPlayerPlayingOrAllIn()).Select(s => s.Player);

@@ -81,6 +81,78 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(true, res);
         }
         [TestMethod]
+        public void EmptySeatDoesntHavePlayerAllIn()
+        {
+            //Arrange
+            var s = new SeatInfo();
+
+            //Act
+            var res = s.HasPlayerAllIn();
+
+            //Assert
+            Assert.AreEqual(false, res);
+        }
+        [TestMethod]
+        public void SeatWithPlayingPlayerDoesntHavePlayerAllIn()
+        {
+            //Arrange
+            var s = new SeatInfo { Player = new PlayerInfo { State = PlayerStateEnum.Playing } };
+
+            //Act
+            var res = s.HasPlayerAllIn();
+
+            //Assert
+            Assert.AreEqual(false, res);
+        }
+        [TestMethod]
+        public void SeatWithSitInPlayerDoesntHavePlayerAllIn()
+        {
+            //Arrange
+            var s = new SeatInfo { Player = new PlayerInfo { State = PlayerStateEnum.SitIn } };
+
+            //Act
+            var res = s.HasPlayerAllIn();
+
+            //Assert
+            Assert.AreEqual(false, res);
+        }
+        [TestMethod]
+        public void SeatWithJoinedPlayerDoesntHavePlayerAllIn()
+        {
+            //Arrange
+            var s = new SeatInfo { Player = new PlayerInfo { State = PlayerStateEnum.Joined } };
+
+            //Act
+            var res = s.HasPlayerAllIn();
+
+            //Assert
+            Assert.AreEqual(false, res);
+        }
+        [TestMethod]
+        public void SeatWithZombiePlayerDoesntHavePlayerAllIn()
+        {
+            //Arrange
+            var s = new SeatInfo { Player = new PlayerInfo { State = PlayerStateEnum.Zombie } };
+
+            //Act
+            var res = s.HasPlayerAllIn();
+
+            //Assert
+            Assert.AreEqual(false, res);
+        }
+        [TestMethod]
+        public void SeatWithAllInPlayerHasPlayerAllIn()
+        {
+            //Arrange
+            var s = new SeatInfo { Player = new PlayerInfo { State = PlayerStateEnum.AllIn } };
+
+            //Act
+            var res = s.HasPlayerAllIn();
+
+            //Assert
+            Assert.AreEqual(true, res);
+        }
+        [TestMethod]
         public void EmptySeatDoesntHavePlayerPlayingOrAllIn()
         {
             //Arrange

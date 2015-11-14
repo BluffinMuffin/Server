@@ -38,7 +38,6 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 {
                     Logger.LogDebugInformation("Player now All-In !");
                     p.State = PlayerStateEnum.AllIn;
-                    Table.NbAllIn++;
                     Table.AddAllInCap(p.MoneyBetAmnt + amnt);
                 }
                 else //well, it's just not fair to play that

@@ -37,11 +37,11 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
         }
         public bool CurrentPlayerCalls()
         {
-            return CurrentPlayerPlays(Game.Table.CallAmnt(CurrentPlayer));
+            return CurrentPlayerPlays(Game.Table.NeededCallAmountForPlayer(CurrentPlayer));
         }
         public bool CurrentPlayerRaisesMinimum()
         {
-            return CurrentPlayerPlays(Game.Table.MinRaiseAmnt(CurrentPlayer));
+            return CurrentPlayerPlays(Game.Table.MinRaiseAmountForPlayer(CurrentPlayer));
         }
         public PlayerInfo SitInGame(PlayerInfo p)
         {

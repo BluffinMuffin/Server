@@ -253,6 +253,25 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.IsTrue(res.Contains(p4.Player));
         }
         [TestMethod]
+        public void CanListAllAllInPlayers()
+        {
+            //Arrange
+            var me = new SeatInfo { Player = new PlayerInfo() { State = PlayerStateEnum.Playing }, NoSeat = 1 };
+            var p1 = new SeatInfo { Player = new PlayerInfo() { State = PlayerStateEnum.Joined }, NoSeat = 2 };
+            var p2 = new SeatInfo { Player = new PlayerInfo() { State = PlayerStateEnum.Playing }, NoSeat = 3 };
+            var p3 = new SeatInfo { Player = new PlayerInfo() { State = PlayerStateEnum.AllIn }, NoSeat = 4 };
+            var p4 = new SeatInfo { Player = new PlayerInfo() { State = PlayerStateEnum.Playing }, NoSeat = 5 };
+            var p5 = new SeatInfo { Player = new PlayerInfo() { State = PlayerStateEnum.Joined }, NoSeat = 6 };
+            var seats = new[] { me, p1, p2, p3, p4, p5 };
+
+            //Act
+            var res = seats.AllInPlayers().ToList();
+
+            //Assert
+            Assert.AreEqual(1, res.Count);
+            Assert.IsTrue(res.Contains(p3.Player));
+        }
+        [TestMethod]
         public void CanListAllRemainingSeatIds()
         {
             //Arrange

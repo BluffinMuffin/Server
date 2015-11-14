@@ -109,8 +109,9 @@ namespace BluffinMuffin.Server.Logic
             else if (blindNeeded > 0)
                 PlayMoney(p, blindNeeded);
 
-            if (Table.Seats.Players().ContainsPlayerWithSameName(p) && Table.SitOut(p))
+            if (Table.Seats.Players().ContainsPlayerWithSameName(p))
             {
+                Table.SitOut(p);
                 var seat = new SeatInfo()
                 {
                     Player = null,

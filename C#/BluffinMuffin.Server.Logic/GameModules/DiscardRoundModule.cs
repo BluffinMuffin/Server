@@ -28,7 +28,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             Observer.RaiseDiscardActionNeeded(m_Minimum, m_Maximum);
         }
 
-        public override void EndModule()
+        protected override void EndModule()
         {
             foreach (var p in m_Players.Keys)
             {

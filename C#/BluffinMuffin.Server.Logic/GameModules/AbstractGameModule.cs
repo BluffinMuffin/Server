@@ -28,12 +28,12 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         }
 
-        public virtual void EndModule()
+        protected virtual void EndModule()
         {
 
         }
 
-        public virtual void EndErrorModule()
+        protected virtual void EndErrorModule()
         {
 
         }

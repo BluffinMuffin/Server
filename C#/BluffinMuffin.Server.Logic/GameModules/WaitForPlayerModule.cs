@@ -68,8 +68,9 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 return true;
 
             p.State = PlayerStateEnum.Zombie;
-            if (Table.Seats.Players().ContainsPlayerWithSameName(p) && Table.SitOut(p))
+            if (Table.Seats.Players().ContainsPlayerWithSameName(p))
             {
+                Table.SitOut(p);
                 var seat = new SeatInfo()
                 {
                     Player = null,

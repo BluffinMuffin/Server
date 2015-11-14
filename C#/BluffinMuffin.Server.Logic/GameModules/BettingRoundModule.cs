@@ -44,7 +44,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             Observer.RaiseGameBettingRoundStarted();
 
             //We Put the current player just before the starting player, then we will take the next player and he will be the first
-            Table.Seats.SeatOfPlayingPlayerJustBefore(firstPlayer).AddAttribute(SeatAttributeEnum.CurrentPlayer);
+            Table.Seats.SeatOfPlayingPlayerJustBefore(firstPlayer)?.AddAttribute(SeatAttributeEnum.CurrentPlayer);
 
 
             Table.NbPlayed = 0;
@@ -95,9 +95,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             // Since every raise "restart" the round, 
             // the number of players who played is the number of AllIn players plus the raising player
-            Table.NbPlayed = Table.NbAllIn;
-            if (p.State != PlayerStateEnum.AllIn)
-                Table.NbPlayed++;
+            Table.NbPlayed = Table.Seats.AllInPlayers().Union(new[] {p}).Count();
 
             Table.HigherBet = p.MoneyBetAmnt;
 
@@ -122,7 +120,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             Table.Seats.MoveAttributeTo(next,SeatAttributeEnum.CurrentPlayer);
 
-            Observer.RaisePlayerActionNeeded(next.Player, Table.CallAmnt(next.Player), CanFold(), Table.MinimumRaiseAmount, int.MaxValue);
+            Observer.RaisePlayerActionNeeded(next.Player, Table.NeededCallAmountForPlayer(next.Player), CanFold(), Table.MinimumRaiseAmount, int.MaxValue);
 
             if (next.Player.State==PlayerStateEnum.Zombie)
             {
@@ -135,7 +133,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override bool OnMoneyPlayed(PlayerInfo p, int amnt)
         {
-            Logger.LogDebugInformation("Currently, we need {0} minimum money from this player", Table.CallAmnt(p));
+            Logger.LogDebugInformation("Currently, we need {0} minimum money from this player", Table.NeededCallAmountForPlayer(p));
 
             //Validation: Is it the player's turn to play ?
             if (p.NoSeat != Table.Seats.NoSeatOfCurrentPlayer())
@@ -153,7 +151,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 return true;
             }
 
-            var amntNeeded = Table.CallAmnt(p);
+            var amntNeeded = Table.NeededCallAmountForPlayer(p);
 
             //Validation: Is the player betting under what he needs to Call ?
             if (amnt < amntNeeded)
@@ -169,9 +167,9 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 amntNeeded = amnt;
             }
 
-            if (amnt > amntNeeded && amnt < Table.MinRaiseAmnt(p))
+            if (amnt > amntNeeded && amnt < Table.MinRaiseAmountForPlayer(p))
             {
-                Logger.LogWarning("{0} needed to play at least {1} to raise (CallAmount + MinRaiseAmount) and tried {2}", p.Name, Table.MinRaiseAmnt(p), amnt);
+                Logger.LogWarning("{0} needed to play at least {1} to raise (CallAmount + MinRaiseAmount) and tried {2}", p.Name, Table.MinRaiseAmountForPlayer(p), amnt);
                 return false;
             }
 
@@ -190,7 +188,6 @@ namespace BluffinMuffin.Server.Logic.GameModules
             {
                 Logger.LogDebugInformation("Player now All-In !");
                 p.State = PlayerStateEnum.AllIn;
-                Table.NbAllIn++;
                 Table.AddAllInCap(p.MoneyBetAmnt);
             }
 

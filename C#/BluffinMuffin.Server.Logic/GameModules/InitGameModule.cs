@@ -13,7 +13,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override GameStateEnum GameState => GameStateEnum.Init;
 
-        public virtual void InitModuleBegginning()
+        private void InitModuleBegginning()
         {
             Table.NoMoreRoundsNeeded = false;
             Table.BettingRoundId = 0;
@@ -25,7 +25,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             AddModule(new WaitForBlindsModule(Observer, Table));
         }
 
-        public virtual void InitModuleEnding()
+        private void InitModuleEnding()
         {
             AddModule(new ShowDownModule(Observer, Table));
             AddModule(new DecideWinnersModule(Observer, Table));

@@ -43,7 +43,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             if (Variant.NeedsBringIn)
             {
-                Logger.LogDebugInformation("Currently, we need {0}, the bring in !!", Table.CallAmnt(p));
+                Logger.LogDebugInformation("Currently, we need {0}, the bring in !!", Table.NeededCallAmountForPlayer(p));
                 if (amnt == -1)
                     return false;
             }
