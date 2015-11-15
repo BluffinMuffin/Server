@@ -1,6 +1,7 @@
 ﻿using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using System;
+using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes.EventHandling;
 
 namespace BluffinMuffin.Server.DataTypes.EventHandling
@@ -67,7 +68,7 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         {
             DiscardActionNeeded(m_Game, new MinMaxEventArgs(min,max));
         }
-        public void RaisePlayerWonPot(WinningPlayer player, int amntWon, int potId, int potTotalAmount)
+        public void RaisePlayerWonPot(EvaluatedCardHolder<PlayerCardHolder> player, int amntWon, int potId, int potTotalAmount)
         {
             PlayerWonPot(m_Game, new PotWonEventArgs(player, amntWon, potId, potTotalAmount));
         }

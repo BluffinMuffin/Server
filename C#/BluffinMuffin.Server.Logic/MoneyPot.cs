@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
+using BluffinMuffin.Server.DataTypes;
 
 namespace BluffinMuffin.Server.Logic
 {
@@ -24,22 +26,23 @@ namespace BluffinMuffin.Server.Logic
                     ContributingPlayers.Add(p);
             }
         }
-        public IEnumerable<KeyValuePair<PlayerInfo, int>> Distribute(Dictionary<PlayerInfo, int> playersWithRank)
+        public IEnumerable<KeyValuePair<EvaluatedCardHolder<PlayerCardHolder>, int>> Distribute(IEnumerable<EvaluatedCardHolder<PlayerCardHolder>> rankedPlayers)
         {
-            var contributingPlayersWithRank = playersWithRank.Where(x => ContributingPlayers.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value);
-            var minRank = contributingPlayersWithRank.Values.DefaultIfEmpty(0).Min();
-            var winningPlayers = contributingPlayersWithRank.Where(x => x.Value == minRank).Select(x => x.Key).ToArray();
+            var playerWithRank = rankedPlayers.ToArray(); 
+            var contributingPlayersWithRank = playerWithRank.Where(x => ContributingPlayers.Contains(x.CardsHolder.Player)).ToArray();
+            var minRank = contributingPlayersWithRank.Select(x => x.Rank).DefaultIfEmpty(0).Min();
+            var winningPlayers = contributingPlayersWithRank.Where(x => x.Rank == minRank).ToArray();
 
             var winningAmount = winningPlayers.Any() ? MoneyAmount /winningPlayers.Length : MoneyAmount;
 
-            var winners = winningPlayers.Select(x => new KeyValuePair<PlayerInfo,int>(x, winningAmount)).ToList();
+            var winners = winningPlayers.Select(x => new KeyValuePair<EvaluatedCardHolder<PlayerCardHolder>, int>(x, winningAmount)).ToList();
 
             MoneyAmount -= winners.Select(x => x.Value).DefaultIfEmpty(0).Sum();
 
-            winners.ToList().ForEach(x => x.Key.MoneySafeAmnt += x.Value);
+            winners.ToList().ForEach(x => x.Key.CardsHolder.Player.MoneySafeAmnt += x.Value);
 
             if(MoneyAmount > 0)
-                winners.Add(new KeyValuePair<PlayerInfo, int>(null, MoneyAmount));
+                winners.Add(new KeyValuePair<EvaluatedCardHolder<PlayerCardHolder>, int>(null, MoneyAmount));
 
             MoneyAmount = 0;
 

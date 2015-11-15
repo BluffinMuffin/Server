@@ -19,29 +19,14 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override GameStateEnum GameState => GameStateEnum.DistributeMoney;
 
-        private class PlayerCardHolder : IStringCardsHolder
-        {
-            public PlayerInfo Player { get; }
-            public IEnumerable<string> PlayerCards => Player.Cards;
-            public IEnumerable<string> CommunityCards { get; }
-
-            public PlayerCardHolder(PlayerInfo p, IEnumerable<string> communityCards)
-            {
-                Player = p;
-                CommunityCards = communityCards;
-            }
-        }
-
         public override void InitModule()
         {
-            var rankedPlayers = HandEvaluators.Evaluate(Table.Seats.PlayingAndAllInPlayers().Select(x => new PlayerCardHolder(x, Table.Cards)).Cast<IStringCardsHolder>().ToArray(),Table.Variant.EvaluationParms).ToArray();
-            var playerWithRanks = rankedPlayers.SelectMany(x => x.Select(p => new KeyValuePair<PlayerInfo, int>(((PlayerCardHolder)p.CardsHolder).Player, x.Key))).ToDictionary(x => x.Key, x => x.Value);
-            var playerWithHands = rankedPlayers.SelectMany(x => x.Select(p => new KeyValuePair<PlayerInfo, HandEvaluationResult>(((PlayerCardHolder)p.CardsHolder).Player, p.Evaluation))).ToDictionary(x => x.Key, x => new WinningPlayer {Player=x.Key, Hand = x.Value});
-            foreach (var pot in Table.Bank.DistributeMoney(playerWithRanks))
+            var rankedPlayers = HandEvaluators.Evaluate(Table.Seats.PlayingAndAllInPlayers().Select(x => new PlayerCardHolder(x, Table.Cards)),Table.Variant.EvaluationParms).SelectMany(x => x);
+            foreach (var pot in Table.Bank.DistributeMoney(rankedPlayers))
             {
                 foreach (var winner in pot.Winners)
                 {
-                    Observer.RaisePlayerWonPot(playerWithHands[winner.Key], winner.Value, pot.PotId, pot.TotalPotAmount);
+                    Observer.RaisePlayerWonPot(winner.Key, winner.Value, pot.PotId, pot.TotalPotAmount);
                     WaitALittle(Table.Params.WaitingTimes.AfterPotWon);
                 }
             }

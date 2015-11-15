@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
@@ -73,8 +74,9 @@ namespace BluffinMuffin.Server.Logic
             return Debts.ContainsKey(p) ? Debts[p] : 0;
         }
 
-        public IEnumerable<WonPot> DistributeMoney(Dictionary<PlayerInfo, int> playersWithRank )
+        public IEnumerable<WonPot> DistributeMoney(IEnumerable<EvaluatedCardHolder<PlayerCardHolder>> rankedPlayers )
         {
+            var playersWithRank = rankedPlayers.ToArray();
             DepositMoneyInPlay();
             List<WonPot> pots = new List<WonPot>();
             while (Pots.Any())

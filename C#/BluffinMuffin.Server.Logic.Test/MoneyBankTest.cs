@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.Logic.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -22,12 +24,13 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(0, bank.MoneyAmount);
             Assert.AreEqual(0, bank.TotalDebtAmount);
         }
+
         [TestMethod]
         public void CantCollectIfNotEnoughMoney()
         {
             //Arrange
             var bank = new MoneyBank();
-            var p = new PlayerInfo { MoneySafeAmnt = 1042 };
+            var p = new PlayerInfo {MoneySafeAmnt = 1042};
 
             //Act
             var res = bank.CollectMoneyFromPlayer(p, 5000);
@@ -35,12 +38,13 @@ namespace BluffinMuffin.Server.Logic.Test
             //Assert
             Assert.IsFalse(res);
         }
+
         [TestMethod]
         public void CanCollectIfEnoughMoney()
         {
             //Arrange
             var bank = new MoneyBank();
-            var p = new PlayerInfo { MoneySafeAmnt = 1042 };
+            var p = new PlayerInfo {MoneySafeAmnt = 1042};
 
             //Act
             var res = bank.CollectMoneyFromPlayer(p, 42);
@@ -51,12 +55,13 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(1000, p.MoneySafeAmnt);
             Assert.AreEqual(42, p.MoneyBetAmnt);
         }
+
         [TestMethod]
         public void ADebtIsRememberedCorrectly()
         {
             //Arrange
             var bank = new MoneyBank();
-            var p = new PlayerInfo { MoneySafeAmnt = 1042 };
+            var p = new PlayerInfo {MoneySafeAmnt = 1042};
 
             //Act
             bank.AddDebt(p, 42);
@@ -68,12 +73,13 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(1042, p.MoneySafeAmnt);
             Assert.AreEqual(0, p.MoneyBetAmnt);
         }
+
         [TestMethod]
         public void ADebtIsLessIfSomeAmountIsPaid()
         {
             //Arrange
             var bank = new MoneyBank();
-            var p = new PlayerInfo { MoneySafeAmnt = 1042 };
+            var p = new PlayerInfo {MoneySafeAmnt = 1042};
             bank.AddDebt(p, 142);
 
             //Act
@@ -98,7 +104,7 @@ namespace BluffinMuffin.Server.Logic.Test
             bank.CollectMoneyFromPlayer(p2, 21);
 
             //Act
-            var res = bank.DistributeMoney(new Dictionary<PlayerInfo, int> { { p1, 2 }, { p2, 1 } }).ToArray();
+            var res = bank.DistributeMoney(new[] {PlayerWithRank(p1, 2), PlayerWithRank(p2, 1)}).ToArray();
 
             //Assert
             Assert.AreEqual(0, bank.MoneyAmount);
@@ -110,7 +116,7 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(0, res.First().PotId);
             Assert.AreEqual(63, res.First().TotalPotAmount);
             Assert.AreEqual(1, res.First().Winners.Count());
-            Assert.AreEqual(p2, res.First().Winners.First().Key);
+            Assert.AreEqual(p2, res.First().Winners.First().Key.CardsHolder.Player);
             Assert.AreEqual(63, res.First().Winners.First().Value);
         }
         [TestMethod]
@@ -124,7 +130,7 @@ namespace BluffinMuffin.Server.Logic.Test
             bank.CollectMoneyFromPlayer(p2, 21);
 
             //Act
-            var res = bank.DistributeMoney(new Dictionary<PlayerInfo, int> { { p1, 1 }, { p2, 1 } }).ToArray();
+            var res = bank.DistributeMoney(new[] { PlayerWithRank(p1, 1), PlayerWithRank(p2, 1) }).ToArray();
 
             //Assert
             Assert.AreEqual(0, bank.MoneyAmount);
@@ -136,9 +142,9 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(0, res.First().PotId);
             Assert.AreEqual(63, res.First().TotalPotAmount);
             Assert.AreEqual(2, res.First().Winners.Count());
-            Assert.AreEqual(p1, res.First().Winners.First().Key);
+            Assert.AreEqual(p1, res.First().Winners.First().Key.CardsHolder.Player);
             Assert.AreEqual(31, res.First().Winners.First().Value); // 63 / 2 = 31.5: 31 is given
-            Assert.AreEqual(p2, res.First().Winners.Skip(1).First().Key);
+            Assert.AreEqual(p2, res.First().Winners.Skip(1).First().Key.CardsHolder.Player);
             Assert.AreEqual(31, res.First().Winners.Skip(1).First().Value); // 63 / 2 = 31.5: 31 is given
         }
         [TestMethod]
@@ -160,7 +166,7 @@ namespace BluffinMuffin.Server.Logic.Test
             p4.State = PlayerStateEnum.Playing;
 
             //Act
-            var res = bank.DistributeMoney(new Dictionary<PlayerInfo, int> { { p1, 1 }, { p2, 3 }, { p3, 2 }, { p4, 4 } }).ToArray();
+            var res = bank.DistributeMoney(new[] { PlayerWithRank(p1, 1), PlayerWithRank(p2, 3), PlayerWithRank(p3, 2), PlayerWithRank(p4, 4) }).ToArray();
 
             //Assert
             Assert.AreEqual(0, bank.MoneyAmount);
@@ -176,22 +182,22 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(0, res.First().PotId);
             Assert.AreEqual(84, res.First().TotalPotAmount);
             Assert.AreEqual(1, res.First().Winners.Count());
-            Assert.AreEqual(p1, res.First().Winners.First().Key);
+            Assert.AreEqual(p1, res.First().Winners.First().Key.CardsHolder.Player);
             Assert.AreEqual(84, res.First().Winners.First().Value);
             Assert.AreEqual(1, res.Skip(1).First().PotId);
             Assert.AreEqual(363, res.Skip(1).First().TotalPotAmount);
             Assert.AreEqual(1, res.Skip(1).First().Winners.Count());
-            Assert.AreEqual(p3, res.Skip(1).First().Winners.First().Key);
+            Assert.AreEqual(p3, res.Skip(1).First().Winners.First().Key.CardsHolder.Player);
             Assert.AreEqual(363, res.Skip(1).First().Winners.First().Value);
             Assert.AreEqual(2, res.Skip(2).First().PotId);
             Assert.AreEqual(2042, res.Skip(2).First().TotalPotAmount);
             Assert.AreEqual(1, res.Skip(2).First().Winners.Count());
-            Assert.AreEqual(p2, res.Skip(2).First().Winners.First().Key);
+            Assert.AreEqual(p2, res.Skip(2).First().Winners.First().Key.CardsHolder.Player);
             Assert.AreEqual(2042, res.Skip(2).First().Winners.First().Value);
             Assert.AreEqual(3, res.Skip(3).First().PotId);
             Assert.AreEqual(1000, res.Skip(3).First().TotalPotAmount);
             Assert.AreEqual(1, res.Skip(3).First().Winners.Count());
-            Assert.AreEqual(p4, res.Skip(3).First().Winners.First().Key);
+            Assert.AreEqual(p4, res.Skip(3).First().Winners.First().Key.CardsHolder.Player);
             Assert.AreEqual(1000, res.Skip(3).First().Winners.First().Value);
         }
         [TestMethod]
@@ -224,6 +230,11 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(1000, res[3]);
             Assert.AreEqual(0, res[4]);
             Assert.AreEqual(0, res[5]);
+        }
+
+        private EvaluatedCardHolder<PlayerCardHolder> PlayerWithRank(PlayerInfo p, int rank)
+        {
+            return new EvaluatedCardHolder<PlayerCardHolder>(new PlayerCardHolder(p, new string[0]), new EvaluationParams()) { Rank = rank };
         }
     }
 }

@@ -91,16 +91,16 @@ namespace BluffinMuffin.Server.Protocol
 
         void OnPlayerWonPot(object sender, PotWonEventArgs e)
         {
-            var playerInfo = e.Player;
+            var evaluatedPlayer = e.Player;
             Send(new PlayerWonPotCommand()
             {
-                NoSeat = playerInfo.Player.NoSeat,
+                NoSeat = evaluatedPlayer.CardsHolder.Player.NoSeat,
                 PotId = e.PotId,
                 WonAmount = e.AmountWon,
-                TotalPlayerMoney = playerInfo.Player.MoneySafeAmnt,
+                TotalPlayerMoney = evaluatedPlayer.CardsHolder.Player.MoneySafeAmnt,
                 TotalPotAmount = e.TotalPotAmount,
-                WinningCards = playerInfo.Hand?.Cards.SelectMany(x => x).Take(5).Select(x => x.ToString()).ToArray() ?? new string[0],
-                WinningHand = playerInfo.Hand == null ? PokerHandEnum.None : (PokerHandEnum)Enum.Parse(typeof(PokerHandEnum), playerInfo.Hand.Hand.ToString())
+                WinningCards = evaluatedPlayer.Evaluation.Cards.SelectMany(x => x).Take(5).Select(x => x.ToString()).ToArray() ?? new string[0],
+                WinningHand = evaluatedPlayer.Evaluation == null ? PokerHandEnum.None : (PokerHandEnum)Enum.Parse(typeof(PokerHandEnum), evaluatedPlayer.Evaluation.Hand.ToString())
             });
         }
 
