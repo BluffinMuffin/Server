@@ -6,6 +6,12 @@ namespace BluffinMuffin.Server.Logic.Extensions
     public static class LobbyOptionExtensions
     {
 
+        /// <summary>
+        /// The minimum amount needed to enter the game
+        /// </summary>
+        /// <param name="lo">Current lobby Option</param>
+        /// <param name="gameSize">Size of the game (Size of bet, size of big blind)</param>
+        /// <returns>The minimum amount needed to enter the game</returns>
         public static int MinimumBuyInAmount(this LobbyOptions lo, int gameSize)
         {
             switch (lo.MinimumBuyInParameter)
@@ -18,6 +24,12 @@ namespace BluffinMuffin.Server.Logic.Extensions
             return 0;
         }
 
+        /// <summary>
+        /// The maximum amount you can put in the game
+        /// </summary>
+        /// <param name="lo">Current lobby Option</param>
+        /// <param name="gameSize">Size of the game (Size of bet, size of big blind)</param>
+        /// <returns>The maximum amount you can put in the game</returns>
         public static int MaximumBuyInAmount(this LobbyOptions lo, int gameSize)
         {
             switch (lo.MaximumBuyInParameter)
