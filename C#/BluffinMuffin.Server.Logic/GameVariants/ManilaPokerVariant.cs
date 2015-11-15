@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.HandEvaluator.HandRankers;
 using BluffinMuffin.HandEvaluator.Selectors;
@@ -9,6 +10,7 @@ using BluffinMuffin.Server.DataTypes.Attributes;
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
     [GameVariant(GameSubTypeEnum.ManilaPoker)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ManilaPokerVariant : AbstractLongFlopHoldemGameVariant
     {
         public override EvaluationParams EvaluationParms => new EvaluationParams

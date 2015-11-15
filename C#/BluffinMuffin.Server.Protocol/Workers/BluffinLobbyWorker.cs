@@ -94,22 +94,22 @@ namespace BluffinMuffin.Server.Protocol.Workers
 
         private void OnCheckCompatibilityCommandReceived(AbstractCommand command, IBluffinClient client)
         {
-            const string minimumClientVersion = "3.0";
-            const string currentServerVersion = "3.0.0";
+            const string MINIMUM_CLIENT_VERSION = "3.0";
+            const string CURRENT_SERVER_VERSION = "3.1.0";
 
             var c = (CheckCompatibilityCommand)command;
             Version vClient; 
             bool ok = Version.TryParse(c.ImplementedProtocolVersion,out vClient);
-            if (!ok || vClient < new Version(minimumClientVersion))
+            if (!ok || vClient < new Version(MINIMUM_CLIENT_VERSION))
             {
-                var r = c.ResponseFailure(BluffinMessageId.NotSupported, "The client must implement at least protocol version " + minimumClientVersion);
-                r.ImplementedProtocolVersion = currentServerVersion;
+                var r = c.ResponseFailure(BluffinMessageId.NotSupported, "The client must implement at least protocol version " + MINIMUM_CLIENT_VERSION);
+                r.ImplementedProtocolVersion = CURRENT_SERVER_VERSION;
                 client.SendCommand(r);
             }
             else
             {
                 var r = c.ResponseSuccess();
-                r.ImplementedProtocolVersion = currentServerVersion;
+                r.ImplementedProtocolVersion = CURRENT_SERVER_VERSION;
                 r.SupportedLobbyTypes = new[] {LobbyTypeEnum.QuickMode, LobbyTypeEnum.RegisteredMode};
                 r.AvailableGames = new[]
                 {
@@ -252,7 +252,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
                 client.SendCommand(c.ResponseFailure(BluffinMessageId.NameAlreadyUsed, "Someone with your name is already in this game !"));
                 return;
             }
-            var rp = new RemotePlayer(game, new PlayerInfo(client.PlayerName, 0), client, Server, c.TableId);
+            var rp = new RemotePlayer(game, new PlayerInfo(client.PlayerName, 0), client, c.TableId);
             if (!rp.JoinGame())
             {
                 client.SendCommand(c.ResponseFailure(BluffinMessageId.SpecificServerMessage, "Unknown failure"));

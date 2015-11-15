@@ -48,27 +48,6 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
 
             return nfo;
         }
-        public GameMockInfo WithP1P2Seated()
-        {
-            var nfo = WithP1Seated();
-            nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2, new JoinGameModule(), new SitInGameModule()).Player;
-
-            return nfo;
-        }
-        public GameMockInfo WithP1P2P3Seated()
-        {
-            var nfo = WithP1P2Seated();
-            nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3, new JoinGameModule(), new SitInGameModule()).Player;
-
-            return nfo;
-        }
-        public GameMockInfo WithP1P2P3P4Seated()
-        {
-            var nfo = WithP1P2P3Seated();
-            nfo.P4 = new ModularPlayerMock(nfo, PlayerNames.P4, new JoinGameModule(), new SitInGameModule()).Player;
-
-            return nfo;
-        }
         public GameMockInfo WithAllPlayersSeated()
         {
             var nfo = WithP1Seated();
@@ -79,7 +58,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
             if (Parms.MaxPlayers >= 3)
                 nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3, new JoinGameModule(), new SitInGameModule()).Player;
 
-            if (Parms.MaxPlayers >= 4)
+            if (Parms.MaxPlayers == 4)
                 nfo.P4 = new ModularPlayerMock(nfo, PlayerNames.P4, new JoinGameModule(), new SitInGameModule()).Player;
             
             return nfo;
@@ -132,13 +111,10 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
         private readonly int m_NbMin;
         private readonly int m_NbMax;
 
-        public NbPlayersModule(int nb) : this(nb, nb)
+        public NbPlayersModule(int nb)
         {
-        }
-        public NbPlayersModule(int nbMin, int nbMax)
-        {
-            m_NbMin = nbMin;
-            m_NbMax = nbMax;
+            m_NbMin = nb;
+            m_NbMax = nb;
         }
         public void ExecuteModule(TableParams parms)
         {

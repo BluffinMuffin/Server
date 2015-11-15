@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class GameMockInfo
     {
         public PokerGame Game { get; set; }
@@ -12,7 +14,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
         public PlayerInfo P2 { get; set; }
         public PlayerInfo P3 { get; set; }
         public PlayerInfo P4 { get; set; }
-        
+
 
         public IEnumerable<PlayerInfo> Players => Game.Table.Seats.PlayingPlayers();
         public PlayerInfo CurrentPlayer => Game.Table.Seats.CurrentPlayer();
@@ -31,10 +33,11 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
         {
             return CurrentPlayerPlays(0);
         }
-        public bool CurrentPlayerFolds()
+        public void CurrentPlayerFolds()
         {
-            return CurrentPlayerPlays(-1);
+            CurrentPlayerPlays(-1);
         }
+
         public bool CurrentPlayerCalls()
         {
             return CurrentPlayerPlays(Game.Table.NeededCallAmountForPlayer(CurrentPlayer));
@@ -43,11 +46,10 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes
         {
             return CurrentPlayerPlays(Game.Table.MinRaiseAmountForPlayer(CurrentPlayer));
         }
-        public PlayerInfo SitInGame(PlayerInfo p)
+        public void SitInGame(PlayerInfo p)
         {
-            Game.Table.SitIn(p, -1);
+            Game.Table.SitIn(p);
             Game.AfterPlayerSat(p);
-            return p;
         }
 
         public int BlindNeeded(PlayerInfo p)

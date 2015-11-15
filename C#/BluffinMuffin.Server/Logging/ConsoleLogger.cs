@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using BluffinMuffin.Server.Configuration;
 
 namespace BluffinMuffin.Server.Logging
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class ConsoleLogger
     {
         private static void WriteLine(string message, ConsoleColor color)

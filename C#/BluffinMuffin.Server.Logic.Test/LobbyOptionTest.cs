@@ -1,5 +1,4 @@
-﻿using BluffinMuffin.Protocol.DataTypes;
-using BluffinMuffin.Protocol.DataTypes.Enums;
+﻿using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Server.Logic.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -121,13 +120,13 @@ namespace BluffinMuffin.Server.Logic.Test
         {
             public override LobbyTypeEnum OptionType => LobbyTypeEnum.QuickMode;
             public override BuyInParameterEnum MinimumBuyInParameter => MinimumBuyInParameterMock;
-            public BuyInParameterEnum MinimumBuyInParameterMock { get; set; }
+            public BuyInParameterEnum MinimumBuyInParameterMock { private get; set; }
             public override int MinimumBuyInValue => MinimumBuyInValueMock;
-            public int MinimumBuyInValueMock { get; set; }
+            public int MinimumBuyInValueMock { private get; set; }
             public override BuyInParameterEnum MaximumBuyInParameter => MaximumBuyInParameterMock;
-            public BuyInParameterEnum MaximumBuyInParameterMock { get; set; }
+            public BuyInParameterEnum MaximumBuyInParameterMock { private get; set; }
             public override int MaximumBuyInValue => MaximumBuyInValueMock;
-            public int MaximumBuyInValueMock { get; set; }
+            public int MaximumBuyInValueMock { private get; set; }
         }
     }
 }

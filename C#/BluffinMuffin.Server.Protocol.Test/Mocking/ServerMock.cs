@@ -26,7 +26,7 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
             Task.Factory.StartNew(StartWorker);
         }
 
-        public void StartWorker()
+        private void StartWorker()
         {
             try
             {
@@ -45,16 +45,6 @@ namespace BluffinMuffin.Server.Protocol.Test.Mocking
 
         public BlockingCollection<CommandEntry> LobbyCommands { get; }
         public BlockingCollection<GameCommandEntry> GameCommands { get; }
-
-        public void KillGame(int id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void StartGame(int id)
-        {
-            throw new System.NotImplementedException();
-        }
 
         public BlockingCollection<CommandEntry> ServerSendedCommands { get; }
 

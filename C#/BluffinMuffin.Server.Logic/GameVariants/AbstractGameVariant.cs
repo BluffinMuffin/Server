@@ -12,7 +12,7 @@ namespace BluffinMuffin.Server.Logic.GameVariants
 {
     public abstract class AbstractGameVariant
     {
-        public virtual int NbCardsInHand => 2;
+        protected virtual int NbCardsInHand => 2;
         public virtual EvaluationParams EvaluationParms => new EvaluationParams();
 
         public abstract IEnumerable<IGameModule> GetModules(PokerGameObserver o, PokerTable table); 

@@ -32,11 +32,6 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
 
         }
-
-        protected virtual void EndErrorModule()
-        {
-
-        }
         public virtual void OnSitIn()
         {
 
@@ -62,7 +57,6 @@ namespace BluffinMuffin.Server.Logic.GameModules
         }
         protected void RaiseAborted()
         {
-            EndErrorModule();
             ModuleCompleted(this, new SuccessEventArg() { Success = false });
         }
 

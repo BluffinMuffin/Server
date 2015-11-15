@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.Logic.Extensions;
 using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;

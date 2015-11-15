@@ -1,7 +1,9 @@
 ﻿using System.Configuration;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BluffinMuffin.Server.Configuration
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class LoggingDataSection : ConfigurationElement
     {
         public const string NAME = "logging";

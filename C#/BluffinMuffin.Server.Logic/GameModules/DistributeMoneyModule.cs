@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using BluffinMuffin.HandEvaluator;
-using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.EventHandling;
@@ -21,8 +18,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         public override void InitModule()
         {
-            var rankedPlayers = HandEvaluators.Evaluate(Table.Seats.PlayingAndAllInPlayers().Select(x => new PlayerCardHolder(x, Table.Cards)),Table.Variant.EvaluationParms).SelectMany(x => x);
-            foreach (var pot in Table.Bank.DistributeMoney(rankedPlayers))
+            foreach (var pot in Table.Bank.DistributeMoney(HandEvaluators.Evaluate(Table.Seats.PlayingAndAllInPlayers().Select(x => new PlayerCardHolder(x, Table.Cards)), Table.Variant.EvaluationParms).SelectMany(x => x)))
             {
                 foreach (var winner in pot.Winners)
                 {

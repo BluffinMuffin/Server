@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using System.Linq;
@@ -239,11 +238,12 @@ namespace BluffinMuffin.Server.Logic
             return Seats[seat];
         }
 
-        public IEnumerable<SeatInfo> GetPlayersWhoNeedsToPutAntes()
+        private IEnumerable<SeatInfo> GetPlayersWhoNeedsToPutAntes()
         {
             return Params.Blind == BlindTypeEnum.Antes ? Seats.PlayingPlayers().Select(x => Seats[x.NoSeat]) : new SeatInfo[0];
         }
-        public IEnumerable<SeatInfo> GetPlayersWhoNeedsToPutSmallBlind()
+
+        private IEnumerable<SeatInfo> GetPlayersWhoNeedsToPutSmallBlind()
         {
             if (Params.Blind != BlindTypeEnum.Blinds)
                 return new SeatInfo[0];
@@ -251,7 +251,8 @@ namespace BluffinMuffin.Server.Logic
             var smallSeat = Seats.SeatOfShouldBeSmallBlind();
             return NewArrivals.Any(x => x.NoSeat == smallSeat.NoSeat) ? new SeatInfo[0] : new[] {smallSeat};
         }
-        public IEnumerable<SeatInfo> GetPlayersWhoNeedsToPutBigBlind()
+
+        private IEnumerable<SeatInfo> GetPlayersWhoNeedsToPutBigBlind()
         {
             return Params.Blind == BlindTypeEnum.Blinds ? NewArrivals.Select(x => Seats[x.NoSeat]).Union(new[] {Seats.SeatOfShouldBeBigBlind()}) : new SeatInfo[0];
         }

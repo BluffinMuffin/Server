@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using BluffinMuffin.Protocol.DataTypes;
-using BluffinMuffin.Protocol.DataTypes.Enums;
+﻿using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Server.Logic.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

@@ -6,7 +6,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 {
     public class DealCardsToBoardModule : AbstractGameModule
     {
-        protected int NbCards { get; }
+        private int NbCards { get; }
         public DealCardsToBoardModule(PokerGameObserver o, PokerTable table, int nbCards)
             : base(o, table)
         {

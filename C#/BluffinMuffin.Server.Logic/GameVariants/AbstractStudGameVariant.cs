@@ -5,7 +5,7 @@ namespace BluffinMuffin.Server.Logic.GameVariants
 {
     public abstract class AbstractStudGameVariant : AbstractGameVariant
     {
-        public bool NeedsBringIn { get; set; } = false;
+        public bool NeedsBringIn { get; set; }
 
         public override EvaluationParams EvaluationParms => new EvaluationParams
         {

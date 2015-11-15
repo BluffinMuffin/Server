@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using BluffinMuffin.Logger.DBAccess;
 using BluffinMuffin.Protocol;
@@ -9,6 +10,7 @@ using BluffinMuffin.Server.DataTypes.Protocol;
 
 namespace BluffinMuffin.Server.Logging
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class DbCommandLogger
     {
         private static Logger.DBAccess.Server m_LogServer;

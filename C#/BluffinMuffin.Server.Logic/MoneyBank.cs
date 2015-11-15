@@ -11,10 +11,10 @@ namespace BluffinMuffin.Server.Logic
 {
     public class MoneyBank
     {
-        public int MoneyAmount { get; private set; } = 0;
+        public int MoneyAmount { get; private set; }
         private List<PlayerInfo> PlayersWithMoneyAmountInPlay { get; } = new List<PlayerInfo>();
 
-        private Stack<MoneyPot> Pots { get; } = new Stack<MoneyPot>() {}; 
+        private Stack<MoneyPot> Pots { get; } = new Stack<MoneyPot>(); 
 
         private Dictionary<PlayerInfo, int> Debts { get; } = new Dictionary<PlayerInfo, int>();
 
@@ -76,20 +76,29 @@ namespace BluffinMuffin.Server.Logic
 
         public IEnumerable<WonPot> DistributeMoney(IEnumerable<EvaluatedCardHolder<PlayerCardHolder>> rankedPlayers )
         {
+
+            IList<WonPot> pots = new List<WonPot>();
             var playersWithRank = rankedPlayers.ToArray();
+
+            //Just to be sure there is no money left in play
             DepositMoneyInPlay();
-            List<WonPot> pots = new List<WonPot>();
+
+            //Distribute all money pots
             while (Pots.Any())
             {
                 var winners = Pots.Pop().Distribute(playersWithRank).ToArray();
                 var wonPot = new WonPot(Pots.Count, winners.Select(x => x.Value).DefaultIfEmpty(0).Sum(), winners.Where(x => x.Key != null));
+
                 MoneyAmount -= wonPot.TotalPotAmount;
 
                 pots.Add(wonPot);
             }
+
+            //Create a new empty moneypot ready for the next game
             Pots.Push(new MoneyPot());
-            pots.Reverse();
-            return pots;
+
+            //Return pots so they are in good order
+            return pots.OrderBy(x => x.PotId);
         }
 
         public int TotalDebtAmount => Debts.Values.Sum();

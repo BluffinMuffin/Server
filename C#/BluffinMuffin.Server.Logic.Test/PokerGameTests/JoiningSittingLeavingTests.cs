@@ -29,7 +29,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new MoneyModule(100), new JoinGameModule()).Player;
 
             //Act
-            var res = nfo.Game.Table.SitIn(nfo.P1, -1);
+            var res = nfo.Game.Table.SitIn(nfo.P1);
 
             //Assert
             Assert.AreEqual(null, res, "You should not be able to obtain a seat without enough money");
@@ -57,7 +57,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new MoneyModule(5000), new JoinGameModule()).Player;
 
             //Act
-            var res = nfo.Game.Table.SitIn(nfo.P1, -1);
+            var res = nfo.Game.Table.SitIn(nfo.P1);
 
             //Assert
             Assert.AreEqual(null, res, "You should not be able to obtain a seat with too much money");
@@ -128,7 +128,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new JoinGameModule()).Player;
 
             //Act
-            var res = nfo.Game.Table.SitIn(nfo.P1, -1);
+            var res = nfo.Game.Table.SitIn(nfo.P1);
 
             //Assert
             Assert.AreNotEqual(null, res, "You should be able to obtain a seat in a game with all the seats available");
@@ -140,7 +140,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             //Arrange
             var nfo = new ModularGameMock().EmptyButStarted();
             nfo.P1 = new ModularPlayerMock(nfo, PlayerNames.P1, new JoinGameModule()).Player;
-            nfo.Game.Table.SitIn(nfo.P1, -1);
+            nfo.Game.Table.SitIn(nfo.P1);
 
             //Act
             var res = nfo.Game.AfterPlayerSat(nfo.P1);
@@ -156,7 +156,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             var nfo = new ModularGameMock().WithP1Seated();
 
             //Act
-            var res = nfo.Game.Table.SitIn(nfo.P1, -1);
+            var res = nfo.Game.Table.SitIn(nfo.P1);
 
             //Assert
             Assert.AreEqual(null, res, "You should not be able to obtain a seat in twice");
@@ -184,7 +184,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2, new JoinGameModule()).Player;
 
             //Act
-            var res = nfo.Game.Table.SitIn(nfo.P2, -1);
+            var res = nfo.Game.Table.SitIn(nfo.P2);
 
             //Assert
             Assert.AreNotEqual(null, res, "You should be able to obtain a seat in a game with only 1 seated player");
@@ -196,7 +196,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             //Arrange
             var nfo = new ModularGameMock().WithP1Seated();
             nfo.P2 = new ModularPlayerMock(nfo, PlayerNames.P2, new JoinGameModule()).Player;
-            nfo.Game.Table.SitIn(nfo.P2, -1);
+            nfo.Game.Table.SitIn(nfo.P2);
 
             //Act
             var res = nfo.Game.AfterPlayerSat(nfo.P2);
@@ -227,7 +227,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3, new JoinGameModule()).Player;
 
             //Act
-            var res = nfo.Game.Table.SitIn(nfo.P3, -1);
+            var res = nfo.Game.Table.SitIn(nfo.P3);
 
             //Assert
             Assert.AreEqual(null, res, "You should not be able to obtain a seat in a game that is full (MaxSeats=2)");
@@ -239,7 +239,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             //Arrange
             var nfo = new ModularGameMock().WithAllPlayersSeated();
             nfo.P3 = new ModularPlayerMock(nfo, PlayerNames.P3, new JoinGameModule()).Player;
-            nfo.Game.Table.SitIn(nfo.P3, -1);
+            nfo.Game.Table.SitIn(nfo.P3);
 
             //Act
             var res = nfo.Game.AfterPlayerSat(nfo.P3);
@@ -257,7 +257,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.Game.LeaveGame(nfo.P1);
 
             //Act
-            var res = nfo.Game.Table.SitIn(nfo.P3, -1);
+            var res = nfo.Game.Table.SitIn(nfo.P3);
 
             //Assert
             Assert.AreNotEqual(null, res, "You should be able to obtain a seat a game that is now with only 1 seated player");
@@ -272,7 +272,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             nfo.Game.SitOut(nfo.P1);
 
             //Act
-            var res = nfo.Game.Table.SitIn(nfo.P3, -1);
+            var res = nfo.Game.Table.SitIn(nfo.P3);
 
             //Assert
             Assert.AreNotEqual(null, res, "You should be able to obtain a seat a game that is now with only 1 seated player");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Sockets;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
@@ -9,6 +10,8 @@ using AbstractCommand = BluffinMuffin.Protocol.AbstractCommand;
 
 namespace BluffinMuffin.Server.DataTypes
 {
+    [SuppressMessage("ReSharper", "EventNeverSubscribedTo.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class Logger
     {
         public static event EventHandler<StringEventArgs> VerboseInformationLogged = delegate { };

@@ -1,7 +1,9 @@
 ﻿using System.Configuration;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BluffinMuffin.Server.Configuration
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class BluffinMuffinDataSection : ConfigurationSection
     {
         public const string NAME = "bluffinMuffin";
@@ -11,10 +13,6 @@ namespace BluffinMuffin.Server.Configuration
 
         private const string PORT = "port";
         [ConfigurationProperty(PORT, IsRequired = true)]
-        public int Port
-        {
-            get { return (int)this[PORT]; }
-            set { this[PORT] = value; }
-        }
+        public int Port => (int)this[PORT];
     }
 }

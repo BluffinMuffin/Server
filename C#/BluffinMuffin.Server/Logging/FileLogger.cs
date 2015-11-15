@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using BluffinMuffin.Server.Configuration;
 
 namespace BluffinMuffin.Server.Logging
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class FileLogger
     {
         public static void Init(BluffinMuffinDataSection config)

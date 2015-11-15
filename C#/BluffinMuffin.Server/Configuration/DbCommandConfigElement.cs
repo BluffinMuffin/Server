@@ -1,7 +1,9 @@
 ﻿using System.Configuration;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BluffinMuffin.Server.Configuration
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class DbCommandConfigElement : ConfigurationElement
     {
         public const string NAME = "dbCommandLogger";
@@ -9,34 +11,18 @@ namespace BluffinMuffin.Server.Configuration
 
         private const string URL = "url";
         [ConfigurationProperty(URL, IsRequired = true)]
-        public string Url
-        {
-            get { return (string)this[URL]; }
-            set { this[URL] = value; }
-        }
+        public string Url => (string)this[URL];
 
         private const string USER = "user";
         [ConfigurationProperty(USER, IsRequired = true)]
-        public string User
-        {
-            get { return (string)this[USER]; }
-            set { this[USER] = value; }
-        }
+        public string User => (string)this[USER];
 
         private const string PASSWORD = "password";
         [ConfigurationProperty(PASSWORD, IsRequired = true)]
-        public string Password
-        {
-            get { return (string)this[PASSWORD]; }
-            set { this[PASSWORD] = value; }
-        }
+        public string Password => (string)this[PASSWORD];
 
         private const string DATABASE = "database";
         [ConfigurationProperty(DATABASE, IsRequired = true)]
-        public string Database
-        {
-            get { return (string)this[DATABASE]; }
-            set { this[DATABASE] = value; }
-        }
+        public string Database => (string)this[DATABASE];
     }
 }

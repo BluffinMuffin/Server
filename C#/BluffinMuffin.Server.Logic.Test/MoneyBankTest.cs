@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
-using BluffinMuffin.Server.Logic.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BluffinMuffin.Server.Logic.Test
