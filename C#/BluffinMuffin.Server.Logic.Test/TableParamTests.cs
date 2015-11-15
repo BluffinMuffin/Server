@@ -69,5 +69,125 @@ namespace BluffinMuffin.Server.Logic.Test
             //Assert
             Assert.AreEqual(false, res);
         }
+        [TestMethod]
+        public void BigBlindEqualsGameSize()
+        {
+            //Arrange 
+            var t = new TableParams { GameSize = 100 };
+
+            //Act
+            var res = t.BigBlindAmount();
+
+            //Assert
+            Assert.AreEqual(t.GameSize, res);
+        }
+        [TestMethod]
+        public void SmallBlindEqualsHalfOfGameSize()
+        {
+            //Arrange 
+            var t = new TableParams { GameSize = 100 };
+
+            //Act
+            var res = t.SmallBlindAmount();
+
+            //Assert
+            Assert.AreEqual(t.GameSize / 2, res);
+        }
+        [TestMethod]
+        public void AnteEqualsATenthOfGameSize()
+        {
+            //Arrange 
+            var t = new TableParams { GameSize = 100 };
+
+            //Act
+            var res = t.AnteAmount();
+
+            //Assert
+            Assert.AreEqual(t.GameSize / 10, res);
+        }
+        [TestMethod]
+        public void BetEqualsGameSize()
+        {
+            //Arrange 
+            var t = new TableParams { GameSize = 100 };
+
+            //Act
+            var res = t.BetAmount();
+
+            //Assert
+            Assert.AreEqual(t.GameSize, res);
+        }
+        [TestMethod]
+        public void HalfBetEqualsHalfOfGameSize()
+        {
+            //Arrange 
+            var t = new TableParams { GameSize = 100 };
+
+            //Act
+            var res = t.HalfBetAmount();
+
+            //Assert
+            Assert.AreEqual(t.GameSize / 2, res);
+        }
+        [TestMethod]
+        public void MinimumOfTwoForBigBlind()
+        {
+            //Arrange 
+            var t = new TableParams { GameSize = 1 };
+
+            //Act
+            var res = t.BigBlindAmount();
+
+            //Assert
+            Assert.AreEqual(2, res);
+        }
+        [TestMethod]
+        public void MinimumOfTwoForBet()
+        {
+            //Arrange 
+            var t = new TableParams { GameSize = 1 };
+
+            //Act
+            var res = t.BetAmount();
+
+            //Assert
+            Assert.AreEqual(2, res);
+        }
+        [TestMethod]
+        public void MinimumOfOneForAnte()
+        {
+            //Arrange 
+            var t = new TableParams { GameSize = 5 };
+
+            //Act
+            var res = t.AnteAmount();
+
+            //Assert
+            Assert.AreEqual(1, res);
+        }
+        [TestMethod]
+        public void MinimumOfOneForSmallBlind()
+        {
+            //Arrange 
+            var t = new TableParams { GameSize = 1 };
+
+            //Act
+            var res = t.SmallBlindAmount();
+
+            //Assert
+            Assert.AreEqual(1, res);
+        }
+        [TestMethod]
+        public void MinimumOfOneForHalfBet()
+        {
+            //Arrange 
+            var t = new TableParams { GameSize = 1 };
+
+            //Act
+            var res = t.HalfBetAmount();
+
+            //Assert
+            Assert.AreEqual(1, res);
+        }
     }
 }

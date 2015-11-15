@@ -98,18 +98,18 @@ namespace BluffinMuffin.Server.Logic
                 Seats.SeatOfPlayingPlayerNextTo(previousDealer).AddAttribute(SeatAttributeEnum.Dealer);
 
             foreach (var s in GetPlayersWhoNeedsToPutAntes())
-                Bank.AddDebt(s.Player, Math.Max(1, Params.GameSize / 10));
+                Bank.AddDebt(s.Player, Params.AnteAmount());
 
             foreach (var s in GetPlayersWhoNeedsToPutSmallBlind())
             {
                 s.AddAttribute(SeatAttributeEnum.SmallBlind);
-                Bank.AddDebt(s.Player, Params.GameSize / 2);
+                Bank.AddDebt(s.Player, Params.SmallBlindAmount());
             }
 
             foreach (var s in GetPlayersWhoNeedsToPutBigBlind())
             {
                 s.AddAttribute(SeatAttributeEnum.BigBlind);
-                Bank.AddDebt(s.Player, Params.GameSize);
+                Bank.AddDebt(s.Player, Params.BigBlindAmount());
             }
 
             NewArrivals.Clear();

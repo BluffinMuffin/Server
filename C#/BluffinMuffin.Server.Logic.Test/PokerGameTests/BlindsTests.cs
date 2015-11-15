@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using BluffinMuffin.Protocol.DataTypes.Enums;
+using BluffinMuffin.Server.Logic.Extensions;
 using BluffinMuffin.Server.Logic.Test.PokerGameTests.DataTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -16,7 +17,7 @@ namespace BluffinMuffin.Server.Logic.Test.PokerGameTests
             var nfo = new ModularGameMock(new BlindModule(BlindTypeEnum.Antes), new NbPlayersModule(4)).WithAllPlayersSeated();
             
             //Act
-            var res = nfo.Players.All(x => nfo.BlindNeeded(x) == Math.Max(nfo.Game.Table.Params.GameSize/10,1));
+            var res = nfo.Players.All(x => nfo.BlindNeeded(x) == nfo.Game.Table.Params.AnteAmount());
 
             //Assert
             Assert.AreEqual(true, res, "The game should need the same blind for everybody (Antes)");

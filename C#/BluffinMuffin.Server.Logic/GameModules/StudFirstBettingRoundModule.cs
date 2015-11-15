@@ -34,9 +34,8 @@ namespace BluffinMuffin.Server.Logic.GameModules
         protected override void InitModuleSpecific()
         {
             Variant.NeedsBringIn = true;
-            var halfBet = Table.Params.GameSize / 2;
-            Table.HigherBet = halfBet;
-            Table.MinimumRaiseAmount = halfBet;
+            Table.HigherBet = Table.Params.HalfBetAmount();
+            Table.MinimumRaiseAmount = Table.Params.HalfBetAmount();
         }
 
         public override bool OnMoneyPlayed(PlayerInfo p, int amnt)
@@ -55,7 +54,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
         {
             if (Variant.NeedsBringIn)
             {
-                Table.MinimumRaiseAmount = Table.Params.GameSize;
+                Table.MinimumRaiseAmount = Table.Params.BetAmount();
                 Variant.NeedsBringIn = false;
             }
             base.ContinueBettingRound();

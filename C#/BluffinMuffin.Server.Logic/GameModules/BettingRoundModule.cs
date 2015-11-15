@@ -48,7 +48,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
 
             Table.NbPlayed = 0;
-            Table.MinimumRaiseAmount = Table.Params.GameSize;
+            Table.MinimumRaiseAmount = Table.Params.BetAmount();
             InitModuleSpecific();
 
             WaitALittle(Table.Params.WaitingTimes.AfterBoardDealed);
