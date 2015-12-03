@@ -11,7 +11,6 @@ using BluffinMuffin.Protocol.Game;
 using BluffinMuffin.Protocol.Lobby;
 using BluffinMuffin.Protocol.Lobby.QuickMode;
 using BluffinMuffin.Server.DataTypes;
-using Com.Ericmas001.Net.Protocol;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BluffinMuffin.Server.Protocol.Test
@@ -19,11 +18,11 @@ namespace BluffinMuffin.Server.Protocol.Test
     [TestClass]
     public class BluffinServerTest
     {
-        private readonly StringWriter m_Sw = new StringWriter();
         [TestMethod]
         public void BigUglyTest()
         {
-            Logger.MessageLogged += OnMessageLogged;
+            StringWriter sw = new StringWriter();
+            Logger.MessageLogged += (sender,e) =>  sw.WriteLine("[{0}] {1}", GetCaller(sender), e.Str);
 
             var server = new BluffinServer(42084);
             var tokenServer = new CancellationTokenSource();
@@ -90,12 +89,29 @@ namespace BluffinMuffin.Server.Protocol.Test
             c1.ReceivedCommands.CompleteAdding();
             c2.ReceivedCommands.CompleteAdding();
 
-            Assert.AreEqual(string.Empty,string.Join(",",c1.ReceivedCommands.GetConsumingEnumerable().Select(x => x.ToString())),m_Sw.ToString());
+            Assert.AreEqual(string.Empty, string.Join(",", c1.ReceivedCommands.GetConsumingEnumerable().Select(x => x.ToString())), sw.ToString());
 
-            Assert.AreEqual(string.Empty, string.Join(",", c2.ReceivedCommands.GetConsumingEnumerable().Select(x => x.ToString())), m_Sw.ToString());
+            Assert.AreEqual(string.Empty, string.Join(",", c2.ReceivedCommands.GetConsumingEnumerable().Select(x => x.ToString())), sw.ToString());
 
             tokenClient2.Cancel();
             tokenClient1.Cancel();
+            tokenServer.Cancel();
+        }
+        [TestMethod]
+        public void TryJoinTableThatDoesNotExist()
+        {
+            var server = new BluffinServer(42084);
+            var tokenServer = new CancellationTokenSource();
+            Task.Factory.StartNew(server.Start, tokenServer.Token);
+
+            var client = new ClientForTesting();
+            var tokenClient = new CancellationTokenSource();
+            Task.Factory.StartNew(client.Connect, tokenClient.Token);
+
+            var c = client.ObtainTcpEntity();
+            IdentifyAs(c, "Player");
+            JoinUnjoinableTable(c, 1);
+            tokenClient.Cancel();
             tokenServer.Cancel();
         }
 
@@ -106,11 +122,6 @@ namespace BluffinMuffin.Server.Protocol.Test
             if (sf == null)
                 return sender?.ToString() ?? string.Empty;
             return $"{sf.GetMethod().DeclaringType?.FullName}.{sf.GetMethod().Name}";
-        }
-
-        private void OnMessageLogged(object sender, StringEventArgs e)
-        {
-            m_Sw.WriteLine("[{0}] {1}", GetCaller(sender), e.Str);
         }
 
         private void BeAwareOfWhoItIsToPlay(RemoteTcpServer serverEntity, int tableId, int noSeat)
@@ -197,11 +208,21 @@ namespace BluffinMuffin.Server.Protocol.Test
         {
             var cmd = new JoinTableCommand()
             {
-                TableId=table
+                TableId = table
             };
             serverEntity.Send(cmd);
             var response = serverEntity.WaitForNextCommand<JoinTableResponse>();
             Assert.IsTrue(response.Success);
+        }
+        private void JoinUnjoinableTable(RemoteTcpServer serverEntity, int table)
+        {
+            var cmd = new JoinTableCommand()
+            {
+                TableId = table
+            };
+            serverEntity.Send(cmd);
+            var response = serverEntity.WaitForNextCommand<JoinTableResponse>();
+            Assert.IsFalse(response.Success);
         }
 
         private int CreateTable(RemoteTcpServer serverEntity)

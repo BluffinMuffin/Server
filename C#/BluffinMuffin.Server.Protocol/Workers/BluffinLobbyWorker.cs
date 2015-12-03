@@ -245,12 +245,12 @@ namespace BluffinMuffin.Server.Protocol.Workers
         {
             var c = (JoinTableCommand)command;
             var game = (PokerGame)Lobby.GetGame(c.TableId);
-            var table = game.Table;
-            if (!game.IsRunning)
+            if (game == null || !game.IsRunning)
             {
                 client.SendCommand(c.ResponseFailure(BluffinMessageId.WrongTableState, "You can't join a game that isn't running !"));
                 return;
             }
+            var table = game.Table;
             if (table.Seats.Players().ContainsPlayerNamed(client.PlayerName))
             {
                 client.SendCommand(c.ResponseFailure(BluffinMessageId.NameAlreadyUsed, "Someone with your name is already in this game !"));

@@ -28,6 +28,8 @@ namespace BluffinMuffin.Server.Protocol
 
         public IPokerGame GetGame(int id)
         {
+            if (!m_Games.ContainsKey(id))
+                return null;
             return m_Games[id];
         }
 
