@@ -6,6 +6,7 @@ using BluffinMuffin.Logger.DBAccess;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.Enums;
 using BluffinMuffin.Server.Configuration;
+using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.DataTypes.Protocol;
 
 namespace BluffinMuffin.Server.Logging
@@ -32,6 +33,8 @@ namespace BluffinMuffin.Server.Logging
             DataTypes.Logger.GameCreated += OnLogGameCreated;
             DataTypes.Logger.GameEnded += OnLogGameEnded;
             DataTypes.Logger.ClientCreated += OnLogClientCreated;
+            DataTypes.Logger.ClientIdentified += OnLogClientIdentified;
+            DataTypes.Logger.ClientAdditionalInfo += OnLogClientAdditionalInfo;
 
             m_LogServer = new Logger.DBAccess.Server($"{Assembly.GetEntryAssembly().GetName().Name} {Assembly.GetEntryAssembly().GetName().Version.ToString(3)}", Assembly.GetAssembly(typeof(AbstractCommand)).GetName().Version);
             m_LogServer.RegisterServer();
@@ -42,6 +45,16 @@ namespace BluffinMuffin.Server.Logging
         {
             m_LogClients[e.Client] = new Client(e.Endpoint.Client.RemoteEndPoint.ToString());
             m_LogClients[e.Client].RegisterClient();
+        }
+
+        private static void OnLogClientIdentified(object sender, LogClientEventArg e)
+        {
+            m_LogClients[e.Client].Identify(e.Client.PlayerName);
+        }
+
+        private static void OnLogClientAdditionalInfo(object sender, LogClientEventArg e)
+        {
+            m_LogClients[e.Client].SetAdditionalInformation(e.Client.ClientIdentification, e.Client.SupportedProtocol);
         }
 
         private static void OnLogGameEnded(object sender, DataTypes.EventHandling.LogGameEventArg e)

@@ -29,6 +29,7 @@ namespace BluffinMuffin.Server.DataTypes
         public static event EventHandler<LogGameEventArg> GameEnded = delegate { };
         public static event EventHandler<LogClientCreationEventArg> ClientCreated = delegate { };
         public static event EventHandler<LogClientEventArg> ClientIdentified = delegate { };
+        public static event EventHandler<LogClientEventArg> ClientAdditionalInfo = delegate { };
 
         public static void LogVerboseInformation(string message, params object[] args)
         {
@@ -87,6 +88,10 @@ namespace BluffinMuffin.Server.DataTypes
         public static void LogClientIdentified(IBluffinClient client)
         {
             ClientIdentified(new StackFrame(1), new LogClientEventArg(client));
+        }
+        public static void LogClientAdditionalInfo(IBluffinClient client)
+        {
+            ClientAdditionalInfo(new StackFrame(1), new LogClientEventArg(client));
         }
     }
 }

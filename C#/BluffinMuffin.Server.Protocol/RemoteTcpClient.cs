@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.Enums;
@@ -15,6 +16,8 @@ namespace BluffinMuffin.Server.Protocol
         private readonly Dictionary<int, RemotePlayer> m_GamePlayers = new Dictionary<int, RemotePlayer>(); 
 
         public string PlayerName { get; set; }
+        public string ClientIdentification { get; set; }
+        public Version SupportedProtocol { get; set; }
 
         public RemoteTcpClient(TcpClient remoteEntity, IBluffinServer bluffinServer)
             : base(remoteEntity)
