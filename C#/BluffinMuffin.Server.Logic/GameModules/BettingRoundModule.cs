@@ -76,8 +76,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         private void FoldPlayer(PlayerInfo p)
         {
-            if (p.State != PlayerStateEnum.Zombie)
-                p.State = PlayerStateEnum.SitIn;
+            p.ChangeState(PlayerStateEnum.SitIn);
 
             WaitALittle(Table.Params.WaitingTimes.AfterPlayerAction);
 
@@ -122,8 +121,9 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
             Observer.RaisePlayerActionNeeded(next.Player, Table.NeededCallAmountForPlayer(next.Player), CanFold(), Table.MinimumRaiseAmount, int.MaxValue);
 
-            if (next.Player.State==PlayerStateEnum.Zombie)
+            if (Table.Zombies.Contains(next.Player))
             {
+                WaitALittle(Table.Params.WaitingTimes.AfterPlayerAction);
                 if (Table.CanCheck(next.Player))
                     OnMoneyPlayed(next.Player, 0);
                 else
@@ -187,7 +187,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             if (p.MoneySafeAmnt == 0)
             {
                 Logger.LogDebugInformation("Player now All-In !");
-                p.State = PlayerStateEnum.AllIn;
+                p.ChangeState(PlayerStateEnum.AllIn);
             }
 
             //Was it a CALL or a RAISE ?

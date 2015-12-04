@@ -57,10 +57,10 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(false, res);
         }
         [TestMethod]
-        public void SeatWithZombiePlayerDoesntHavePlayerPlaying()
+        public void SeatWithNonePlayerDoesntHavePlayerPlaying()
         {
             //Arrange
-            var s = new SeatInfo { Player = new PlayerInfo { State = PlayerStateEnum.Zombie } };
+            var s = new SeatInfo { Player = new PlayerInfo { State = PlayerStateEnum.None } };
 
             //Act
             var res = s.HasPlayerPlaying();
@@ -129,10 +129,10 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(false, res);
         }
         [TestMethod]
-        public void SeatWithZombiePlayerDoesntHavePlayerAllIn()
+        public void SeatWithNonePlayerDoesntHavePlayerAllIn()
         {
             //Arrange
-            var s = new SeatInfo { Player = new PlayerInfo { State = PlayerStateEnum.Zombie } };
+            var s = new SeatInfo { Player = new PlayerInfo { State = PlayerStateEnum.None } };
 
             //Act
             var res = s.HasPlayerAllIn();
@@ -201,10 +201,10 @@ namespace BluffinMuffin.Server.Logic.Test
             Assert.AreEqual(false, res);
         }
         [TestMethod]
-        public void SeatWithZombiePlayerDoesntHavePlayerPlayingOrAllIn()
+        public void SeatWithNonePlayerDoesntHavePlayerPlayingOrAllIn()
         {
             //Arrange
-            var s = new SeatInfo { Player = new PlayerInfo { State = PlayerStateEnum.Zombie } };
+            var s = new SeatInfo { Player = new PlayerInfo { State = PlayerStateEnum.None } };
 
             //Act
             var res = s.HasPlayerPlayingOrAllIn();

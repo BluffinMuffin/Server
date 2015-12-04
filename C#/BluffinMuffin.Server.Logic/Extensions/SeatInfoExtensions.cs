@@ -14,7 +14,7 @@ namespace BluffinMuffin.Server.Logic.Extensions
         /// <returns>True if the seats contains a player that is in the playing state</returns>
         public static bool HasPlayerPlaying(this SeatInfo si)
         {
-            return !si.IsEmpty && si.Player.State == PlayerStateEnum.Playing;
+            return !si.IsEmpty && si.Player.IsPlaying();
         }
 
         /// <summary>

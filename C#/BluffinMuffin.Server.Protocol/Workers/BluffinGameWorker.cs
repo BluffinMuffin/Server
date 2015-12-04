@@ -8,7 +8,9 @@ using BluffinMuffin.Server.Persistance;
 using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Protocol.Enums;
 using BluffinMuffin.Protocol.Game;
+using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes.Protocol;
+using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Protocol.Workers
 {
@@ -50,13 +52,25 @@ namespace BluffinMuffin.Server.Protocol.Workers
                 DataManager.Persistance.Get(p.Client.PlayerName).TotalMoney += p.Player.MoneySafeAmnt;
 
             client.RemovePlayer(p);
+            if (p.Player.State == PlayerStateEnum.Joined || !p.Game.IsPlaying)
+            {
+                var t = p.Game.Table;
+                Logger.LogInformation("> Client '{0}' left table: {2}:{1}", p.Player.Name, t.Params.TableName, p.TableId);
 
-            p.Player.State = PlayerStateEnum.Zombie;
+                p.Game.LeaveGame(p.Player);
+            }
+            else
+            {
+            var blindNeeded = p.Game.Table.Bank.DebtAmount(p.Player);
 
-            var t = p.Game.Table;
-            Logger.LogInformation("> Client '{0}' left table: {2}:{1}", p.Player.Name, t.Params.TableName, p.TableId);
+                if (!p.Game.Table.Zombies.Contains(p.Player))
+                    p.Game.Table.Zombies.Add(p.Player);
+                if (p.Game.State == GameStateEnum.Playing && p.Game.Table.Seats.CurrentPlayer() == p.Player)
+                p.Game.PlayMoney(p.Player, -1);
+            else if (blindNeeded > 0)
+                p.Game.PlayMoney(p.Player, blindNeeded);
+            }
 
-            p.Game.LeaveGame(p.Player);
             
         }
 

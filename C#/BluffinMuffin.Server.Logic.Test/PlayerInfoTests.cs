@@ -112,19 +112,6 @@ namespace BluffinMuffin.Server.Logic.Test
         }
 
         [TestMethod]
-        public void ZombiePlayerIsNotPlayingNorAllIn()
-        {
-            //Arrange
-            var p = new PlayerInfo() { State = PlayerStateEnum.Zombie };
-
-            //Act
-            var res = p.IsPlayingOrAllIn();
-
-            //Assert
-            Assert.AreEqual(false, res);
-        }
-
-        [TestMethod]
         public void JoinedPlayerIsNotPlayingNorAllIn()
         {
             //Arrange

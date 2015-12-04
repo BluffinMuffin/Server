@@ -35,15 +35,15 @@ namespace BluffinMuffin.Server.Logic.GameModules
 
         private void TryToBegin()
         {
+            PlayerInfo pZombie;
+            Table.Zombies.ToArray().ToList().ForEach(p => Observer.RaisePlayerLeft(p));
+            Table.Zombies.Clear();
+            while ((pZombie = Table.Zombies.FirstOrDefault()) != null)
+                Observer.RaisePlayerLeft(pZombie);
+
             foreach (var p in Table.Seats.Players())
-            {
-                if (p.State==PlayerStateEnum.Zombie && SitOut(p))
-                    Table.LeaveTable(p);
-                else if (p.IsReadyToPlay())
-                    p.State = PlayerStateEnum.Playing;
-                else
-                    p.State = PlayerStateEnum.SitIn;
-            }
+                p.ChangeState(p.IsReadyToPlay() ? PlayerStateEnum.Playing : PlayerStateEnum.SitIn);
+
             if (Table.HadPlayers && !Table.Seats.PlayingPlayers().Any())
                 RaiseAborted();
             else if (Table.Seats.PlayingPlayers().Count() >= Table.Params.MinPlayersToStart)
@@ -57,29 +57,8 @@ namespace BluffinMuffin.Server.Logic.GameModules
             else
             {
                 Table.Seats.ClearAttribute(SeatAttributeEnum.Dealer);
-                Table.Seats.PlayingPlayers().ToList().ForEach(x => x.State = PlayerStateEnum.SitIn);
+                Table.Seats.PlayingPlayers().ToList().ForEach(x => x.ChangeState(PlayerStateEnum.SitIn));
             }
-        }
-
-        private bool SitOut(PlayerInfo p)
-        {
-            var oldSeat = p.NoSeat;
-            if (oldSeat == -1)
-                return true;
-
-            p.State = PlayerStateEnum.Zombie;
-            if (Table.Seats.Players().ContainsPlayerWithSameName(p))
-            {
-                Table.SitOut(p);
-                var seat = new SeatInfo()
-                {
-                    Player = null,
-                    NoSeat = oldSeat,
-                };
-                Observer.RaiseSeatUpdated(seat);
-                return true;
-            }
-            return false;
         }
     }
 }

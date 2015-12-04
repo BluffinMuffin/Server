@@ -23,7 +23,11 @@ namespace BluffinMuffin.Server.Logic
         /// <summary>
         /// Contains all the People that are watching anbd playing the game. Everybody in the room.
         /// </summary>
-        private List<PlayerInfo> People { get; } = new List<PlayerInfo>();
+        public List<PlayerInfo> People { get; } = new List<PlayerInfo>();
+        /// <summary>
+        /// Contains all the Players that are zombies. Every sitting player that left.
+        /// </summary>
+        public List<PlayerInfo> Zombies { get; } = new List<PlayerInfo>();
 
         /// <summary>
         /// Cards on the Board
@@ -126,7 +130,7 @@ namespace BluffinMuffin.Server.Logic
             }
 
             People.Add(p);
-            p.State = PlayerStateEnum.Joined;
+            p.ChangeState(PlayerStateEnum.Joined);
 
             return true;
         }
@@ -151,7 +155,8 @@ namespace BluffinMuffin.Server.Logic
                 return;
 
             var seat = p.NoSeat;
-            p.State = PlayerStateEnum.Zombie;
+            if (!Zombies.Contains(p))
+                Zombies.Add(p);
             p.NoSeat = -1;
             Seats[seat].Player = null;
         }
@@ -232,7 +237,7 @@ namespace BluffinMuffin.Server.Logic
 
             HadPlayers = true;
 
-            p.State = PlayerStateEnum.SitIn;
+            p.ChangeState(PlayerStateEnum.SitIn);
             p.NoSeat = seat;
             Seats[seat].Player = p;
             return Seats[seat];

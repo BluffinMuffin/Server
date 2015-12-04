@@ -16,6 +16,7 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         public event EventHandler GameBettingRoundStarted = delegate { };
         public event EventHandler GameBettingRoundEnded = delegate { };
         public event EventHandler<PlayerInfoEventArgs> PlayerJoined = delegate { };
+        public event EventHandler<PlayerInfoEventArgs> PlayerLeft = delegate { };
         public event EventHandler<PlayerInfoEventArgs> PlayerHoleCardsChanged = delegate { };
         public event EventHandler<SeatEventArgs> SeatUpdated = delegate { };
         public event EventHandler<ActionNeededEventArgs> PlayerActionNeeded = delegate { };
@@ -51,6 +52,10 @@ namespace BluffinMuffin.Server.DataTypes.EventHandling
         public void RaisePlayerJoined(PlayerInfo p)
         {
             PlayerJoined(m_Game, new PlayerInfoEventArgs(p));
+        }
+        public void RaisePlayerLeft(PlayerInfo p)
+        {
+            PlayerLeft(m_Game, new PlayerInfoEventArgs(p));
         }
         public void RaisePlayerHoleCardsChanged(PlayerInfo p)
         {

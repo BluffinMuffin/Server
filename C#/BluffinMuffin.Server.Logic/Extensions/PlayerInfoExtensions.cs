@@ -13,7 +13,22 @@ namespace BluffinMuffin.Server.Logic.Extensions
         /// <returns>True if the player is playing or all-in</returns>
         public static bool IsPlayingOrAllIn(this PlayerInfo p)
         {
-            return p.State == PlayerStateEnum.Playing || p.State == PlayerStateEnum.AllIn;
+            return p.IsPlaying() || p.State == PlayerStateEnum.AllIn;
+        }
+
+        /// <summary>
+        /// Checks if the player is playing
+        /// </summary>
+        /// <param name="p">Player</param>
+        /// <returns>True if the player is playing</returns>
+        public static bool IsPlaying(this PlayerInfo p)
+        {
+            return p.State == PlayerStateEnum.Playing;
+        }
+
+        public static void ChangeState(this PlayerInfo p, PlayerStateEnum state)
+        {
+            p.State = state;
         }
 
 

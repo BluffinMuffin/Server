@@ -37,7 +37,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
                 if (amnt < needed && !p.CanBet(amnt + 1))
                 {
                     Logger.LogDebugInformation("Player now All-In !");
-                    p.State = PlayerStateEnum.AllIn;
+                    p.ChangeState(PlayerStateEnum.AllIn);
                 }
                 else //well, it's just not fair to play that
                 {

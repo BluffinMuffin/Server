@@ -29,14 +29,17 @@ namespace BluffinMuffin.Server.Logic
         public PokerTable Table { get; }
 
         /// <summary>
-        /// Is the Game currently Running ? (Not Ended)
+        /// Is the Game currently Running ? (State Not Ended)
         /// </summary>
         public bool IsRunning => State != GameStateEnum.End;
 
+        /// <summary>
+        /// Is the Game currently Initializing ? (State Init)
+        /// </summary>
         private bool IsInitializing => State == GameStateEnum.Init;
 
         /// <summary>
-        /// Is the Game currently Running ? (Not Ended)
+        /// Is the Game currently Playing ? (State >= WaitForBlinds)
         /// </summary>
         public bool IsPlaying => IsRunning && State >= GameStateEnum.WaitForBlinds;
 
@@ -50,6 +53,7 @@ namespace BluffinMuffin.Server.Logic
         public PokerGame(PokerTable table)
         {
             Observer = new PokerGameObserver(this);
+            Observer.PlayerLeft += (sender, e) => LeaveGame(e.Player);
             Table = table;
         }
         #endregion Ctors & Init
@@ -103,7 +107,8 @@ namespace BluffinMuffin.Server.Logic
 
             var blindNeeded = Table.Bank.DebtAmount(p);
 
-            p.State = PlayerStateEnum.Zombie;
+            if (!Table.Zombies.Contains(p))
+                Table.Zombies.Add(p);
             if (State == GameStateEnum.Playing && Table.Seats.CurrentPlayer() == p)
                 PlayMoney(p, -1);
             else if (blindNeeded > 0)
@@ -133,7 +138,7 @@ namespace BluffinMuffin.Server.Logic
 
             if (sitOutOk && Table.LeaveTable(p))
             {
-                if (!Table.Seats.Players().Any())
+                if (!Table.People.Any())
                     SetModule(new EndGameModule(Observer,Table));
             }
         }
