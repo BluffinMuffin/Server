@@ -52,6 +52,22 @@ namespace BluffinMuffin.Server.Protocol
             Game.Observer.DiscardActionNeeded += OnDiscardActionNeeded;
         }
 
+        public void EndPokerObserver()
+        {
+            Game.Observer.GameBettingRoundEnded -= OnGameBettingRoundEnded;
+            Game.Observer.PlayerHoleCardsChanged -= OnPlayerHoleCardsChanged;
+            Game.Observer.GameEnded -= OnGameEnded;
+            Game.Observer.PlayerWonPot -= OnPlayerWonPot;
+            Game.Observer.PlayerActionTaken -= OnPlayerActionTaken;
+            Game.Observer.EverythingEnded -= OnEverythingEnded;
+            Game.Observer.PlayerActionNeeded -= OnPlayerActionNeeded;
+            Game.Observer.GameBlindNeeded -= OnGameBlindNeeded;
+            Game.Observer.GameBettingRoundStarted -= OnGameBettingRoundStarted;
+            Game.Observer.PlayerJoined -= OnPlayerJoined;
+            Game.Observer.SeatUpdated -= OnSeatUpdated;
+            Game.Observer.DiscardActionNeeded -= OnDiscardActionNeeded;
+        }
+
         void OnDiscardActionNeeded(object sender, MinMaxEventArgs e)
         {
             Send(new DiscardRoundStartedCommand()

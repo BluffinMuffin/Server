@@ -85,7 +85,11 @@ namespace BluffinMuffin.Server.Protocol
         {
             lock (m_GamePlayers)
             {
-                m_GamePlayers.Remove(p.TableId);
+                if (m_GamePlayers.ContainsKey(p.TableId))
+                {
+                     m_GamePlayers[p.TableId].EndPokerObserver();
+                    m_GamePlayers.Remove(p.TableId);
+                }
             }
         }
     }
