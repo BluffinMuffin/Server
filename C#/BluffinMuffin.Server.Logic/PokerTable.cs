@@ -13,6 +13,8 @@ namespace BluffinMuffin.Server.Logic
     {
 
         #region Properties
+
+        private SeatInfo m_DealerSeat;
         
         public MoneyBank Bank { get; } = new MoneyBank();
 
@@ -93,12 +95,12 @@ namespace BluffinMuffin.Server.Logic
             Cards = new string[0];
             NbPlayed = 0;
 
-            var previousDealer = Seats.SeatOfDealer();
-
-            Seats.ClearAllAttributes();
+            var previousDealer = m_DealerSeat;
 
             if (Params.Options.OptionType != GameTypeEnum.StudPoker)
                 Seats.SeatOfPlayingPlayerNextTo(previousDealer).AddAttribute(SeatAttributeEnum.Dealer);
+
+            m_DealerSeat = Seats.SeatOfDealer();
 
             foreach (var s in GetPlayersWhoNeedsToPutAntes())
                 Bank.AddDebt(s.Player, Params.AnteAmount());

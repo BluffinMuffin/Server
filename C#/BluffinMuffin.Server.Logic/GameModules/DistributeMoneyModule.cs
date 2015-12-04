@@ -26,6 +26,8 @@ namespace BluffinMuffin.Server.Logic.GameModules
                     WaitALittle(Table.Params.WaitingTimes.AfterPotWon);
                 }
             }
+
+            Table.Seats.ClearAllAttributes();
             RaiseCompleted();
         }
     }
