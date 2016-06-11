@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 using BluffinMuffin.Server.DataTypes.Protocol;
-using Com.Ericmas001.Net.Protocol;
+using Com.Ericmas001.Communication;
 
 namespace BluffinMuffin.Server.Protocol
 {

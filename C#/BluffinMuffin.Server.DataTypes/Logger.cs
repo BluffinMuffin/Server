@@ -2,11 +2,11 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Sockets;
+using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Server.DataTypes.Protocol;
 using Com.Ericmas001.Common;
-using AbstractCommand = BluffinMuffin.Protocol.AbstractCommand;
 
 namespace BluffinMuffin.Server.DataTypes
 {

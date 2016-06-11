@@ -5,7 +5,7 @@ using BluffinMuffin.Protocol;
 using BluffinMuffin.Protocol.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Protocol;
-using Com.Ericmas001.Net.Protocol;
+using Com.Ericmas001.Communication;
 
 namespace BluffinMuffin.Server.Protocol
 {

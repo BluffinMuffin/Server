@@ -8,7 +8,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "References", "References", "{83B52027-C2CE-459B-B2D6-171D30532F57}"
 	ProjectSection(SolutionItems) = preProject
 		References\BluffinMuffin.Logger.DBAccess.dll = References\BluffinMuffin.Logger.DBAccess.dll
-		References\Com.Ericmas001.Net.Protocol.dll = References\Com.Ericmas001.Net.Protocol.dll
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BluffinMuffin.Server.DataTypes", "BluffinMuffin.Server.DataTypes\BluffinMuffin.Server.DataTypes.csproj", "{FCDF88C3-BA2F-4C06-AA9A-6ACE1355A37E}"

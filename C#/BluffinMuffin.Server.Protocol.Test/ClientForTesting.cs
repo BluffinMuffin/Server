@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq;
 using System.Net.Sockets;
-using Com.Ericmas001.Net.Protocol;
+using Com.Ericmas001.Communication;
 
 namespace BluffinMuffin.Server.Protocol.Test
 {

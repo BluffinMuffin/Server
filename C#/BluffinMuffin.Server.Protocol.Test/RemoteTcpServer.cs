@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq;
 using System.Net.Sockets;
-using Com.Ericmas001.Net.Protocol;
+using BluffinMuffin.Protocol;
+using Com.Ericmas001.Communication;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AbstractCommand = BluffinMuffin.Protocol.AbstractCommand;
 
 namespace BluffinMuffin.Server.Protocol.Test
 {
