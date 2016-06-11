@@ -31,12 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BluffinMuffin.HandEvaluator">
-      <HintPath>..\References\BluffinMuffin.HandEvaluator.dll</HintPath>
+    <Reference Include="BluffinMuffin.HandEvaluator, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BluffinMuffin.HandEvaluator.3.1.2\lib\BluffinMuffin.HandEvaluator.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="BluffinMuffin.Protocol.DataTypes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\BluffinMuffin.Protocol.DataTypes.dll</HintPath>
+    <Reference Include="BluffinMuffin.Protocol.DataTypes, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BluffinMuffin.Protocol.DataTypes.4.0.1\lib\BluffinMuffin.Protocol.DataTypes.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Com.Ericmas001.Collections">
       <HintPath>..\References\Com.Ericmas001.Collections.dll</HintPath>
@@ -47,8 +48,8 @@
     <Reference Include="Com.Ericmas001.Portable.Util">
       <HintPath>..\References\Com.Ericmas001.Portable.Util.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

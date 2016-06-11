@@ -43,13 +43,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\BluffinMuffin.Logger.DBAccess.dll</HintPath>
     </Reference>
-    <Reference Include="BluffinMuffin.Protocol, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\BluffinMuffin.Protocol.dll</HintPath>
+    <Reference Include="BluffinMuffin.Protocol, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BluffinMuffin.Protocol.4.0.1\lib\BluffinMuffin.Protocol.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="BluffinMuffin.Protocol.DataTypes, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\BluffinMuffin.Protocol.DataTypes.dll</HintPath>
+    <Reference Include="BluffinMuffin.Protocol.DataTypes, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BluffinMuffin.Protocol.DataTypes.4.0.1\lib\BluffinMuffin.Protocol.DataTypes.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Com.Ericmas001.Net.Protocol">
       <HintPath>..\References\Com.Ericmas001.Net.Protocol.dll</HintPath>
@@ -62,8 +62,8 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
