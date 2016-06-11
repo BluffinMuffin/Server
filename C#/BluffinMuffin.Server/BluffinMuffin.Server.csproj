@@ -39,9 +39,9 @@
     <ApplicationIcon>server.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BluffinMuffin.Logger.DBAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\BluffinMuffin.Logger.DBAccess.dll</HintPath>
+    <Reference Include="BluffinMuffin.Logger.DBAccess, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BluffinMuffin.Logger.DBAccess.1.1.0\lib\BluffinMuffin.Logger.DBAccess.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="BluffinMuffin.Protocol, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BluffinMuffin.Protocol.4.0.1\lib\BluffinMuffin.Protocol.dll</HintPath>
