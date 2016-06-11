@@ -47,7 +47,12 @@
       <HintPath>..\packages\BluffinMuffin.Protocol.Tests.DataTypes.4.0.1\lib\BluffinMuffin.Protocol.Tests.DataTypes.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Com.Ericmas001.Net.Protocol">
+    <Reference Include="Com.Ericmas001.Common, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Com.Ericmas001.Common.0.1.0\lib\Com.Ericmas001.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Com.Ericmas001.Net.Protocol, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\Com.Ericmas001.Net.Protocol.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

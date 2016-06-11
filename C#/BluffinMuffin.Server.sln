@@ -1,19 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{10646A39-62B0-45F4-9D1C-46252B174541}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "References", "References", "{83B52027-C2CE-459B-B2D6-171D30532F57}"
 	ProjectSection(SolutionItems) = preProject
-		References\BluffinMuffin.HandEvaluator.dll = References\BluffinMuffin.HandEvaluator.dll
-		References\BluffinMuffin.Protocol.DataTypes.dll = References\BluffinMuffin.Protocol.DataTypes.dll
-		References\BluffinMuffin.Protocol.dll = References\BluffinMuffin.Protocol.dll
-		References\BluffinMuffin.Protocol.Tests.DataTypes.dll = References\BluffinMuffin.Protocol.Tests.DataTypes.dll
-		References\Com.Ericmas001.Collections.dll = References\Com.Ericmas001.Collections.dll
+		References\BluffinMuffin.Logger.DBAccess.dll = References\BluffinMuffin.Logger.DBAccess.dll
 		References\Com.Ericmas001.Net.Protocol.dll = References\Com.Ericmas001.Net.Protocol.dll
-		References\Com.Ericmas001.Util.dll = References\Com.Ericmas001.Util.dll
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BluffinMuffin.Server.DataTypes", "BluffinMuffin.Server.DataTypes\BluffinMuffin.Server.DataTypes.csproj", "{FCDF88C3-BA2F-4C06-AA9A-6ACE1355A37E}"

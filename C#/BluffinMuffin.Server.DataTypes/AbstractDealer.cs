@@ -2,7 +2,7 @@
 using System.Linq;
 using BluffinMuffin.HandEvaluator;
 using BluffinMuffin.HandEvaluator.Enums;
-using Com.Ericmas001.Portable.Util;
+using Com.Ericmas001.Common;
 using static BluffinMuffin.HandEvaluator.Enums.NominalValueEnum;
 using static BluffinMuffin.HandEvaluator.Enums.SuitEnum;
 
@@ -34,7 +34,7 @@ namespace BluffinMuffin.Server.DataTypes
             var restantes = GetSortedDeck();
             while (restantes.Count > 0)
             {
-                var id = Hasard.RandomWithMax(restantes.Count - 1);
+                var id = RandomUtil.RandomWithMax(restantes.Count - 1);
                 deck.Push(restantes[id]);
                 restantes.RemoveAt(id);
             }

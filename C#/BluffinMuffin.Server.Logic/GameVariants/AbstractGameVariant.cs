@@ -6,7 +6,7 @@ using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Attributes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
-using Com.Ericmas001.Portable.Util;
+using Com.Ericmas001.Common;
 
 namespace BluffinMuffin.Server.Logic.GameVariants
 {
@@ -40,7 +40,7 @@ namespace BluffinMuffin.Server.Logic.GameVariants
         {
             get
             {
-                var att = EnumFactory<GameSubTypeEnum>.GetAttribute<GameTypeAttribute>(Variant);
+                var att = EnumUtil<GameSubTypeEnum>.GetAttribute<GameTypeAttribute>(Variant);
                 if (att != null)
                     return att.GameType;
                 return GameTypeEnum.CommunityCardsPoker;

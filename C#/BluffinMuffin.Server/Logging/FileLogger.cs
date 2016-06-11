@@ -22,30 +22,30 @@ namespace BluffinMuffin.Server.Logging
                 {
                     var sw = File.CreateText($"{path}\\server.{logName}.verbose.txt");
                     sw.AutoFlush = true;
-                    DataTypes.Logger.ErrorLogged += (sender, args) => LogError(sw, args.Str);
-                    DataTypes.Logger.WarningLogged += (sender, args) => LogWarning(sw, args.Str);
-                    DataTypes.Logger.InformationLogged += (sender, args) => LogInformation(sw, args.Str);
-                    DataTypes.Logger.DebugInformationLogged += (sender, args) => LogDebugInformation(sw, args.Str);
-                    DataTypes.Logger.VerboseInformationLogged += (sender, args) => LogDebugInformation(sw, args.Str);
+                    DataTypes.Logger.ErrorLogged += (sender, args) => LogError(sw, args.Info);
+                    DataTypes.Logger.WarningLogged += (sender, args) => LogWarning(sw, args.Info);
+                    DataTypes.Logger.InformationLogged += (sender, args) => LogInformation(sw, args.Info);
+                    DataTypes.Logger.DebugInformationLogged += (sender, args) => LogDebugInformation(sw, args.Info);
+                    DataTypes.Logger.VerboseInformationLogged += (sender, args) => LogDebugInformation(sw, args.Info);
                     goto case FileLoggerConfigElement.LVL_DEBUG;
                 }
                 case FileLoggerConfigElement.LVL_DEBUG:
                 {
                     var sw = File.CreateText($"{path}\\server.{logName}.debug.txt");
                     sw.AutoFlush = true;
-                    DataTypes.Logger.ErrorLogged += (sender, args) => LogError(sw, args.Str);
-                    DataTypes.Logger.WarningLogged += (sender, args) => LogWarning(sw, args.Str);
-                    DataTypes.Logger.InformationLogged += (sender, args) => LogInformation(sw, args.Str);
-                    DataTypes.Logger.DebugInformationLogged += (sender, args) => LogDebugInformation(sw, args.Str);
+                    DataTypes.Logger.ErrorLogged += (sender, args) => LogError(sw, args.Info);
+                    DataTypes.Logger.WarningLogged += (sender, args) => LogWarning(sw, args.Info);
+                    DataTypes.Logger.InformationLogged += (sender, args) => LogInformation(sw, args.Info);
+                    DataTypes.Logger.DebugInformationLogged += (sender, args) => LogDebugInformation(sw, args.Info);
                     goto case FileLoggerConfigElement.LVL_NORMAL;
                 }
                 case FileLoggerConfigElement.LVL_NORMAL:
                 {
                     var sw = File.CreateText($"{path}\\server.{logName}.txt");
                     sw.AutoFlush = true;
-                    DataTypes.Logger.ErrorLogged += (sender, args) => LogError(sw, args.Str);
-                    DataTypes.Logger.WarningLogged += (sender, args) => LogWarning(sw, args.Str);
-                    DataTypes.Logger.InformationLogged += (sender, args) => LogInformation(sw, args.Str);
+                    DataTypes.Logger.ErrorLogged += (sender, args) => LogError(sw, args.Info);
+                    DataTypes.Logger.WarningLogged += (sender, args) => LogWarning(sw, args.Info);
+                    DataTypes.Logger.InformationLogged += (sender, args) => LogInformation(sw, args.Info);
                     break;
                 }
             }

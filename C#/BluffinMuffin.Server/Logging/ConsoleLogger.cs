@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using BluffinMuffin.Server.Configuration;
+using Com.Ericmas001.Common;
 
 namespace BluffinMuffin.Server.Logging
 {
@@ -18,19 +19,19 @@ namespace BluffinMuffin.Server.Logging
         }
         public static void Init(BluffinMuffinDataSection config)
         {
-            DataTypes.Logger.ErrorLogged += (sender, args) => LogError(args.Str);
-            DataTypes.Logger.WarningLogged += (sender, args) => LogWarning(args.Str);
+            DataTypes.Logger.ErrorLogged += (sender, args) => LogError(args.Info);
+            DataTypes.Logger.WarningLogged += (sender, args) => LogWarning(args.Info);
 
             switch (config.Logging.Console.Level)
             {
                 case ConsoleLoggerConfigElement.LVL_VERBOSE:
-                    DataTypes.Logger.VerboseInformationLogged += (sender, args) => LogVerboseInformation(args.Str);
+                    DataTypes.Logger.VerboseInformationLogged += (sender, args) => LogVerboseInformation(args.Info);
                     goto case ConsoleLoggerConfigElement.LVL_DEBUG;
                 case ConsoleLoggerConfigElement.LVL_DEBUG:
-                    DataTypes.Logger.DebugInformationLogged += (sender, args) => LogDebugInformation(args.Str);
+                    DataTypes.Logger.DebugInformationLogged += (sender, args) => LogDebugInformation(args.Info);
                     goto case ConsoleLoggerConfigElement.LVL_NORMAL;
                 case ConsoleLoggerConfigElement.LVL_NORMAL:
-                    DataTypes.Logger.InformationLogged += (sender, args) => LogInformation(args.Str);
+                    DataTypes.Logger.InformationLogged += (sender, args) => LogInformation(args.Info);
                     break;
             }
         }

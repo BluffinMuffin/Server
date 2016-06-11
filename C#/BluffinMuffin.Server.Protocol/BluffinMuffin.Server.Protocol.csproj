@@ -43,9 +43,6 @@
       <HintPath>..\packages\BluffinMuffin.Protocol.DataTypes.4.0.1\lib\BluffinMuffin.Protocol.DataTypes.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Com.Ericmas001.Collections">
-      <HintPath>..\References\Com.Ericmas001.Collections.dll</HintPath>
-    </Reference>
     <Reference Include="Com.Ericmas001.Net.Protocol">
       <HintPath>..\References\Com.Ericmas001.Net.Protocol.dll</HintPath>
     </Reference>

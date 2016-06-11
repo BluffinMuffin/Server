@@ -22,7 +22,7 @@ namespace BluffinMuffin.Server.Protocol.Test
         public void BigUglyTest()
         {
             StringWriter sw = new StringWriter();
-            Logger.MessageLogged += (sender,e) =>  sw.WriteLine("[{0}] {1}", GetCaller(sender), e.Str);
+            Logger.MessageLogged += (sender,e) =>  sw.WriteLine("[{0}] {1}", GetCaller(sender), e.Info);
 
             var server = new BluffinServer(42084);
             var tokenServer = new CancellationTokenSource();
