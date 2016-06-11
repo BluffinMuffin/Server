@@ -76,7 +76,7 @@ namespace BluffinMuffin.Server.Logic
                 foreach (var cap in allInPlayers.Select(p => p.MoneyBetAmnt).OrderBy(a => a))
                 {
                     PlayersWithMoneyAmountInPlay.ForEach(p => Pots.Peek().Contribute(p, cap - given));
-                    given += (cap - given);
+                    given += cap - given;
                     Pots.Push(new MoneyPot());
                 }
             }

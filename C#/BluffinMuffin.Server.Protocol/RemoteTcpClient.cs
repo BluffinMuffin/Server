@@ -30,7 +30,7 @@ namespace BluffinMuffin.Server.Protocol
         {
             if (!string.IsNullOrEmpty(data))
             {
-                var command = BluffinMuffin.Protocol.AbstractCommand.DeserializeCommand(data);
+                var command = AbstractCommand.DeserializeCommand(data);
                 Logger.LogCommandReceived(command, this, data);
                 switch (command.CommandType)
                 {
@@ -66,7 +66,7 @@ namespace BluffinMuffin.Server.Protocol
             OnDataReceived(new DisconnectCommand().Encode());
         }
 
-        public void SendCommand(BluffinMuffin.Protocol.AbstractCommand command)
+        public void SendCommand(AbstractCommand command)
         {
             var line = command.Encode();
             Logger.LogCommandSent(command, this, line);

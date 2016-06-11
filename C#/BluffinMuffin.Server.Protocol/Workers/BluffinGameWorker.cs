@@ -101,7 +101,7 @@ namespace BluffinMuffin.Server.Protocol.Workers
             }
             else
             {
-                var r = (seat.NoSeat != c.NoSeat) ? c.ResponseSuccess(BluffinMessageId.SeatChanged, "The asked seat wasn't available, the server gave you another one.") : c.ResponseSuccess();
+                var r = seat.NoSeat != c.NoSeat ? c.ResponseSuccess(BluffinMessageId.SeatChanged, "The asked seat wasn't available, the server gave you another one.") : c.ResponseSuccess();
                 r.NoSeat = seat.NoSeat;
                 client.SendCommand(r);
                 p.Game.AfterPlayerSat(p.Player);

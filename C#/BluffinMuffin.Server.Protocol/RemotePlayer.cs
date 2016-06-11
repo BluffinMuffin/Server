@@ -11,7 +11,6 @@ using BluffinMuffin.Protocol.DataTypes.Options;
 using BluffinMuffin.Protocol.Game;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.Protocol;
-using BluffinMuffin.Server.Logic.Extensions;
 
 namespace BluffinMuffin.Server.Protocol
 {

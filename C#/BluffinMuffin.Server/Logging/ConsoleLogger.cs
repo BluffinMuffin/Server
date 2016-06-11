@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using BluffinMuffin.Server.Configuration;
-using Com.Ericmas001.Common;
 
 namespace BluffinMuffin.Server.Logging
 {

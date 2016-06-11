@@ -5,7 +5,6 @@ using BluffinMuffin.Server.DataTypes.Enums;
 using BluffinMuffin.Server.DataTypes;
 using BluffinMuffin.Server.DataTypes.EventHandling;
 using BluffinMuffin.Protocol.DataTypes;
-using BluffinMuffin.Protocol.DataTypes.Enums;
 using BluffinMuffin.Server.Logic.Extensions;
 using BluffinMuffin.Server.Logic.GameModules;
 

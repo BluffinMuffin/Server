@@ -56,7 +56,7 @@ namespace BluffinMuffin.Server.Logic.GameModules
             //Take note of the action
             var whatAmIDoing = GameActionEnum.PostAnte;
             if (Table.Params.Blind == BlindTypeEnum.Blinds)
-                whatAmIDoing = (needed == Table.Params.BigBlindAmount() ? GameActionEnum.PostBigBlind : GameActionEnum.PostSmallBlind);
+                whatAmIDoing = needed == Table.Params.BigBlindAmount() ? GameActionEnum.PostBigBlind : GameActionEnum.PostSmallBlind;
 
             Logger.LogDebugInformation("{0} POSTED BLIND ({1})", p.Name, whatAmIDoing);
             Observer.RaisePlayerActionTaken(p, whatAmIDoing, amnt);

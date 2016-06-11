@@ -41,7 +41,7 @@ namespace BluffinMuffin.Server.Logging
 
         }
 
-        private static void OnLogClientCreated(object sender, DataTypes.EventHandling.LogClientCreationEventArg e)
+        private static void OnLogClientCreated(object sender, LogClientCreationEventArg e)
         {
             m_LogClients[e.Client] = new Client(e.Endpoint.Client.RemoteEndPoint.ToString());
             m_LogClients[e.Client].RegisterClient();
@@ -57,12 +57,12 @@ namespace BluffinMuffin.Server.Logging
             m_LogClients[e.Client].SetAdditionalInformation(e.Client.ClientIdentification, e.Client.SupportedProtocol);
         }
 
-        private static void OnLogGameEnded(object sender, DataTypes.EventHandling.LogGameEventArg e)
+        private static void OnLogGameEnded(object sender, LogGameEventArg e)
         {
             m_LogGamesStatus[e.Id] = false;
         }
 
-        private static void OnLogGameCreated(object sender, DataTypes.EventHandling.LogGameEventArg e)
+        private static void OnLogGameCreated(object sender, LogGameEventArg e)
         {
             if (m_LogGamesStatus[e.Id])
                 return;
@@ -72,7 +72,7 @@ namespace BluffinMuffin.Server.Logging
             m_LogGames[e.Id].RegisterGame();
         }
 
-        private static void OnLogTableCreated(object sender, DataTypes.EventHandling.LogTableCreationEventArg e)
+        private static void OnLogTableCreated(object sender, LogTableCreationEventArg e)
         {
             var p = e.Params;
             m_LogTables[e.Id] = new Table(p.TableName, (Logger.DBAccess.Enums.GameSubTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.GameSubTypeEnum), p.Variant.ToString()), p.MinPlayersToStart, p.MaxPlayers, (Logger.DBAccess.Enums.BlindTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.BlindTypeEnum), p.Blind.ToString()), (Logger.DBAccess.Enums.LobbyTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.LobbyTypeEnum), p.Lobby.OptionType.ToString()), (Logger.DBAccess.Enums.LimitTypeEnum)Enum.Parse(typeof(Logger.DBAccess.Enums.LimitTypeEnum), p.Limit.ToString()), m_LogServer);
@@ -80,7 +80,7 @@ namespace BluffinMuffin.Server.Logging
             m_LogGamesStatus[e.Id] = false;
         }
 
-        private static void OnLogCommandSent(object sender, DataTypes.EventHandling.LogCommandEventArg e)
+        private static void OnLogCommandSent(object sender, LogCommandEventArg e)
         {
             switch (e.Command.CommandType)
             {
@@ -98,7 +98,7 @@ namespace BluffinMuffin.Server.Logging
             }
         }
 
-        private static void OnLogCommandReceived(object sender, DataTypes.EventHandling.LogCommandEventArg e)
+        private static void OnLogCommandReceived(object sender, LogCommandEventArg e)
         {
             switch (e.Command.CommandType)
             {
